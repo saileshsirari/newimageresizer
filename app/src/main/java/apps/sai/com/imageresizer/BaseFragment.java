@@ -56,6 +56,7 @@ public abstract class BaseFragment extends Fragment {
     protected static final int REQUEST_IMAGE_GALLERY = 1;
     //    protected static final int PICK_IMAGE_MULTIPLE = 20;
     public static final int REQUEST_WRITE_STORAGE = 10;
+
     public abstract void showError(Throwable th);
 
     public static final int MAX_LOAD_IMAGES = 300;
@@ -88,14 +89,9 @@ public abstract class BaseFragment extends Fragment {
     }
 
     public void shareImage(Context context, String mUrlString) {
-
-
         ArrayList<Uri> uriList = new ArrayList<>();
         uriList.add(Uri.parse(mUrlString));
-        if (true) {
             shareImageMultiple(context, uriList);
-            return;
-        }
     }
 
     public boolean mayRequestExternalStorage() {
@@ -146,7 +142,7 @@ public abstract class BaseFragment extends Fragment {
 
         pictureChooseIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
 //        pictureChooseIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        pictureChooseIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,"image/*");
+        pictureChooseIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
 
         startActivityForResult(Intent.createChooser(pictureChooseIntent,
                 getResources().getString(R.string.select_gallery_file)), REQUEST_IMAGE_GALLERY);

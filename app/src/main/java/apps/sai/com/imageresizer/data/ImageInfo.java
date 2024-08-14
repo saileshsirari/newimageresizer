@@ -62,8 +62,7 @@ public  class ImageInfo {
     @Override
     public boolean equals(Object obj) {
 
-        if(obj instanceof ImageInfo){
-            ImageInfo imageInfo = (ImageInfo) obj;
+        if(obj instanceof ImageInfo imageInfo){
             if(imageInfo.imageUri!=null && imageUri!=null){
                 return imageUri.equals(imageInfo.imageUri);
             }
