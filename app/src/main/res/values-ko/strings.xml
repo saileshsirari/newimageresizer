@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name = "action_settings"> 설정 </string>
+        <string name = "select_gallery_file"> 사진 선택 </string>
+    <string name = "get_pro_title"> Pro로 업그레이드 </string>
+    <string name = "upgraded_title"> 감사합니다 </string>
+    <string name = "upgraded_message"> 귀하는 Pro로 성공적으로 업그레이드되었습니다. 협조 해 주셔서 감사합니다.
+\n \n 모든 기능이 사용되도록 앱을 다시 시작하십시오. </string>
+
+    <string name = "upgrade_dialog_message">
+         • 광고 없음
+         \n • 개발 지원 ❤️ </string>
+         <string name = "restart_button"> 지금 다시 시작하십시오. </string>
+         <string name = "get_pro_button_no"> 감사합니다. </string>
+         <string name = "btn_upgrade"> 업그레이드 </string>
+         <string name = "iab_purchase_restored"> 구매 복원 됨. Image Resizer를 다시 시작하십시오. </string>
+         <string name = "remove_ads"> 광고 삭제 </string>
+       
+        <string name = "permission_rationale"> 앱이 작동하려면 저장 권한이 필요합니다. </string>
+        <string name = "size_string"> "% s 크기 = % .2f % s"</string>
+
+        <string name = "action_share"> 공유 </string>
+
+        <string name = "main_action_crop"> 자르기 </string>
+        <string name = "main_action_rotate"> 회전 </string>
+        <string name = "action_rotate"> 회전 </string>
+        <string name = "main_action_flip"> 뒤집기 </string>
+        <string name = "main_action_flip_horizontally"> 수평으로 뒤집기 </string>
+        <string name = "main_action_flip_vertically"> 세로로 뒤집기 </string>
+        <string name = "action_reset"> 재설정 </string>
+        <string name = "action_scale"> 크기 조정 </string>
+        <string name = "action_sharpen"> 선명하게하기 </string>
+        <string name = "action_blur"> 흐리게하기 </string>
+        <string name = "action_save"> 저장 </string>
+        <string name = "share_with"> </string>
+        <string name = "dialog_title"> 맞춤 너비 x 높이 </string>
+        <string name = "aspect_ratio_text"> 화면 비율 유지 </string>
+        <string name = "ok"> 확인 </string>
+        <string name = "cancel"> 취소 </string>
+        <string name = "min_length_error"> 유효한 값을 입력하십시오. </string>
+        <string name = "max_length_error"> 최대 허용치 : % d x % d </string>
+        <string name = "memory_error"> 메모리가 부족하여 작업을 수행 할 수 없습니다. </string>
+        <string name = "some_error"> 작업 처리 오류 </string>
+        <string name = "action_compress"> 압축 </string>
+        <string name = "image_quality"> 화질 </string>
+        <string name = "low_quality"> 낮음 (작은 파일) </string>
+        <string name = "medium_quality"> 보통 (중간 크기 파일) </string>
+        <string name = "high_quality"> 높음 (큰 파일) </string>
+        <string name = "action_open"> 열기 </string>
+        <string name = "select_custom_quality"> 화질 (압축률이 높을수록 압축률이 낮음) </string>
+        
+        <string name = "resized_photo"> 크기가 조정 된 사진 </string>
+        <string name = "gallery"> 갤러리 </string>
+        <string name = "no_resized_images"> 크기가 조정되지 않은 이미지 </string>
+        <string name = "delete"> 삭제 </string>
+        <string name = "saved_file"> 이미지를 % 1s % 2s에 저장했습니다. </string>
+        <string name = "delete_org"> 원본 삭제 </string>
+        <string name = "file_deleted"> 삭제 된 파일 </string>
+        <string name = "custom_label_dime_multi"> 치수 입력 </string>
+        <string name = "new_dimensions_label"> 새 측정 기준 : </string>
+        <string name = "select_all"> 모두 선택 </string>
+        <string name = "clear"> 삭제 </string>
+        <string name = "delete_confirm"> 삭제 확인? </string>
+        <string name = "processing"> % d 개의 이미지 중 % d 처리 중 </string>
+        <string name = "not_enough_memory"> 작업에 필요한 메모리가 부족하거나, 크기를 줄이거 나 메모리를 비울 수 있습니다. </string>
+        <string name = "out_of_memory"> 작업을 수행 할 메모리가 부족합니다. 메모리를 비우십시오. </string>
+        <string name = "unknown_error"> 알 수없는 오류가 발생했습니다. </string>
+        <string name = "discard_changes"> 아직 저장되지 않은 이미지, 변경 사항을 취소 하시겠습니까? </string>
+        <string name = "info_aspect"> (하나의 치수 만 입력하십시오. 다른 치수는 이미지의 종횡비에 따라 계산됩니다.) </string>
+        <string name = "unable_to_load_image"> 이미지를로드 할 수 없습니다. </string>
+        <string name = "no_images"> 이미지가 없습니다. 먼저 이미지를로드하십시오. </string>
+        <string name = "rate_app"> 감사 인사 </string>
+        <string name = "rate_us"> Image Resizer가 마음에 들면 리뷰를 남겨보십시오. </string>
+        <string name = "unable_to_save_image"> 이미지를 저장할 수 없습니다. </string>
+
+        
+        <string name = "settings_label"> 설정 </string>
+        <string name = "pref_auto_save"> 압축, 잘라 내기 또는 크기 조절 후 이미지 자동 저장 </string>
+        <string name = "pref_title_auto_save"> 자동 저장 이미지 </string>
+        <string name = "pref_rate_us"> 평가하기 </string>
+        <string name = "pref_title_rate_us"> 감사 인사 </string>
+        <string name = "pref_share_app"> 친구와 앱을 공유하십시오. </string>
+        <string name = "pref_title_share_app"> 앱 공유 </string>
+        <string name = "pref_share_feedback"> 우리에게 원하는 제안이나 개선점을 적어주십시오. </string>
+        <string name = "pref_title_share_feedback"> 의견 공유 </string>
+        <string name = "scanning"> 이미지 스캔 </string>
+        <string name = "close"> 닫기 </string>
+        <string name = "scan_complete"> 스캔 완료 </string>
+        <string name = "unable_to_select_folder">이 폴더에는 파일을 저장할 수있는 권한이 없습니다. 다른 폴더를 선택하십시오. </string>
+        <string name = "pref_output_folder"> 기본 폴더 변경 </string>
+
+
+    <string name = "pref_output_folder_summary"> 처리 된 이미지의 기본 폴더 위치 변경 </string>
+        <string name = "error_compressing"> 오류 압축 </string>
+        <string name = "image_does_not_exists"> 이미지가 없거나 삭제되었거나 액세스 할 수 없습니다. </string>
+        <string name = "unable_to_delete"> 파일을 삭제할 수 없습니다. </string>
+        <string name = "select_file_extension"> 출력 파일 형식 선택 </string>
+        <string name = "select_file_extension_type"> 파일 확장명 </string>
+
+        <string name = "pref_title_grid_size"> ui의 그리드 크기 </string>
+        <string name = "pref_grid_size"> 표시 할 행 당 항목을 선택하지 않습니다. </string>
+
+        <string name = "pref_title_grid_appear"> 격자 이미지 모양 </string>
+        <string name = "pref_grid_appear"> 크거나 작은 이미지 모양 </string>
+        <string name = "pref_title_music_app"> 놀라운 음악 앱 다운로드! </string>
+        <string name = "pref_summary_music_app"> 사용자 정의 가능한 스킨, 배경 및 더 많은 기능을 갖춘 멋진 음악 플레이어를 다운로드하십시오! </string>
+        <string name = "more_apps"> 더 많은 앱 </string>
+</resources>

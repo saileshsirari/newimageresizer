@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <CheckBox
+        android:padding="5dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/aspect_ratio_text"
+        android:checked="true"
+
+        android:id="@+id/check_aspect"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+    <RelativeLayout
+        android:layout_below="@+id/check_aspect"
+        android:paddingTop="40dp"
+
+
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+    <EditText
+        android:layout_weight="1"
+        android:id="@+id/width"
+        android:inputType="number"
+        android:maxLength="4"
+        android:width="200dp"
+
+        android:layout_width="wrap_content"
+        android:layout_toLeftOf="@+id/sep"
+
+        android:layout_height="wrap_content" />
+    <TextView
+
+        android:text="X"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/sep"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:maxLength="4"
+        android:width="200dp"
+
+        android:layout_weight="1"
+        android:id="@+id/height"
+        android:inputType="number"
+        android:layout_toRightOf="@+id/sep"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+</RelativeLayout>

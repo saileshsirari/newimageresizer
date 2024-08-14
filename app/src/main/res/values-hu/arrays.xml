@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <resources>
+        <!-- foreground color names array -->
+      <!--  <string-array name="foreground_color_names_array">
+            <item >Jpg</item>
+            <item>Png</item>
+            <item>Same as original</item>
+        </string-array>
+
+        &lt;!&ndash; foreground color values array &ndash;&gt;
+        <string-array name="foreground_color_values_array">
+            <item>.jpg</item>
+            <item>.png</item>
+            <item>default</item>
+
+        </string-array>-->
+
+    <string-array name="grid_appeance_values" >
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+
+
+    </string-array>
+    <string-array name="grid_appeance_labels">
+        <item> Nagyobb </item>
+        <item> Standard </item>
+        <item> Kisebb </item>
+    </string-array>
+
+    <string-array name="grid_row_labels">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <!-- foreground color values array -->
+
+
+
+</resources>

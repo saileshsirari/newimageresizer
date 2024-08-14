@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+        <string name = "action_settings"> Configuració </string>
+        <string name = "select_gallery_file"> Selecciona foto </string>
+
+    <string name = "get_pro_title"> Pro sürümüne yükseltme </string>
+         <string name = "upgraded_title"> Teşekkürler </string>
+         <string name = "upgraded_message"> Pro\'ya başarıyla geçirdiniz. Desteğiniz için teşekkür ederim.
+         \nLütfen tüm özelliklerin etkinleştirildiğinden emin olmak için uygulamayı yeniden başlatın </string>
+
+         <string name = "upgrade_dialog_message">
+         • İlan Yok
+         \n • Destek geliştirme sürümü </string>
+         <string name = "restart_button"> Şimdi yeniden başlat </string>
+         <string name = "get_pro_button_no"> Hayır teşekkürler </string>
+         <string name = "btn_upgrade"> Yükseltme </string>
+         <string name = "iab_purchase_restored"> Satınalma Geri Yüklendi. Lütfen Görüntü Resizer\'ı yeniden başlat </string>
+         <string name = "remove_ads"> Reklamları Kaldır </string>
+        <string name = "permission_rationale"> "Els permisos d'emmagatzematge són necessaris perquè l'aplicació funcioni." </string>
+        <string name = "size_string"> "% s size =% .2f% s" </string>
+
+        <string name = "action_share"> Comparteix </string>
+
+        <string name = "main_action_crop"> Crop </string>
+        <string name = "main_action_rotate"> Gira </string>
+        <string name = "action_rotate"> Gira </string>
+        <string name = "main_action_flip"> Flip </string>
+        <string name = "main_action_flip_horizontally"> Flip horitzontal </string>
+        <string name = "main_action_flip_vertically"> Flip verticalment </string>
+        <string name = "action_reset"> Reset </string>
+        <string name = "action_scale"> Redimensionar </string>
+        <string name = "action_sharpen"> Esmolar </string>
+        <string name = "action_blur"> Blur </string>
+        <string name = "action_save"> Desa </string>
+        <string name = "share_with"> Comparteix amb </string>
+        <string name = "dialog_title"> Custom width x height </string>
+        <string name = "aspect_ratio_text"> Mantingueu la proporció de l\'aspecte </string>
+        <string name = "ok"> Ok </string>
+        <string name = "cancel"> Cancel·la </string>
+        <string name = "min_length_error"> Introduïu un valor vàlid </string>
+        <string name = "max_length_error"> Dimesion màx. permès:% d x% d </string>
+        <string name = "memory_error"> Memòria baixa, incapaç de realitzar operacions </string>
+        <string name = "some_error"> Tasca de processament d\'errors </string>
+        <string name = "action_compress"> Comprimir </string>
+        <string name = "image_quality"> Qualitat de la imatge </string>
+        <string name = "low_quality"> Low (Small sized file) </string>
+        <string name = "medium_quality"> Mitjà (fitxer de mida mitjana) </string>
+        <string name = "high_quality"> Alt (fitxer de mida gran) </string>
+        <string name = "action_open"> Obre </string>
+        <string name = "select_custom_quality"> Qualitat de la imatge (Més significa menys compressió) </string>
+        
+        <string name = "resized_photo"> Fotos redimensionades </string>
+        <string name = "gallery"> Gallery </string>
+        <string name = "no_resized_images"> No hi ha imatges redimensionades </string>
+        <string name = "delete"> Delete </string>
+        <string name = "saved_file"> Imatges guardades a% 1s% 2s </string>
+        <string name = "delete_org"> Suprimeix l\'original </string>
+        <string name = "file_deleted"> Fitxer esborrat </string>
+        <string name = "custom_label_dime_multi"> Introduïu dimensions </string>
+        <string name = "new_dimensions_label"> Noves dimensions: </string>
+        <string name = "select_all"> Selecciona-ho tot </string>
+        <string name = "clear"> Esborra </string>
+        <string name = "delete_confirm"> Confirmeu suprimir? </string>
+        <string name = "processing"> Processament de% d de% d imatges </string>
+        <string name = "not_enough_memory"> No hi ha prou memòria per a l\'operació, reduïu la mida o emmagatzemeu una mica de memòria. </string>
+        <string name = "out_of_memory"> No hi ha prou memòria per realitzar l\'operació, si us plau, allibereu una mica de memòria. </string>
+        <string name = "unknown_error"> S\'ha produït un error desconegut. </string>
+        <string name = "discard_changes"> Les imatges no s\'han desat encara, descarteu els canvis? </string>
+        <string name = "info_aspect"> (Introduïu només una dimensió, un altre es calcularà a partir de la relació d\'aspecte de la imatge). </string>
+        <string name = "unable_to_load_image"> No es pot carregar la imatge </string>
+        <string name = "no_images"> No hi ha cap imatge, primer carregueu algunes imatges. </string>
+        <string name = "rate_app"> Digui gràcies </string>
+        <string name = "rate_us"> Si us agrada Image Resizer, si us plau, deixa de deixar una revisió </string>
+        <string name = "unable_to_save_image"> No es pot desar la imatge </string>
+
+        
+        <string name = "settings_label"> Configuració </string>
+        <string name = "pref_auto_save"> Desa automàticament imatges després de la compressió, el cultiu o l\'escala. </string>
+        <string name = "pref_title_auto_save"> Desa automàticament imatges </string>
+        <string name = "pref_rate_us"> Valoreu-nos </string>
+        <string name = "pref_title_rate_us"> Digui gràcies </string>
+        <string name = "pref_share_app"> Comparteix l\'aplicació amb els teus amics </string>
+        <string name = "pref_title_share_app"> Comparteix l\'aplicació </string>
+        <string name = "pref_share_feedback"> Escriviu-nos, qualsevol suggeriment o millora que vulgueu. </string>
+        <string name = "pref_title_share_feedback"> Comparteix comentaris </string>
+        <string name = "scanning"> scaning images </string>
+        <string name = "close"> close </string>
+        <string name = "scan_complete"> Escaneig completat </string>
+        <string name = "unable_to_select_folder"> Aquesta carpeta no té permís per desar el fitxer, si us plau, seleccioneu una altra carpeta </string>
+    <string name = "pref_output_folder"> Canviar la carpeta predeterminada </string>
+
+
+    <string name = "pref_output_folder_summary"> Canvieu la ubicació de la carpeta predeterminada per a les imatges processades </string>
+        <string name = "error_compressing"> compressió d\'errors </string>
+        <string name = "image_does_not_exists"> La imatge no existeix, pot ser eliminada o inaccessible </string>
+        <string name = "unable_to_delete"> No es pot eliminar el fitxer </string>
+        <string name = "select_file_extension"> Seleccioneu el format del fitxer de sortida </string>
+        <string name = "select_file_extension_type"> Extensió de fitxer </string>
+
+        <string name = "pref_title_grid_size"> Mida de quadrícula de ui </string>
+        <string name = "pref_grid_size"> Seleccioneu no d\'elements per fila que es mostrarà </string>
+
+        <string name = "pref_title_grid_appear"> Aspecte de les imatges de la graella </string>
+        <string name = "pref_grid_appear"> Aparença d\'imatges més gran o més petita </string>
+    <string name = "pref_title_music_app"> Descarregueu una sorprenent aplicació de música </string>
+        <string name = "pref_summary_music_app"> Descarregueu un reproductor musical increïble amb funcions personalitzables, fons i moltes més funcions! </string>
+        <string name = "more_apps"> Més aplicacions </string>
+</resources>

@@ -1,0 +1,67 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    ext.kotlin_version = '1.8.0'
+
+    repositories {
+        google()
+        jcenter()
+        maven { url 'https://maven.google.com' }
+    }
+    dependencies {
+
+        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'com.google.gms:google-services:4.4.2'
+
+
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+plugins {
+    id 'com.android.application' version '7.1.0' apply false
+    id 'com.android.library' version '7.1.0' apply false
+    id 'org.jetbrains.kotlin.android' version '1.8.0' apply false
+
+}
+
+ext {
+    // Sdk and tools
+    minSdkVersion = 23
+    targetSdkVersion = 34
+    compileSdkVersion = 34
+    // App dependencies
+    kotlinVersion = "1.8.0"
+    guavaVersion = '18.0'
+    junitVersion = '4.12'
+    mockitoVersion = '1.10.19'
+    powerMockito = '1.6.2'
+    hamcrestVersion = '1.3'
+    runnerVersion = '1.0.0'
+    rulesVersion = '1.0.0'
+    espressoVersion = '3.0.0'
+    daggerVersion = '2.11'
+    dexmakerVersion = '1.2'
+
+    archComponentsVersion = "1.0.0-alpha3"
+    butterKnifeVersion = '8.5.1'
+    mockitoKotlinVersion = "1.4.0"
+    okhttpVersion = "3.0.1"
+    retrofitVersion = "2.0.0"
+    rxjavaVersion = "2.1.8"
+    rxjavaAndroidVersion = "2.0.1"
+    timberVersion ="4.5.1"
+    PUBLISH_VERSION = '2.6.0'
+    PUBLISH_GROUP_ID = 'com.theartofdev.edmodo'
+    PUBLISH_ARTIFACT_ID = 'android-image-cropper'
+    materialDialogs   =  '0.9.6.0'
+
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

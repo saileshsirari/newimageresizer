@@ -1,0 +1,86 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:title="@string/action_open"
+        android:id="@+id/action_open"
+        app:showAsAction="always"/>
+
+   <group android:id="@+id/singleImageItem">
+
+    <item
+        android:id="@+id/action_crop"
+        android:title="@string/crop_image_menu_crop"
+        app:showAsAction="always"/>
+
+
+    <!--<item
+        android:id="@+id/action_compress"
+        android:title="@string/action_compress"
+        app:showAsAction="always"/>-->
+
+
+
+
+   </group>
+    <item
+        android:visible="true"
+        android:actionLayout="@layout/custom_menu_layout"
+
+        android:id="@+id/action_compress"
+        android:title=""
+        app:showAsAction="always"/>
+    <group android:id="@+id/groupSave">
+        <item
+            android:id="@+id/action_save"
+            android:title="@string/action_save"
+            app:showAsAction="always"/>
+    </group>
+
+    <item
+        android:id="@+id/action_reset"
+        android:title="@string/action_reset"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:icon="@drawable/share_icon"
+        android:id="@+id/action_share"
+        android:title="@string/main_action_crop"
+        app:showAsAction="always"/>
+
+  <group android:id="@+id/singleImageItemTwo">
+
+
+
+
+
+
+
+      <item
+          android:visible="false"
+          android:id="@+id/action_rotate"
+          android:title="@string/action_rotate"
+          app:showAsAction="ifRoom"></item>
+
+      <item
+          android:visible="false"
+          android:id="@+id/action_sharpen"
+          android:title="@string/action_sharpen"
+          app:showAsAction="never"/>
+      <item
+          android:visible="false"
+          android:id="@+id/action_blur"
+          android:title="@string/action_blur"
+          app:showAsAction="never"/>
+
+  </group>
+
+    <item
+        android:visible="true"
+        android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        app:showAsAction="never"/>
+
+
+
+</menu>

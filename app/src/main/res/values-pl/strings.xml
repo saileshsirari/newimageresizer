@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name = "action_settings"> Ustawienia </string>
+        <string name = "select_gallery_file"> Wybierz zdjęcie </string>
+
+       <string name = "get_pro_title"> Uaktualnij do Pro </string>
+    <string name = "upgraded_title"> Thank You </string>
+    <string name = "upgraded_message"> Pomyślnie zaktualizowano program do wersji Pro. Dziękuję za Twoje wsparcie.
+\n \ nProszę ponownie uruchomić aplikację, aby upewnić się, że wszystkie funkcje są włączone </string>
+
+    <string name = "upgrade_dialog_message">
+         • Bez reklam
+         \n • Wsparcie dla rozwoju ❤️ </string>
+         <string name = "restart_button"> Zrestartuj teraz </string>
+         <string name = "get_pro_button_no"> Nie, dziękuję </string>
+         <string name = "btn_upgrade"> Aktualizacja </string>
+         <string name = "iab_purchase_restored"> Zakup został przywrócony. Proszę ponownie uruchomić Image Resizer </string>
+         <string name = "remove_ads"> Usuń reklamy </string>
+        <string name = "permission_rationale"> "Aby aplikacja działała, potrzebne są uprawnienia do przechowywania." </string>
+        <string name = "size_string"> "% s size =% .2f% s" </string>
+
+        <string name = "action_share"> Udostępnij </string>
+
+        <string name = "main_action_crop"> Crop </string>
+        <string name = "main_action_rotate"> Obróć </string>
+        <string name = "action_rotate"> Rotate </string>
+        <string name = "main_action_flip"> Flip </string>
+        <string name = "main_action_flip_horizontally"> Odwróć poziomo </string>
+        <string name = "main_action_flip_vertically"> Odwróć w pionie </string>
+        <string name = "action_reset"> Resetuj </string>
+        <string name = "action_scale"> Zmień rozmiar </string>
+        <string name = "action_sharpen"> Sharpen </string>
+        <string name = "action_blur"> Blur </string>
+        <string name = "action_save"> Zapisz </string>
+        <string name = "share_with"> Udostępnij za pomocą </string>
+        <string name = "dialog_title"> Niestandardowa szerokość x wysokość </string>
+        <string name = "aspect_ratio_text"> Zachowaj proporcje </string>
+        <string name = "ok"> Ok </string>
+        <string name = "cancel"> Anuluj </string>
+        <string name = "min_length_error"> Wprowadź poprawną wartość </string>
+        <string name = "max_length_error"> Maksymalna dozwolona dimesion:% d x% d </string>
+        <string name = "memory_error"> Niska pamięć, nie można wykonać operacji </string>
+        <string name = "some_error"> Błąd przetwarzania zadania </string>
+        <string name = "action_compress"> Kompresuj </string>
+        <string name = "image_quality"> Jakość obrazu </string>
+        <string name = "low_quality"> Low (plik o małym rozmiarze) </string>
+        <string name = "medium_quality"> Średnia (plik średniej wielkości) </string>
+        <string name = "high_quality"> High (plik o dużym rozmiarze) </string>
+        <string name = "action_open"> Open </string>
+        <string name = "select_custom_quality"> Jakość obrazu (Więcej oznacza mniejszą kompresję) </string>
+        
+        <string name = "resized_photo"> Resize Photos </string>
+        <string name= "gallery"> Galeria </string>
+        <string name = "no_resized_images"> Brak obrazów o zmienionym rozmiarze </string>
+        <string name = "delete"> Usuń </string>
+        <string name = "saved_file"> Zapisane obrazy do% 1s% 2s </string>
+        <string name = "delete_org"> Usuń oryginał </string>
+        <string name = "file_deleted"> Plik usunięty </string>
+        <string name = "custom_label_dime_multi"> Podaj wymiary </string>
+        <string name = "new_dimensions_label"> Nowe wymiary: </string>
+        <string name = "select_all"> Zaznacz wszystko </string>
+        <string name = "clear"> Wyczyść </string>
+        <string name = "delete_confirm"> Potwierdź usunięcie? </string>
+        <string name = "processing"> Przetwarzanie% d z% d obrazów </string>
+        <string name = "not_enough_memory"> Za mało pamięci dla operacji, zmniejsz rozmiar lub zwolnij trochę pamięci. </string>
+        <string name = "out_of_memory"> Brak wystarczającej ilości pamięci do wykonania operacji, zwolnij trochę pamięci. </string>
+        <string name = "unknown_error"> Wystąpił nieznany błąd. </string>
+        <string name = "discard_changes"> Obrazy nie zostały jeszcze zapisane, odrzucić zmiany? </string>
+        <string name = "info_aspect"> (Wprowadź tylko jeden wymiar, inny zostanie obliczony na podstawie proporcji obrazu.) </string>
+        <string name = "unable_to_load_image"> Nie można załadować obrazu </string>
+        <string name = "no_images"> Brak obrazów, najpierw załaduj zdjęcia. </string>
+        <string name = "rate_app"> Say Thanks </string>
+        <string name = "rate_us"> Jeśli lubisz Image Resizer, rozważ pozostawienie opinii </string>
+        <string name = "unable_to_save_image"> Nie można zapisać obrazu </string>
+
+        
+        <string name = "settings_label"> Ustawienia </string>
+        <string name = "pref_auto_save"> Automatycznie zapisuj obrazy po kompresji, przycinaniu lub skali. </string>
+        <string name = "pref_title_auto_save"> Automatycznie zapisuj obrazy </string>
+        <string name = "pref_rate_us"> Oceń nas </string>
+        <string name = "pref_title_rate_us"> Say Thanks </string>
+        <string name = "pref_share_app"> Udostępnij aplikację znajomym </string>
+        <string name = "pref_title_share_app"> Udostępnij aplikację </string>
+        <string name = "pref_share_feedback"> Napisz do nas, wszelkie sugestie lub ulepszenia, które chcesz. </string>
+        <string name = "pref_title_share_feedback"> Udostępnij opinię </string>
+        <string name = "scanning"> skanowanie obrazów </string>
+        <string name = "close"> zamknij </string>
+        <string name = "scan_complete"> Skanowanie zakończone </string>
+        <string name = "unable_to_select_folder"> Ten folder nie ma uprawnień do zapisu pliku, wybierz inny folder </string>
+        <string name = "pref_output_folder"> Zmień domyślny folder </string>
+
+
+    <string name = "pref_output_folder_summary"> Zmień domyślną lokalizację folderu dla przetworzonych obrazów </string>
+        <string name = "error_compressing"> kompresja błędów </string>
+        <string name = "image_does_not_exists"> Obraz nie istnieje, może zostać usunięty lub niedostępny </string>
+        <string name = "unable_to_delete"> Nie można usunąć pliku </string>
+        <string name = "select_file_extension"> Wybierz format pliku wyjściowego </string>
+        <string name = "select_file_extension_type"> Rozszerzenie pliku </string>
+
+        <string name = "pref_title_grid_size"> Rozmiar siatki ui </string>
+        <string name = "pref_grid_size"> Wybierz liczbę elementów w wierszu do wyświetlenia </string>
+
+        <string name = "pref_title_grid_appear"> Wygląd obrazów siatki </string>
+        <string name = "pref_grid_appear"> Wygląd obrazów większy lub mniejszy </string>
+        <string name = "pref_title_music_app"> Pobierz wspaniałą aplikację muzyczną! </string>
+        <string name = "pref_summary_music_app"> Pobierz wspaniały odtwarzacz muzyczny z dostosowywanymi skórek, tłem i wieloma innymi funkcjami! </string>
+        <string name = "more_apps"> Więcej aplikacji </string>
+</resources>

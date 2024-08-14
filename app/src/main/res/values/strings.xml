@@ -1,0 +1,124 @@
+<resources xmlns:tools="http://schemas.android.com/tools" >
+
+    <string name="or" translatable="false">Or</string>
+    <string name="percentage_of_orignal" translatable="false">Or \n\nEnter percentage of original </string>
+    <string name="or_enter_custom_dime" translatable="false">Or Enter custom dimensions</string>
+
+    <string name="app_name" translatable="false">Image Resizer</string>
+    <string name="action_settings" tools:ignore="MissingTranslation">Settings</string>
+    <string name="select_gallery_file">Select Photo</string>
+
+    <string name="non_shared_folder_name" translatable="false">nonShared</string>
+    <string name="shared_folder_name" translatable="false">ImageResizer</string>
+
+    <string name="permission_rationale">"Storage permissions are needed for the app to work."</string>
+    <string name="size_string">"%s size = %.2f %s"</string>
+
+    <string name="action_share">Share</string>
+
+
+    <string name="get_pro_title">Upgrade to Pro</string>
+    <string name="upgraded_title">Thank You</string>
+    <string name="upgraded_message" tools:ignore="MissingTranslation">You have successfully upgraded to Pro. Thank you for your support.
+        \n\nPlease restart the app to ensure all features are enabled</string>
+
+    <string name="upgrade_dialog_message">
+        • No Ads
+        \n• Support development ❤️</string>
+    <string name="restart_button">Restart now</string>
+    <string name="get_pro_button_no">No thanks</string>
+    <string name="btn_upgrade">Upgrade</string>
+    <string name="iab_purchase_restored">Purchase Restored. Please restart Image Resizer</string>
+    <string name="remove_ads">Remove Ads</string>
+
+    <string name="main_action_crop">Crop</string>
+    <string name="main_action_rotate">Rotate</string>
+    <string name="action_rotate">Rotate</string>
+    <string name="main_action_flip">Flip</string>
+    <string name="main_action_flip_horizontally">Flip horizontally</string>
+    <string name="main_action_flip_vertically">Flip vertically</string>
+    <string name="action_reset">Reset</string>
+    <string name="action_scale">Resize</string>
+    <string name="action_sharpen">Sharpen</string>
+    <string name="action_blur">Blur</string>
+    <string name="action_save">Save</string>
+    <string name="share_with">Share with</string>
+    <string name="dialog_title">Custom width x height</string>
+    <string name="aspect_ratio_text">Keep Aspect Ratio</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="min_length_error">Please enter valid value</string>
+    <string name="max_length_error">Max dimesion allowed : %d x %d</string>
+    <string name="memory_error">Low memory , unable to perform operation</string>
+    <string name="some_error" tools:ignore="MissingTranslation">Error processing task</string>
+    <string name="action_compress">Compress</string>
+    <string name="image_quality">Image quality</string>
+    <string name="low_quality">Low ( Small sized file)</string>
+    <string name="medium_quality">Medium ( Medium sized file)</string>
+    <string name="high_quality">High ( Large sized file)</string>
+    <string name="action_open">Open</string>
+    <string name="select_custom_quality">Picture quality(More means less compression) </string>
+    <string name="select_custom_size" translatable="false">Expected picture size in kb </string>
+    <string name="select_custom_percen" translatable="false">Compress percentage of original </string>
+
+    <string name="resized_photo">Resized Photos</string>
+    <string name="gallery">Gallery</string>
+    <string name="no_resized_images">No resized images</string>
+    <string name="delete">Delete</string>
+    <string name="saved_file">Saved image(s) to %1s  %2s </string>
+    <string name="delete_org">Delete original</string>
+    <string name="file_deleted">File deleted</string>
+    <string name="custom_label_dime_multi">Enter dimensions</string>
+    <string name="new_dimensions_label">New dimensions:</string>
+    <string name="select_all">Select all</string>
+    <string name="clear">Clear</string>
+    <string name="delete_confirm">Confirm delete?</string>
+    <string name="processing">Processing %d out of %d images</string>
+    <string name="not_enough_memory">Not enough memory for the operation , reduce the size or free some memory.</string>
+    <string name="out_of_memory">There is not enough memory to perform the operation,please free up some memory.</string>
+    <string name="unknown_error">Unknown error has occured.</string>
+    <string name="discard_changes">Images not saved yet,discard changes?</string>
+    <string name="info_aspect">(Please enter only one dimension,another will be calculated based on aspect ratio of image.)</string>
+    <string name="unable_to_load_image">Unable to load the image</string>
+    <string name="no_images">There are no images , please load some images first.</string>
+    <string name="rate_app">Say Thanks</string>
+    <string name="rate_us">If you like Image Resizer, please consider leaving a review</string>
+    <string name="unable_to_save_image">Unable to save image</string>
+
+    <string name="facebook_app_id" translatable="false">179547122769778</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb179547122769778</string>
+    <string name="settings_label">Settings</string>
+    <string name="pref_auto_save" tools:ignore="MissingTranslation">Auto save images after compression , crop or scale.</string>
+    <string name="pref_title_auto_save">Auto save images</string>
+    <string name="pref_rate_us">Rate us </string>
+    <string name="pref_title_rate_us">Say Thanks</string>
+    <string name="pref_share_app">Share app with your friends  </string>
+    <string name="pref_title_share_app">Share app </string>
+    <string name="pref_share_feedback">Do write to us , any suggestions or improvements you want . </string>
+    <string name="pref_title_share_feedback">Share feedback</string>
+    <string name="scanning">scaning images</string>
+    <string name="close">close</string>
+    <string name="scan_complete">Scan completed</string>
+    <string name="unable_to_select_folder">This folder does not have permission to save file , please select another folder</string>
+    <string name="pref_output_folder">Change default folder</string>
+
+
+    <string name="pref_output_folder_summary">Change default folder location for processed images</string>
+    <string name="error_compressing">error compressing</string>
+    <string name="image_does_not_exists">Image does not exists , it may be deleted or inaccessible</string>
+    <string name="unable_to_delete">Unable to delete file</string>
+    <string name="select_file_extension">Select output file format</string>
+    <string name="select_file_extension_type">File extension</string>
+
+    <string name="pref_title_grid_size">Grid size of ui</string>
+    <string name="pref_grid_size">Select no of items per row to be displayed</string>
+
+    <string name="pref_title_grid_appear">Grid images appearance</string>
+    <string name="pref_grid_appear">Appearance of images to be larger or smaller </string>
+    <string name="pref_title_music_app">Download stunning music app!</string>
+    <string name="pref_summary_music_app" tools:ignore="MissingTranslation">Download stunning music player with customizable skins ,background and many more features!</string>
+    <string name="more_apps">More Apps</string>
+    <string name="showing_max_images" translatable="false">Only first %d images are loaded</string>
+    <string name="md_choose_label">Choose label</string>
+    <string name="new_folder">New folder</string>
+</resources>

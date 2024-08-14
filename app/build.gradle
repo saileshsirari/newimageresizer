@@ -1,0 +1,158 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdk 34
+    namespace 'apps.sai.com.imageresizer'
+
+    defaultConfig {
+        applicationId "apps.sai.com.imageresizer"
+        minSdk 23
+        targetSdk 34
+        versionCode 33
+        versionName "1.30"
+        resConfigs "en", "zh-rCN", "fr", "ko", "it", "nl", "tr", "pl", "ro", "hu", "uk", "bg-rBG", "en-rGB", "vi", "pt-rBR", "es", "en-rNZ", "zh-rTW", "es-rES", "ca", "hr", "en-rAU", "eu-rES", "th"
+
+        vectorDrawables.useSupportLibrary = false
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    signingConfigs {
+        config_signing {
+            keyAlias 'sai'
+            keyPassword 'saisai'
+            storeFile file('/opt/sdk/sai.jks')
+            storePassword 'saisai'
+        }
+    }
+    buildFeatures {
+        compose = true
+        composeOptions {
+            kotlinCompilerExtensionVersion = "1.4.0"
+        }
+    }
+    buildTypes {
+        debug {
+//            applicationIdSuffix ".debug"
+            debuggable true
+            multiDexEnabled true
+        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config_signing
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    flavorDimensions "default"
+    productFlavors {
+        demo {
+            applicationIdSuffix ".demo"
+            versionNameSuffix "-free"
+            dimension "default"
+        }
+        full {
+            applicationIdSuffix ".full"
+            versionNameSuffix "-full"
+            dimension "default"
+        }
+    }
+    splits {
+        abi {
+            enable true
+            reset()
+            include "armeabi", "armeabi-v7a", 'arm64-v8a', "mips", "x86", "x86_64", 'arm64-v8a'
+            universalApk false
+        }
+    }
+}
+ext.versionCodes = ['armeabi': 3, 'armeabi-v7a': 4, 'arm64-v8a': 5,
+                    mips: 6, 'x86': 7, 'x86_64': 8]
+import com.android.build.OutputFile
+android.applicationVariants.all { variant ->
+    def name = variant.buildType.getName()
+    System.out.println("variant.flavorName->"+name)
+
+    if(name.contains("debug")==false) {
+        System.out.println("variant.flavorName->"+name)
+
+        variant.outputs.each { output ->
+            def abiFilter = output.getFilter(OutputFile.ABI)
+            def abiMultiplier = 0
+            if (abiFilter != null) {
+                abiMultiplier = project.ext.versionCodes.get(abiFilter)
+            }
+            output.versionCodeOverride =
+                    abiMultiplier * 10000 + android.defaultConfig.versionCode
+        }
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.5.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+//    implementation 'com.android.support.constraint:constraint-layout:2.0.4'
+//    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+//    implementation "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
+//    implementation "com.android.support:design:$rootProject.supportLibraryVersion"
+//    implementation "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
+//    implementation "com.android.support:support-v4:$rootProject.supportLibraryVersion"
+    implementation "com.jakewharton:butterknife:${butterKnifeVersion}"
+//    annotationProcessor "com.jakewharton:butterknife-compiler:${butterKnifeVersion}"
+//    compile "com.jakewharton.timber:timber:${timberVersion}"
+//    implementation "com.android.support:design:$rootProject.supportLibraryVersion"
+    implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjavaVersion"
+    implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxjavaAndroidVersion"
+
+
+    //openCv
+    implementation project(':opencv')
+    api project(':cropper')
+//    implementation 'com.google.android.gms:play-services-ads:20.6.0'
+    implementation 'androidx.preference:preference:1.2.1'
+    //billing
+    implementation 'com.android.billingclient:billing:5.2.1'
+
+    //firebase
+
+    implementation 'com.google.firebase:firebase-core:20.1.2'
+    //exif
+//    implementation "com.android.support:exifinterface:28.0.0"
+    apply plugin: 'com.google.gms.google-services'
+
+    //facebook ads
+    implementation 'com.facebook.android:audience-network-sdk:6.8.0'
+//    implementation "com.android.support:preference-v7:${prefCompat}"
+//    implementation "com.android.support:preference-v14:${prefCompatv14}"
+
+    implementation "me.zhanghai.android.materialprogressbar:library:1.4.2"
+    implementation "com.afollestad.material-dialogs:core:${materialDialogs}"
+    implementation "com.afollestad.material-dialogs:commons:${materialDialogs}"
+
+    implementation 'androidx.preference:preference:1.2.0'
+
+    implementation(platform("androidx.compose:compose-bom:2024.06.00"))
+    // other dependencies
+    // Compose
+    implementation("androidx.activity:activity-compose:1.9.1")
+    implementation("androidx.compose.material3:material3")
+    implementation("com.google.accompanist:accompanist-themeadapter-material3:0.28.0")
+
+
+}

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+        <string name = "action_settings"> Настройки </string>
+        <string name = "select_gallery_file"> Изберете снимка </string>
+    <string name = "get_pro_title"> Pro sürümüne yükseltme </string>
+         <string name = "upgraded_title"> Teşekkürler </string>
+         <string name = "upgraded_message"> Pro\'ya başarıyla geçirdiniz. Desteğin için teşekkürler.
+         \nLütfen tüm özelliklerin etkinleştirildiğinden emin olmak için uygulamayı yeniden başlatın </string>
+
+         <string name = "upgrade_dialog_message">
+         • Reklamsız
+         \n• Destek geliştirme sürümü </string>
+         <string name = "restart_button"> Şimdi yeniden başlat </string>
+         <string name = "get_pro_button_no"> Hayır teşekkürler </string>
+         <string name = "btn_upgrade"> Yükseltme </string>
+         <string name = "iab_purchase_restored"> Satınalma Geri Yüklendi. Lütfen Görüntü Resizer\'ı yeniden başlat </string>
+         <string name = "remove_ads"> Reklamları Kaldır </string>
+
+
+        <string name = "permission_rationale"> "Необходими са разрешения за съхранение, за да може приложението да работи." </string>
+        <string name = "size_string"> "% s размер =% .2f% s" </string>
+
+        <string name = "action_share"> Сподели </string>
+
+        <string name = "main_action_crop"> Изрязване </string>
+        <string name = "main_action_rotate"> Завъртане </string>
+        <string name = "action_rotate"> Завъртане </string>
+        <string name = "main_action_flip"> Флип </string>
+        <string name = "main_action_flip_horizontally"> Обърнете хоризонтално </string>
+        <string name = "main_action_flip_vertically"> Обърнете вертикално </string>
+        <string name = "action_reset"> Нулиране </string>
+        <string name = "action_scale"> Промяна на размера </string>
+        <string name = "action_sharpen"> Усилване </string>
+        <string name = "action_blur"> Blur </string>
+        <string name = "action_save"> Запазване </string>
+        <string name = "share_with"> Споделяне с </string>
+        <string name = "dialog_title"> Персонализирана ширина x височина </string>
+        <string name = "aspect_ratio_text"> Съхраняване на Aspect Ratio </string>
+        <string name = "ok"> Ok </string>
+        <string name = "cancel"> Отказ </string>
+        <string name = "min_length_error"> Моля, въведете валидна стойност </string>
+        <string name = "max_length_error"> Максимално допустимо разрешение:% d x% d </string>
+        <string name = "memory_error"> Ниска памет, която не може да изпълнява операция </string>
+        <string name = "some_error"> Грешка при обработката на задачата </string>
+        <string name = "action_compress"> Компресиране </string>
+        <string name = "image_quality"> Качество на изображението </string>
+        <string name = "low_quality"> Нисък (файл с малък размер) </string>
+        <string name = "medium_quality"> Среден (среден файл) </string>
+        <string name = "high_quality"> Високо (голям файл) </string>
+        <string name = "action_open"> Отворете </string>
+        <string name = "select_custom_quality"> Качеството на картината (повече означава по-малко компресия) </string>
+        <string name = "resized_photo"> Разменени снимки </string>
+        <string name = "gallery"> Галерия </string>
+        <string name = "no_resized_images"> Няма преоразмерени изображения </string>
+        <string name = "delete"> Изтриване </string>
+        <string name = "saved_file"> Запазените изображения към% 1s% 2s </string>
+        <string name = "delete_org"> Изтриване на оригинала </string>
+        <string name = "file_deleted"> Изтрит файл </string>
+        <string name = "custom_label_dime_multi"> Въведете размери </string>
+        <string name = "new_dimensions_label"> Нови величини: </string>
+        <string name = "select_all"> Изберете всички </string>
+        <string name = "clear"> изчистване </string>
+        <string name = "delete_confirm"> Потвърдете изтриването? </string>
+        <string name = "processing"> Обработване на% d от% d изображения </string>
+        <string name = "not_enough_memory"> Няма достатъчно памет за операцията, намали размера или освободи някаква памет. </string>
+        <string name = "out_of_memory"> Няма достатъчно памет за извършване на операцията, моля, освободете някаква памет. </string>
+        <string name = "unknown_error"> Неизвестна грешка е възникнала. </string>
+        <string name = "discard_changes"> Изображения, които още не са запазени, отхвърлят промените? </string>
+        <string name = "info_aspect"> (Моля, въведете само една величина, другата ще се изчислява въз основа на аспектното съотношение на изображението.) </string>
+        <string name = "unable_to_load_image"> Не може да се зареди изображението </string>
+        <string name = "no_images"> Няма изображения, първо заредете някои изображения. </string>
+        <string name = "rate_app"> Кажете благодаря </string>
+        <string name = "rate_us"> Ако ви харесва Image Resizer, моля, помислете за оставянето на преглед </string>
+        <string name = "unable_to_save_image"> Не може да се запази изображението </string>
+
+       
+        <string name = "settings_label"> Настройки </string>
+        <string name = "pref_auto_save"> Автоматично запазване на изображения след компресиране, изрязване или мащабиране. </string>
+        <string name = "pref_title_auto_save"> Автоматично запазване на изображения </string>
+        <string name = "pref_rate_us"> Оцени ни </string>
+        <string name = "pref_title_rate_us"> Кажете благодаря </string>
+        <string name = "pref_share_app"> Споделяне на приложение с приятелите ви </string>
+        <string name = "pref_title_share_app"> Споделяне на приложение </string>
+        <string name = "pref_share_feedback"> Напишете ни всички предложения или подобрения, които искате. </string>
+        <string name = "pref_title_share_feedback"> Споделяне на обратна информация </string>
+        <string name = "scanning"> scaning изображения </string>
+        <string name = "close"> close </string>
+        <string name = "scan_complete"> Сканирането е завършено </string>
+        <string name = "unable_to_select_folder"> Тази папка няма разрешение за запазване на файл, моля изберете друга папка </string>
+        <string name = "pref_output_folder"> Промяна на папката по подразбиране </string>
+
+    <string name = "pref_output_folder_summary"> Промяна на местоположението на папките по подразбиране за обработени изображения </string>
+        <string name = "error_compressing"> компресиране на грешки </string>
+        <string name = "image_does_not_exists"> Изображението не съществува, може да бъде изтрито или недостъпно </string>
+        <string name = "unable_to_delete"> Не може да се изтрие файла </string>
+        <string name = "select_file_extension"> Изберете изходен файлов формат </string>
+        <string name = "select_file_extension_type"> Разширение на файла </string>
+
+        <string name = "pref_title_grid_size"> Размер на мрежата на ui </string>
+        <string name = "pref_grid_size"> Изберете никой от елементите на ред, който да се показва </string>
+
+        <string name = "pref_title_grid_appear"> Изглед на изображението на мрежата </string>
+        <string name = "pref_grid_appear"> Изображение на изображенията да бъдат по-големи или по-малки </string>
+        <string name = "pref_title_music_app"> Изтеглете зашеметяващо приложение за музика! </string>
+        <string name = "pref_summary_music_app"> Изтеглете зашеметяващ музикален плейър с персонализируеми кожи, фон и много други функции! </string>
+        <string name = "more_apps"> Още приложения </string>
+</resources>

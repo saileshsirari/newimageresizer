@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.preference.PreferenceCategory
+        android:title="@string/settings_label">
+
+        <androidx.preference.SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="pref_auto_save"
+            android:summary="@string/pref_auto_save"
+            android:title="@string/pref_title_auto_save"/>
+
+        <androidx.preference.Preference
+            android:defaultValue="0"
+            android:key="pref_folder_path"
+            android:summary="@string/pref_output_folder_summary"
+            android:title="@string/pref_output_folder"/>
+
+        <androidx.preference.Preference
+            android:defaultValue="0"
+
+            android:key="pref_music_app"
+            android:summary="@string/pref_summary_music_app"
+            android:title="@string/pref_title_music_app"/>
+
+        <!--<androidx.preference.ListPreference
+            android:defaultValue=".jpg"
+            android:key="pref_file_extension"
+
+            android:summary="@string/select_file_extension"
+            android:entries="@array/foreground_color_names_array"
+            android:entryValues="@array/foreground_color_values_array"
+            android:title="@string/select_file_extension_type"/>
+-->
+
+
+        <androidx.preference.ListPreference
+            android:defaultValue="2"
+            android:key="pref_grid_size"
+
+            android:summary="@string/pref_grid_size"
+            android:entries="@array/grid_row_labels"
+            android:entryValues="@array/grid_row_labels"
+            android:title="@string/pref_title_grid_size"/>
+
+        <androidx.preference.ListPreference
+            android:defaultValue="1"
+            android:key="pref_grid_appearance"
+
+            android:summary="@string/pref_grid_appear"
+            android:entries="@array/grid_appeance_labels"
+            android:entryValues="@array/grid_appeance_values"
+            android:title="@string/pref_title_grid_appear"/>
+
+
+
+        <androidx.preference.Preference
+            android:defaultValue="0"
+            android:key="pref_rate_us"
+            android:summary="@string/rate_us"
+            android:title="@string/pref_title_rate_us"/>
+
+        <androidx.preference.Preference
+            android:defaultValue="0"
+            android:key="pref_share_feedback"
+            android:summary="@string/pref_share_feedback"
+            android:title="@string/pref_title_share_feedback"/>
+
+        <androidx.preference.Preference
+            android:defaultValue="0"
+
+            android:key="pref_share_app"
+            android:summary="@string/pref_share_app"
+            android:title="@string/pref_title_share_app"/>
+
+
+
+            <androidx.preference.Preference
+                android:key="pref_about_build"
+                android:title="Build version"
+               />
+
+
+       <!-- <androidx.preference.Preference
+            android:key="pref_about_build_fill"
+            android:title="Build version"
+            />-->
+
+    </androidx.preference.PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

@@ -1,0 +1,90 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "apps.sai.com.imageresizer.demo",
+  "variantName": "demoRelease",
+  "elements": [
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86_64"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 80033,
+      "versionName": "1.30-free",
+      "outputFile": "app-demo-x86_64-release.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "mips"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 60033,
+      "versionName": "1.30-free",
+      "outputFile": "app-demo-mips-release.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "armeabi-v7a"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 40033,
+      "versionName": "1.30-free",
+      "outputFile": "app-demo-armeabi-v7a-release.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "armeabi"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 30033,
+      "versionName": "1.30-free",
+      "outputFile": "app-demo-armeabi-release.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "arm64-v8a"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 50033,
+      "versionName": "1.30-free",
+      "outputFile": "app-demo-arm64-v8a-release.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 70033,
+      "versionName": "1.30-free",
+      "outputFile": "app-demo-x86-release.apk"
+    }
+  ],
+  "elementType": "File"
+}

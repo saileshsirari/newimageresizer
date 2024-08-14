@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name = "action_settings"> การตั้งค่า </string>
+        <string name = "select_gallery_file"> เลือกรูปภาพ </string>
+
+       <string name = "get_pro_title"> อัปเกรดเป็น Pro </string>
+    <string name = "upgraded_title"> ขอบคุณ </string>
+    <string name = "upgraded_message"> คุณได้อัพเกรดเป็น Pro แล้ว ขอบคุณสำหรับการสนับสนุนของคุณ.
+\n \n กรุณารีสตาร์ทแอพเพื่อให้แน่ใจว่าคุณสมบัติทั้งหมดถูกเปิดใช้งาน </string>
+
+    <string name = "upgrade_dialog_message">
+         •ไม่มีโฆษณา
+         \ n •สนับสนุนการพัฒนา❤️ </string>
+         <string name = "restart_button"> รีสตาร์ทเดี๋ยวนี้ </string>
+         <string name = "get_pro_button_no"> ไม่ขอขอบคุณ </string>
+         <string name = "btn_upgrade"> อัพเกรด </string>
+         <string name = "iab_purchase_restored"> ซื้อคืน โปรดรีสตาร์ท Image Resizer </string>
+         <string name = "remove_ads"> ลบโฆษณา </string>
+        <string name = "permission_rationale"> "สิทธิ์ในการเก็บข้อมูลมีความจำเป็นสำหรับแอพฯ ที่จะทำงานได้" </string>
+        <string name = "size_string"> "% s ขนาด =% .2f% s" </string>
+
+        <string name = "action_share"> แบ่งปัน </string>
+
+        <string name = "main_action_crop"> ตัด </string>
+        <string name = "main_action_rotate"> หมุน </string>
+        <string name = "action_rotate"> หมุน </string>
+        <string name = "main_action_flip"> พลิก </string>
+        <string name = "main_action_flip_horizontally"> พลิกแนวนอน </string>
+        <string name = "main_action_flip_vertically"> พลิกแนวตั้ง </string>
+        <string name = "action_reset"> ตั้งค่าใหม่ </string>
+        <string name = "action_scale"> ปรับขนาด </string>
+        <string name = "action_sharpen"> ทำให้ชัดขึ้น </string>
+        <string name = "action_blur"> เบลอ </string>
+        <string name = "action_save"> บันทึก </string>
+        <string name = "share_with"> แชร์กับ </string>
+        <string name = "dialog_title"> ความกว้างที่กำหนดเอง x สูง </string>
+        <string name = "aspect_ratio_text"> เก็บสัดส่วนภาพ </string>
+        <string name = "ok"> ตกลง </string>
+        <string name = "cancel"> ยกเลิก </string>
+        <string name = "min_length_error"> โปรดใส่ค่าที่ถูกต้อง </string>
+        <string name = "max_length_error"> อนุญาต dimesion สูงสุด:% d x% d </string>
+        <string name = "memory_error"> หน่วยความจำต่ำไม่สามารถดำเนินการได้ </string>
+        <string name = "some_error"> ข้อผิดพลาดในการประมวลผลงาน </string>
+        <string name = "action_compress"> บีบอัด </string>
+        <string name = "image_quality"> คุณภาพของภาพ </string>
+        <string name = "low_quality"> ต่ำ (ไฟล์ขนาดเล็ก) </string>
+        <string name = "medium_quality"> ปานกลาง (ไฟล์ขนาดกลาง) </string>
+        <string name = "high_quality"> สูง (ไฟล์ขนาดใหญ่) </string>
+        <string name = "action_open"> เปิด </string>
+        <string name = "select_custom_quality"> คุณภาพของภาพ (ยิ่งหมายถึงการบีบอัดน้อยกว่า) </string>
+        
+        <string name = "resized_photo"> ปรับขนาดรูปภาพ </string>
+        <string name = "gallery"> แกลลอรี่ </string>
+        <string name = "no_resized_images"> ไม่มีภาพที่ปรับขนาด </string>
+        <string name = "delete"> ลบ </string>
+        <string name = "saved_file"> บันทึกรูปภาพไว้ที่% 1s% 2s </string>
+        <string name = "delete_org"> ลบต้นฉบับ </string>
+        <string name = "file_deleted"> ไฟล์ที่ถูกลบ </string>
+        <string name = "custom_label_dime_multi"> ป้อนมิติข้อมูล </string>
+        <string name = "new_dimensions_label"> มิติข้อมูลใหม่: </string>
+        <string name = "select_all"> เลือกทั้งหมด </string>
+        <string name = "clear"> ล้าง </string>
+        <string name = "delete_confirm"> ยืนยันการลบ? </string>
+        <string name = "processing"> ประมวลผล% d จาก% d ภาพ </string>
+        <string name = "not_enough_memory"> หน่วยความจำไม่เพียงพอสำหรับการดำเนินการลดขนาดหรือเพิ่มหน่วยความจำบางส่วน </string>
+        <string name = "out_of_memory"> มีหน่วยความจำไม่เพียงพอที่จะดำเนินการได้กรุณาเพิ่มหน่วยความจำบางส่วนขึ้น </string>
+        <string name = "unknown_error"> เกิดข้อผิดพลาดที่ไม่รู้จัก </string>
+        <string name = "discard_changes"> รูปที่ยังไม่ได้บันทึกไว้ทิ้งหรือไม่? </string>
+        <string name = "info_aspect"> (โปรดใส่เพียงมิติข้อมูลเดียวและอีกส่วนหนึ่งจะคำนวณตามสัดส่วนของภาพ) </string>
+        <string name = "unable_to_load_image"> ไม่สามารถโหลดภาพ </string> ได้
+        <string name = "no_images"> ไม่มีภาพโปรดโหลดรูปภาพก่อน </string>
+        <string name = "rate_app"> ขอขอบคุณ </string>
+        <string name = "rate_us"> หากคุณต้องการ Image Resizer โปรดพิจารณาออกจากการตรวจทาน </string>
+        <string name = "unable_to_save_image"> ไม่สามารถบันทึกภาพ </string> ได้
+
+        
+        <string name = "settings_label"> การตั้งค่า </string>
+        <string name = "pref_auto_save"> บันทึกภาพอัตโนมัติหลังจากการบีบอัดการครอบตัดหรือสเกล </string>
+        <string name = "pref_title_auto_save"> บันทึกภาพอัตโนมัติ </string>
+        <string name = "pref_rate_us"> ให้คะแนนเรา </string>
+        <string name = "pref_title_rate_us"> พูดว่าขอบคุณ </string>
+        <string name = "pref_share_app"> แบ่งปันแอปกับเพื่อนของคุณ </string>
+        <string name = "pref_title_share_app"> แชร์แอป </string>
+        <string name = "pref_share_feedback"> อย่าเขียนถึงเราคำแนะนำหรือการปรับปรุงที่คุณต้องการ </string>
+        <string name = "pref_title_share_feedback"> แบ่งปันความคิดเห็น </string>
+        <string name = "scanning"> สแกนภาพ </string>
+        <string name = "close"> ปิด </string>
+        <string name = "scan_complete"> สแกนเสร็จสิ้น </string>
+        <string name = "unable_to_select_folder"> โฟลเดอร์นี้ไม่มีสิทธิ์บันทึกไฟล์โปรดเลือกโฟลเดอร์อื่น </string>
+        <string name = "pref_output_folder"> เปลี่ยนโฟลเดอร์เริ่มต้น </string>
+
+       <string name = "pref_output_folder_summary"> เปลี่ยนตำแหน่งโฟลเดอร์ดีฟอลต์สำหรับภาพที่ผ่านการประมวลผล </string>
+        <string name = "error_compressing"> ข้อผิดพลาดในการบีบอัด </string>
+        <string name = "image_does_not_exists"> ไม่มีรูปภาพไม่มีอาจลบหรือไม่สามารถเข้าถึงได้ </string>
+        <string name = "unable_to_delete"> ไม่สามารถลบไฟล์ </string> ได้
+        <string name = "select_file_extension"> เลือกรูปแบบไฟล์ที่ส่งออก </string>
+        <string name = "select_file_extension_type"> นามสกุลไฟล์ </string>
+
+        <string name = "pref_title_grid_size"> ขนาดตารางของ ui </string>
+        <string name = "pref_grid_size"> เลือกจำนวนรายการต่อแถวที่จะแสดง </string>
+
+        <string name = "pref_title_grid_appear"> การแสดงภาพแบบตาราง </string>
+        <string name = "pref_grid_appear"> การแสดงภาพให้มีขนาดใหญ่ขึ้นหรือเล็กลง </string>
+        <string name = "pref_title_music_app"> ดาวน์โหลดแอพเพลงที่สวยงาม! </string>
+        <string name = "pref_summary_music_app"> ดาวน์โหลดเครื่องเล่นเพลงที่น่าสนใจพร้อมสกินที่ปรับแต่งพื้นหลังและคุณลักษณะอื่น ๆ อีกมากมาย! </string>
+        <string name = "more_apps"> แอปเพิ่มเติม </string>
+
+
+
+
+</resources>

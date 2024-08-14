@@ -1,0 +1,11 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="destination_width">250dp</dimen>
+    <dimen name="destination_height">250dp</dimen>
+    <dimen name="res_height">100dp</dimen>
+    <dimen name="left_pad_scale_text">20dp</dimen>
+    <dimen name="large_app">220dp</dimen>
+    <dimen name="small_app">50dp</dimen>
+    <dimen name="normal_app">120dp</dimen>
+    <dimen name="spacing">10dp</dimen>
+</resources>

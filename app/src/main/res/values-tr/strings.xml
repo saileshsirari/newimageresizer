@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name = "action_settings"> Ayarlar </string>
+        <string name = "select_gallery_file"> Fotoğraf Seç </string>
+
+       <string name = "get_pro_title"> Pro sürümüne yükseltme </string>
+    <string name = "upgraded_title"> Teşekkürler </string>
+    <string name = "upgraded_message"> Pro\'ya başarıyla geçirdiniz. Desteğin için teşekkürler.
+\n \nLütfen tüm özelliklerin etkinleştirildiğinden emin olmak için uygulamayı yeniden başlatın </string>
+
+    <string name = "upgrade_dialog_message">
+         • Reklamsız
+         \ n • Destek geliştirme sürümü </string>
+         <string name = "restart_button"> Şimdi yeniden başlat </string>
+         <string name = "get_pro_button_no"> Hayır teşekkürler </string>
+         <string name = "btn_upgrade"> Yükseltme </string>
+         <string name = "iab_purchase_restored"> Satınalma Geri Yüklendi. Lütfen Görüntü Resizer\'ı yeniden başlat </string>
+         <string name = "remove_ads"> Reklamları Kaldır </string>
+        <string name = "permission_rationale"> "Uygulamanın çalışması için depolama izinleri gerekiyor." </string>
+        <string name = "size_string"> "% s size =% .2f% s" </string>
+
+        <string name = "action_share"> Paylaş </string>
+
+        <string name = "main_action_crop"> Kırpma </string>
+        <string name = "main_action_rotate"> Döndür </string>
+        <string name = "action_rotate"> Döndür </string>
+        <string name = "main_action_flip"> Çevir </string>
+        <string name = "main_action_flip_horizontally"> Yatay olarak çevir </string>
+        <string name = "main_action_flip_vertically"> Dikey olarak çevir </string>
+        <string name = "action_reset"> Sıfırla </string>
+        <string name = "action_scale"> Yeniden boyutlandır </string>
+        <string name = "action_sharpen"> Keskinleştir </string>
+        <string name = "action_blur"> Bulanıklık </string>
+        <string name = "action_save"> Kaydet </string>
+        <string name = "share_with"> ile paylaş </string>
+        <string name = "dialog_title"> Özel genişlik x yükseklik </string>
+        <string name = "aspect_ratio_text"> En Boy Oranını Koru </string>
+        <string name = "ok"> Tamam </string>
+        <string name = "cancel"> İptal et </string>
+        <string name = "min_length_error"> Lütfen geçerli bir değer girin </string>
+        <string name = "max_length_error"> Maksimum boyut aşımı:% d x% d </string>
+        <string name = "memory_error"> Düşük bellek, işlemi gerçekleştiremiyor </string>
+        <string name = "some_error"> İşlemi gerçekleştirirken hata oluştu </string>
+        <string name = "action_compress"> Sıkıştır </string>
+        <string name = "image_quality"> Resim kalitesi </string>
+        <string name = "low_quality"> Düşük (Küçük boyutlu dosya) </string>
+        <string name = "medium_quality"> Orta (Orta boyutlu dosya) </string>
+        <string name = "high_quality"> Yüksek (Büyük boyutlu dosya) </string>
+        <string name = "action_open"> Aç </string>
+        <string name = "select_custom_quality"> Resim kalitesi (Daha az sıkıştırma anlamına gelir) </string>
+        
+        <string name = "resized_photo"> Yeniden Boyutlandırılan Fotoğraflar </string>
+        <string name = "gallery"> Galeri </string>
+        <string name = "no_resized_images"> Yeniden boyutlandırılan resim yok </string>
+        <string name = "delete"> Sil </string>
+        <string name = "saved_file"> Kaydedilen görüntü (ler)% 1s% 2s </string>
+        <string name = "delete_org"> Orijinali sil </string>
+        <string name = "file_deleted"> Dosya silindi </string>
+        <string name = "custom_label_dime_multi"> Boyutları girin </string>
+        <string name = "new_dimensions_label"> Yeni boyutlar: </string>
+        <string name = "select_all"> Tümünü seç </string>
+        <string name = "clear"> Clear </string>
+        <string name = "delete_confirm"> Silmeyi onayla? </string>
+        <string name = "processing">% d görüntüden% d işleniyor </string>
+        <string name = "not_enough_memory"> İşlem için yeterli bellek yok, boyutu azaltın veya hafızayı boşaltın. </string>
+        <string name = "out_of_memory"> İşlemi gerçekleştirmek için yeterli bellek yok, lütfen biraz bellek boşaltın. </string>
+        <string name = "unknown_error"> Bilinmeyen bir hata oluştu. </string>
+        <string name = "discard_changes"> Görüntüler henüz kaydedilmedi, değişiklikleri silinsin mi? </string>
+        <string name = "info_aspect"> (Lütfen sadece bir boyut girin, diğeri resmin en boy oranına göre hesaplanacaktır.) </string>
+        <string name = "unable_to_load_image"> Resmi yükleyemiyor </string>
+        <string name = "no_images"> Görüntü yok, lütfen önce bazı resimleri yükleyin. </string>
+        <string name = "rate_app"> Teşekkürler </string>
+        <string name = "rate_us"> Eğer Image Resizer\'ı seviyorsanız, lütfen bir yorum bırakmayı düşünün </string>
+        <string name = "unable_to_save_image"> Resmi kaydedemiyor </string>
+
+        
+        <string name = "settings_label"> Ayarlar </string>
+        <string name = "pref_auto_save"> Sıkıştırma, kırpma veya ölçek sonra görüntüleri otomatik kaydet. </string>
+        <string name = "pref_title_auto_save"> Resimleri otomatik kaydet </string>
+        <string name = "pref_rate_us"> Bize oy verin </string>
+        <string name = "pref_title_rate_us"> Teşekkür Deyin </string>
+        <string name = "pref_share_app"> Arkadaşlarınızla uygulamayı paylaşın </string>
+        <string name = "pref_title_share_app"> Uygulamayı paylaş </string>
+        <string name = "pref_share_feedback"> Bize yazmak istediğiniz herhangi bir öneri veya geliştirmeyi yapın. </string>
+        <string name = "pref_title_share_feedback"> Geri bildirim paylaş </string>
+        <string name = "scanning"> görüntüleri tarama </string>
+        <string name = "close"> kapat </string>
+        <string name = "scan_complete"> Tarama tamamlandı </string>
+        <string name = "unable_to_select_folder"> Bu klasörde dosya kaydetme izni yok, lütfen başka bir klasör seçin </string>
+        <string name = "pref_output_folder"> Varsayılan klasörü değiştir </string>
+
+    <string name = "pref_output_folder_summary"> İşlenen görüntüler için varsayılan klasör konumunu değiştir </string>
+        <string name = "error_compressing"> sıkıştırma sıkıştırılıyor </string>
+        <string name = "image_does_not_exists"> Resim mevcut değil, silinebilir veya erişilemez olabilir </string>
+        <string name = "unable_to_delete"> Dosya silinemiyor </string>
+        <string name = "select_file_extension"> Çıkış dosya formatını seç </string>
+        <string name = "select_file_extension_type"> Dosya uzantısı </string>
+
+        <string name = "pref_title_grid_size"> Kullanıcıların ızgara boyutu </string>
+        <string name = "pref_grid_size"> Gösterilecek satır başına öğe seçmeyin </string>
+
+        <string name = "pref_title_grid_appear"> Kılavuz görüntüleri görünür </string>
+        <string name = "pref_grid_appear"> Resimlerin daha büyük veya daha küçük görünmesi </string>
+        <string name = "pref_title_music_app"> Çarpıcı müzik uygulamasını indirin! </string>
+        <string name = "pref_summary_music_app"> Özelleştirilebilir arayüzler, arka plan ve daha birçok özellik ile çarpıcı müzik çalar indirin! </string>
+        <string name = "more_apps"> Diğer Uygulamalar </string>
+</resources>

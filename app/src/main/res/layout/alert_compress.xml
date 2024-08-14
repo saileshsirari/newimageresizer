@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView app:cardCornerRadius="5dp"
+    android:elevation="5dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<RelativeLayout
+    android:padding="10dp"
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:padding="3dp"
+        android:id="@+id/text_quality"
+        android:text="@string/image_quality"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+   <!-- <ListView
+        android:id="@+id/compress_listview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></ListView>-->
+
+    <RadioGroup
+        android:visibility="gone"
+        android:layout_below="@+id/text_quality"
+        android:id="@+id/quality_radiogroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RadioButton
+
+            android:id="@+id/radio1"
+            android:checked="true"
+            android:text="@string/low_quality"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <RadioButton
+            android:text="@string/medium_quality"
+            android:id="@+id/radio2"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <RadioButton
+            android:text="@string/high_quality"
+            android:id="@+id/radio3"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </RadioGroup>
+
+    <TextView
+        android:paddingTop="10dp"
+        android:layout_below="@+id/quality_radiogroup"
+        android:padding="3dp"
+        android:paddingBottom="10dp"
+
+        android:id="@+id/text_custom"
+        android:text="@string/select_custom_percen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <SeekBar
+
+
+        android:layout_below="@id/text_custom"
+        android:id="@+id/seekbar_quality"
+        android:paddingTop="15dp"
+        android:paddingBottom="5dp"
+        android:progress="50"
+        android:min="20"
+        android:max="100"
+        android:layout_toLeftOf="@+id/seekbar_percentage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_below="@+id/seekbar_quality"
+        android:id="@+id/or"
+        android:text="@string/or"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:inputType="number"
+        android:layout_below="@+id/or"
+        android:id="@+id/newSize"
+        android:hint="@string/select_custom_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:paddingTop="15dp"
+        android:gravity="center"
+
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/text_custom"
+        android:textColor="@android:color/black"
+
+        android:id="@+id/seekbar_percentage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+</RelativeLayout>
+</androidx.cardview.widget.CardView>

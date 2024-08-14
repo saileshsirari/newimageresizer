@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+        <string name = "action_settings"> Beállítások </string>
+        <string name = "select_gallery_file"> Válassza a Photo </string> lehetőséget
+
+       <string name = "get_pro_title"> Frissítés Pro-re </string>
+    <string name = "upgraded_title"> Köszönjük </string>
+    <string name = "upgraded_message"> Sikeresen frissítette a Pro-et. Köszönjük a támogatást.
+\n \nAz alkalmazás újraindításához győződjön meg róla, hogy minden funkció engedélyezve van </string>
+
+    <string name = "upgrade_dialog_message">
+         • Nincs hirdetés
+         \n • Támogatás fejlesztése ❤️ </string>
+         <string name = "restart_button"> Indítsa újra most </string>
+         <string name = "get_pro_button_no"> Nem köszönöm </string>
+         <string name = "btn_upgrade"> Frissítés </string>
+         <string name = "iab_purchase_restored"> A vásárlás visszaállt. Kérjük, indítsa újra a képméretet </string>
+         <string name = "remove_ads"> Hirdetések eltávolítása </string>
+        <string name = "permission_rationale"> "Az alkalmazásokhoz tárolási jogosultságokra van szükség." </string>
+        <string name = "size_string"> "% s méret =% .2f% s" </string>
+
+        <string name = "action_share"> Megosztás </string>
+
+        <string name = "main_action_crop"> Crop </string>
+        <string name = "main_action_rotate"> Forgatás </string>
+        <string name = "action_rotate"> Forgatás </string>
+        <string name = "main_action_flip"> Flip </string>
+        <string name = "main_action_flip_horizontally"> Flip vízszintesen </string>
+        <string name = "main_action_flip_vertically"> Függőlegesen csúsztatható </string>
+        <string name = "action_reset"> Reset </string>
+        <string name = "action_scale"> Átméretezés </string>
+        <string name = "action_sharpen"> élesítés </string>
+        <string name = "action_blur"> Blur </string>
+        <string name = "action_save"> Mentés </string>
+        <string name = "share_with"> Share with </string>
+        <string name = "dialog_title"> Egyéni szélesség x magasság </string>
+        <string name = "aspect_ratio_text"> Tartsa az arányt </string>
+        <string name = "ok"> Ok </string>
+        <string name = "cancel"> Mégse </string>
+        <string name = "min_length_error"> Kérjük, adjon meg érvényes értéket </string>
+        <string name = "max_length_error"> Maximális méret megengedett:% d x% d </string>
+        <string name = "memory_error"> Alacsony memória, nem hajtható végre </string>
+        <string name = "some_error"> Hiba a feladat feldolgozásakor </string>
+        <string name = "action_compress"> Tömörítés </string>
+        <string name = "image_quality"> Képminőség </string>
+        <string name = "low_quality"> Alacsony (kis méretű fájl) </string>
+        <string name = "medium_quality"> Közepes (közepes méretű fájl) </string>
+        <string name = "high_quality"> Magas (nagy méretű fájl) </string>
+        <string name = "action_open"> Nyissa meg </string>
+        <string name = "select_custom_quality"> Képminőség (Több kevesebb tömörítést jelent) </string>
+        
+        <string name = "resized_photo"> Átméretezett képek </string>
+        <string name = "gallery"> Galéria </string>
+        <string name = "no_resized_images"> Nincs átméretezett kép </string>
+        <string name = "delete"> Törlés </string>
+        <string name = "saved_file"> A (z)% 1s% 2s </string> mentett kép
+        <string name = "delete_org"> Az eredeti törlése </string>
+        <string name = "file_deleted"> A fájl törölve </string>
+        <string name = "custom_label_dime_multi"> Adja meg a dimenziókat </string>
+        <string name = "new_dimensions_label"> Új dimenziók: </string>
+        <string name = "select_all"> Minden kijelölése </string>
+        <string name = "clear"> Töröl </string>
+        <string name = "delete_confirm"> A törlés megerősítése </string>
+        <string name = "processing">% d feldolgozása% d képből </string>
+        <string name = "not_enough_memory"> Nincs elég memória a művelethez, csökkentse a méretét, vagy szabadítson fel egy bizonyos memóriát. </string>
+        <string name = "out_of_memory"> Nincs elég memória a művelet végrehajtásához, kérjük, szabadítson fel egy bizonyos memóriát. </string>
+        <string name = "unknown_error"> Ismeretlen hiba történt. </string>
+        <string name = "discard_changes"> A képek még nem mentettek, megváltoztatják a változásokat? </string>
+        <string name = "info_aspect"> (Kérjük, csak egy dimenziót adjon meg, a másik pedig a képarány alapján kerül kiszámításra.) </string>
+        <string name = "unable_to_load_image"> Nem lehet betölteni a képet </string>
+        <string name = "no_images"> Nincsenek képek, kérjük töltsön be néhány képet először. </string>
+        <string name = "rate_app"> Say Thanks </string>
+        <string name = "rate_us"> Ha szereted a Képméretezőt, kérjük, tekintse át a felülvizsgálat </string> parancsát
+        <string name = "unable_to_save_image"> Kép mentése </string> nem sikerült
+
+        
+        <string name = "settings_label"> Beállítások </string>
+        <string name = "pref_auto_save"> A képek tömörítési, kivágási vagy méretarányos automatikus mentése. </string>
+        <string name = "pref_title_auto_save"> Képek automatikus mentése </string>
+        <string name = "pref_rate_us"> Értékelje nekünk </string>
+        <string name = "pref_title_rate_us"> Mondja Köszönjük </string>
+        <string name = "pref_share_app"> Alkalmazás megosztása barátaival </string>
+        <string name = "pref_title_share_app"> Alkalmazás megosztása </string>
+        <string name = "pref_share_feedback"> Írjon nekünk, javaslatokat vagy fejlesztéseket szeretne. </string>
+        <string name = "pref_title_share_feedback"> Visszajelzés megosztása </string>
+        <string name = "scanning"> képek szkennelése </string>
+        <string name = "close"> bezár </string>
+        <string name = "scan_complete"> Scan completed </string>
+        <string name = "unable_to_select_folder"> Ez a mappa nem rendelkezik engedélyekkel a fájlok mentéséhez, kérjük válasszon másik mappát </string>
+        <string name = "pref_output_folder"> Az alapértelmezett mappa módosítása </string>
+
+
+    <string name = "pref_output_folder_summary"> A feldolgozott képek alapértelmezett mappahelyének módosítása </string>
+        <string name = "error_compressing"> hiba tömörítése </string>
+        <string name = "image_does_not_exists"> A kép nem létezik, törölhető vagy nem érhető el </string>
+        <string name = "unable_to_delete"> A fájl törlése </string> nem sikerült
+        <string name = "select_file_extension"> Válassza ki a kimeneti fájlformátumot </string>
+        <string name = "select_file_extension_type"> Fájl kiterjesztés </string>
+
+        <string name = "pref_title_grid_size"> Az ui </string> rácsmérete
+        <string name = "pref_grid_size"> Nem jeleníthet meg soronként megjelenített elemeket </string>
+
+        <string name = "pref_title_grid_appear"> Rácskép megjelenése </string>
+        <string name = "pref_grid_appear"> A képek nagyobb vagy kisebb megjelenése </string>
+        <string name = "pref_title_music_app"> Letöltés lenyűgöző zenei alkalmazás! </string>
+        <string name = "pref_summary_music_app"> Töltsd le a lenyűgöző zenelejátszót testreszabható bőrök, háttér és még sok más funkcióval! </string>
+        <string name = "more_apps"> További alkalmazások </string>
+</resources>

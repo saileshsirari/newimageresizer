@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:backgroundTint="@android:color/holo_blue_bright"
+    >
+
+    <CheckBox
+        android:layout_marginTop="20dp"
+        android:paddingLeft="@dimen/left_pad_scale_text"
+        android:padding="5dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/aspect_ratio_text"
+        android:checked="true"
+
+        android:id="@+id/check_aspect"
+        android:paddingBottom="10dp"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+   <!-- <TextView
+        android:paddingBottom="10dp"
+        android:paddingLeft="@dimen/left_pad_scale_text"
+
+        android:text="Choose a size"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />-->
+
+    <Spinner
+        android:paddingTop="10dp"
+        android:id="@+id/custom_res__recycler_view"
+        android:layout_gravity="center"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </Spinner>
+
+    <TextView
+
+        android:paddingStart="10dp"
+
+        android:id="@+id/newDime"
+        android:paddingBottom="@dimen/left_pad_scale_text"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:text=""
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:paddingTop="10dp"
+        android:paddingStart="@dimen/left_pad_scale_text"
+        android:id="@+id/enterPercentageLabel"
+
+        android:text="@string/percentage_of_orignal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/customPercentEdit"
+        android:inputType="number"
+        android:maxLength="3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    <!--<RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <SeekBar
+
+
+
+
+        android:layout_below="@id/text_custom"
+        android:id="@+id/seekbar_custom_percentage"
+        android:paddingTop="15dp"
+        android:paddingBottom="5dp"
+        android:progress="20"
+        android:min="20"
+        android:max="200"
+        android:paddingLeft="@dimen/left_pad_scale_text"
+
+        android:layout_toLeftOf="@+id/seekbar_percentage"
+
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_alignParentRight="true"
+            android:id="@+id/seekbar_percentage"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content" />
+
+
+    </RelativeLayout>-->
+
+    <!--<android.support.v7.widget.RecyclerView
+
+
+        android:layout_gravity="center"
+
+        android:layout_alignParentTop="true"
+
+        android:id="@+id/percent_recycler_view"
+        android:scrollbars="vertical"
+
+        android:layout_width="match_parent"
+        android:layout_height="200dp"/>-->
+
+   <!-- <TextView
+        android:paddingLeft="@dimen/left_pad_scale_text"
+        android:text="Or Resize by preset percentage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Spinner
+
+        android:id="@+id/percent_list_view"
+        android:layout_gravity="center"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </Spinner>-->
+
+
+    <!--<android.support.v7.widget.RecyclerView-->
+
+
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_alignParentTop="true"-->
+
+        <!--android:id="@+id/custom_res__recycler_view"-->
+        <!--android:scrollbars="vertical"-->
+
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="200dp"/>-->
+
+
+
+    <TextView
+        android:paddingLeft="@dimen/left_pad_scale_text"
+        android:id="@+id/enterDimenLabel"
+
+        android:text="Or Enter custom dimensions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <RelativeLayout
+        android:layout_below="@+id/check_aspect"
+        android:paddingTop="40dp"
+
+
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:paddingLeft="@dimen/left_pad_scale_text"
+           android:paddingRight="2dp"
+            android:visibility="visible"
+            android:id="@+id/info"
+            android:text="@string/info_aspect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+        <EditText
+            android:layout_below="@+id/info"
+        android:focusedByDefault="false"
+        android:paddingLeft="@dimen/left_pad_scale_text"
+
+        android:layout_weight="1"
+        android:id="@+id/width"
+        android:inputType="number"
+        android:maxLength="4"
+        android:width="200dp"
+
+        android:layout_width="wrap_content"
+        android:layout_toLeftOf="@+id/sep"
+
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_below="@+id/info"
+        android:text="X"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/sep"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:layout_below="@+id/info"
+        android:focusedByDefault="false"
+
+        android:maxLength="4"
+        android:width="200dp"
+
+        android:layout_weight="1"
+        android:id="@+id/height"
+        android:inputType="number"
+        android:layout_toRightOf="@+id/sep"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+
+
+</LinearLayout>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name = "action_settings"> Setări </string>
+        <string name = "select_gallery_file"> Selectați fotografia </string>
+
+       <string name = "get_pro_title"> Upgrade la Pro </string>
+    <string name = "upgraded_title"> Vă mulțumim </string>
+    <string name = "upgraded_message"> Ai reușit să faceți upgrade la Pro. Iti multumesc pentru sprijin.
+\n \nReportați aplicația pentru a vă asigura că toate funcțiile sunt activate </string>
+
+    <string name = "upgrade_dialog_message">
+         • Fără reclame
+         \n • Sprijină dezvoltarea ❤️ </string>
+         <string name = "restart_button"> Reporniți acum </string>
+         <string name = "get_pro_button_no"> Nu mulțumesc </string>
+         <string name = "btn_upgrade"> Upgrade </string>
+         <string name = "iab_purchase_restored"> Cumpărare restaurat. Reporniți Image Resizer </string>
+         <string name = "remove_ads"> Eliminați anunțurile </string>
+
+        <string name = "permission_rationale"> "Sunt necesare permisiuni de stocare pentru ca aplicația să funcționeze." </string>
+        <string name = "size_string"> "dimensiunea% s =% .2f% s" </string>
+
+        <string name = "action_share"> Partajare </string>
+
+        <string name = "main_action_crop"> Decupați </string>
+        <string name = "main_action_rotate"> Rotire </string>
+        <string name = "action_rotate"> Rotire </string>
+        <string name = "main_action_flip"> Flip </string>
+        <string name = "main_action_flip_horizontally"> Flip orizontal </string>
+        <string name = "main_action_flip_vertically"> Flip vertical </string>
+        <string name = "action_reset"> Resetare </string>
+        <string name = "action_scale"> Redimensionare </string>
+        <string name = "action_sharpen"> Sharpen </string>
+        <string name = "action_blur"> Blur </string>
+        <string name = "action_save"> Save </string>
+        <string name = "share_with"> Partajați cu </string>
+        <string name = "dialog_title"> Lățime personalizată x înălțime </string>
+        <string name = "aspect_ratio_text"> Păstrați raportul aspect </string>
+        <string name = "ok"> Ok </string>
+        <string name = "cancel"> Anulare </string>
+        <string name = "min_length_error"> Introduceți valoarea validă </string>
+        <string name = "max_length_error"> Dimensiunea maximă permisă:% d x% d </string>
+        <string name = "memory_error"> Memorie redusă, imposibilă de a efectua operația </string>
+        <string name = "some_error"> eroare de procesare a sarcinii </string>
+        <string name = "action_compress"> Comprimare </string>
+        <string name = "image_quality"> Calitatea imaginii </string>
+        <string name = "low_quality"> Scăzut (fișier de dimensiuni mici) </string>
+        <string name = "medium_quality"> Mediu (fișier cu dimensiune medie) </string>
+        <string name = "high_quality"> Înalt (fișier cu dimensiuni mari) </string>
+        <string name = "action_open"> Deschideți </string>
+        <string name = "select_custom_quality"> Calitatea imaginii (Mai mult înseamnă mai puțină compresie) </string>
+        
+        <string name = "resized_photo"> Fotografiile redimensionate </string>
+        <string name = "gallery"> Galerie </string>
+        <string name = "no_resized_images"> Nicio imagine redimensionată </string>
+        <string name = "delete"> Șterge </string>
+        <string name = "saved_file"> Imaginile salvate la% 1s% 2s </string>
+        <string name = "delete_org"> Șterge originalul </string>
+        <string name = "file_deleted"> Fișier șters </string>
+        <string name = "custom_label_dime_multi"> Introduceți dimensiunile </string>
+        <string name = "new_dimensions_label"> Dimensiuni noi: </string>
+        <string name = "select_all"> Selectați toate </string>
+        <string name = "clear"> Șterge </string>
+        <string name = "delete_confirm"> Confirmă ștergerea? </string>
+        <string name = "processing"> Prelucrarea% d din% d imagini </string>
+        <string name = "not_enough_memory"> Nu este suficientă memorie pentru operație, reduceți dimensiunea sau eliberați o anumită memorie. </string>
+        <string name = "out_of_memory"> Nu există suficientă memorie pentru a efectua operația, eliberați-vă o anumită memorie. </string>
+        <string name = "unknown_error"> A apărut o eroare necunoscută. </string>
+        <string name = "discard_changes"> Imaginile nu au fost salvate încă, eliminați modificările? </string>
+        <string name = "info_aspect"> (Introduceți doar o singură dimensiune, alta va fi calculată pe baza raportului de aspect al imaginii.) </string>
+        <string name = "unable_to_load_image"> Imposibil de încărcat imaginea </string>
+        <string name = "no_images"> Nu există imagini, încărcați mai întâi unele imagini. </string>
+        <string name = "rate_app"> Spuneți mulțumiri </string>
+        <string name = "rate_us"> Dacă vă place Image Resizer, vă recomandăm să lăsați o recenzie </string>
+        <string name = "unable_to_save_image"> Imposibil de salvat imaginea </string>
+
+        
+        <string name = "settings_label"> Setări </string>
+        <string name = "pref_auto_save"> Salvarea automată a imaginilor după comprimare, decupare sau scalare. </string>
+        <string name = "pref_title_auto_save"> Salvează automat imaginile </string>
+        <string name = "pref_rate_us"> Evaluați-ne </string>
+        <string name = "pref_title_rate_us"> Spuneți mulțumiri </string>
+        <string name = "pref_share_app"> Distribuiți aplicația cu prietenii dvs. </string>
+        <string name = "pref_title_share_app"> Distribuiți aplicația </string>
+        <string name = "pref_share_feedback"> Ne scrieți sugestiile sau îmbunătățirile pe care le doriți. </string>
+        <string name = "pref_title_share_feedback"> Împărtășiți feedback </string>
+        <string name = "scanning"> imagini scaning </string>
+        <string name = "close"> închide </string>
+        <string name = "scan_complete"> Scanare finalizată </string>
+        <string name = "unable_to_select_folder"> Acest director nu are permisiunea de a salva fișierul, selectați un alt folder </string>
+        <string name = "pref_output_folder"> Schimbați folderul implicit </string>
+
+    <string name = "pref_output_folder_summary"> Schimbați locația implicită a dosarelor pentru imaginile procesate </string>
+        <string name = "error_compressing"> eroare de comprimare </string>
+        <string name = "image_does_not_exists"> Imaginea nu există, poate fi ștearsă sau inaccesibilă </string>
+        <string name = "unable_to_delete"> Nu se poate șterge fișierul </string>
+        <string name = "select_file_extension"> Selectați formatul de fișier de ieșire </string>
+        <string name = "select_file_extension_type"> extensie de fișier </string>
+
+        <string name = "pref_title_grid_size"> Dimensiunea grilei ui </string>
+        <string name = "pref_grid_size"> Selectați nr de elemente pe rând care să fie afișate </string>
+
+        <string name = "pref_title_grid_appear"> Aspectul imaginii grid </string>
+        <string name = "pref_grid_appear"> Aspectul imaginilor mai mari sau mai mici </string>
+        <string name = "pref_title_music_app"> Descărcați aplicația muzicală uimitoare! </string>
+        <string name = "pref_summary_music_app"> Descărcați player muzical uimitor cu skin-uri personalizate, fundal și multe alte caracteristici! </string>
+        <string name = "more_apps"> Mai multe aplicații </string>
+
+
+
+    
+</resources>
