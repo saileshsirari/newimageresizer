@@ -177,8 +177,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                 media_uri,
                 column, null, null, null);
 
-      /*  Cursor cursor = context.getContentResolver().query(media_uri, column,
-                null, null, null);*/
         cursor.moveToFirst();
         if (cursor.getCount() > 0) {
             int Media_ID = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID));

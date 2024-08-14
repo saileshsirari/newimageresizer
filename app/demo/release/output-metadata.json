@@ -25,6 +25,32 @@
       "filters": [
         {
           "filterType": "ABI",
+          "value": "armeabi"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 30033,
+      "versionName": "1.30-free",
+      "outputFile": "app-demo-armeabi-release.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 70033,
+      "versionName": "1.30-free",
+      "outputFile": "app-demo-x86-release.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
           "value": "mips"
         }
       ],
@@ -51,19 +77,6 @@
       "filters": [
         {
           "filterType": "ABI",
-          "value": "armeabi"
-        }
-      ],
-      "attributes": [],
-      "versionCode": 30033,
-      "versionName": "1.30-free",
-      "outputFile": "app-demo-armeabi-release.apk"
-    },
-    {
-      "type": "ONE_OF_MANY",
-      "filters": [
-        {
-          "filterType": "ABI",
           "value": "arm64-v8a"
         }
       ],
@@ -71,19 +84,6 @@
       "versionCode": 50033,
       "versionName": "1.30-free",
       "outputFile": "app-demo-arm64-v8a-release.apk"
-    },
-    {
-      "type": "ONE_OF_MANY",
-      "filters": [
-        {
-          "filterType": "ABI",
-          "value": "x86"
-        }
-      ],
-      "attributes": [],
-      "versionCode": 70033,
-      "versionName": "1.30-free",
-      "outputFile": "app-demo-x86-release.apk"
     }
   ],
   "elementType": "File"

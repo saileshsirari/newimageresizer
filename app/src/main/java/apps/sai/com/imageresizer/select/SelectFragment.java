@@ -60,17 +60,12 @@ public class SelectFragment extends BaseFragment implements SelectContract.View 
     }
 
     public static SelectFragment newInstance() {
-
         Bundle args = new Bundle();
-
         SelectFragment fragment = new SelectFragment();
         fragment.setArguments(args);
         return fragment;
     }
-
-
     DataApi mDataApi;
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,9 +115,7 @@ public class SelectFragment extends BaseFragment implements SelectContract.View 
 
         menuItemList.add(MenuItem.newInstance(MenuItem.SETTINGS_ID, getString(R.string.settings_label),
                 R.drawable.ic_settings));
-
-        if (Utils.isUpgradedMy() == false) {
-
+        if (!Utils.isUpgradedMy()) {
             menuItemList.add(MenuItem.newInstance(MenuItem.REMOVE_ADS, getString(R.string.remove_ads),
                     R.drawable.ic_remove_ads_24dp));
         }
@@ -136,7 +129,6 @@ public class SelectFragment extends BaseFragment implements SelectContract.View 
                     mayRequestExternalStorage();
                     mSelectPresenter.launchgalleryExternalApp(false);
                 } else if (menuItem.getId() == MenuItem.RESIZED_PHOTO_ID) {
-
                     mSelectPresenter.showMyImages((AppCompatActivity) getActivity(), MyImagesFragment.newInstance());
                 } else if (menuItem.getId() == MenuItem.SETTINGS_ID) {
                     mSelectPresenter.showSettings((AppCompatActivity) getActivity(), SettingsFragment.newInstance());
@@ -313,20 +305,15 @@ public class SelectFragment extends BaseFragment implements SelectContract.View 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < sizes.size(); i++) {
             result = (android.hardware.Camera.Size) sizes.get(i);
-//            Log.i("PictureSize", "Supported Size. Width: " + result.width + "height : " + result.height);
             sb.append(result.height);
             sb.append("x");
             sb.append(result.width);
             sb.append("\n");
 
         }
-
         DataApi dataApi = FileApi.newInstance(getActivity());
         dataApi.savePrivateTextFile(getContext(), FileApi.RES_FILE_NAME, sb.toString());
-
         mResizeIntent.putExtra(FileApi.RES_FILE_NAME, sb.toString());
-
-
     }
 
     public static class ResizeAdaptor extends RecyclerView.Adapter<ResizeAdaptor.ResizeHolder> {
@@ -370,50 +357,24 @@ public class SelectFragment extends BaseFragment implements SelectContract.View 
         }
 
         static class ResizeHolder extends RecyclerView.ViewHolder {
-
             TextView nameTextView;
-
             ImageView imageView;
             View itemView;
-
             public ResizeHolder(View itemView) {
                 super(itemView);
                 this.itemView = itemView;
-
                 nameTextView = itemView.findViewById(R.id.text_name_menu);
                 imageView = itemView.findViewById(R.id.image_menu);
-
-
             }
         }
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-       /* if(requestCode==REQUEST_CAMERA){
-            if(grantResults!=null && grantResults.length>=1 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
-                checkPictureSizes();
-
-
-
-            }else if(shouldShowRequestPermissionRationale(Manifest.permission.CAMERA
-            )){
-                mayRequestCamera();
-                Toast.makeText(getContext(),"Camera permission is required for better image resizing  as per your device",Toast.LENGTH_LONG).show();
-
-            }
-
-        } else*/
         if (requestCode == REQUEST_WRITE_STORAGE) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //   if (mayRequestExternalStorage()) {
-                //onLoginClick();
-                // }
             }
         }
-
     }
 }
 
