@@ -247,10 +247,7 @@ public final class CropFragment extends BaseFragment
     ResizeFragment resizeFragment = (ResizeFragment) appCompatActivity.getSupportFragmentManager().findFragmentByTag(ResizeFragment.class.getSimpleName());
     mDemoPreset = CropDemoPreset.valueOf(getArguments().getString("DEMO_PRESET"));
     mImageUri = Uri.parse(getArguments().getString("DEMO_URI"));
-
-
     resizeFragment.setCurrentFragment(this);
-
       mOnCropImageCompleteListener = resizeFragment;
   }
 

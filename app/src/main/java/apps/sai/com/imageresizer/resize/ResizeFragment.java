@@ -76,6 +76,7 @@ import apps.sai.com.imageresizer.listener.OnPreferenceChangedListener;
 import apps.sai.com.imageresizer.listener.OnProcessingCancelListener;
 import apps.sai.com.imageresizer.listener.OnResolutionSelectedListener;
 import apps.sai.com.imageresizer.myimages.MyImagesFragment;
+import apps.sai.com.imageresizer.select.MenuItem;
 import apps.sai.com.imageresizer.select.SelectActivity;
 import apps.sai.com.imageresizer.settings.SettingsManager;
 import apps.sai.com.imageresizer.util.BitmapLoadingTask;
@@ -101,65 +102,34 @@ import io.reactivex.schedulers.Schedulers;
 
 public class ResizeFragment extends BaseFragment implements ResizeContract.View, OnResolutionSelectedListener, CropImageView.OnCropImageCompleteListener, OnPreferenceChangedListener {
 
-
     private static final String IMAGE_PATH = "_image_";
     private static String mResFileContent;
-
     private static String mImageUrlString;
-
     private RecyclerView mMenuRecyclerView;
-
     private final ResizeContract.Presenter mResizePresenter;
-//    @BindView(R.id.resolutions_recycler_view)
-//    RecyclerView mRecyclerView;
-
     RecyclerView mMultipleImagesRecyclerView;
-
     private static Intent mIntent;
-
-//    @BindView(R.id.menuRecyclerView_resize)
-//    RecyclerView mResizeMenuRecyclerView;
-
-    //    @BindView(R.id.skeletonGroup)
-//    SkeletonGroup mSkeletonGroup;
     private Unbinder unbinder;
-
 
     public ResizeFragment() {
         mResizePresenter = new ResizePresenter();
     }
 
-    //    private Timer mTimer;
-//    private Bitmap mBitmap;
-//    private Bitmap image;
-//    private DataFile mDataFile ;
     private ImageInfo mImageInfoMin;
-//    private GestureCropImageView mGestureCropImageView;
-//    private View mOverlay;
-//    @BindView(R.id.resizeImageview)
-//    UCropView mImageView;
-
-
-    static DataApi mDataApi;
-
+    DataApi mDataApi;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         autoSave = SettingsManager.getInstance().getAutoSaveImages();
-
-//        getActivity().getActionBar().setTitle("");
-
         if (BaseFragment.openCvLoaded) {
 
             mDataApi = new OpenCvFileApi(getContext());
         } else {
             mDataApi = new FileApi(getContext());
         }
-//        mDataApi = FileApi.newInstance(getContext());
         mMyOnImageProcessedListener = new MyOnImageProcessedListener();
-
     }
 
     @Override
@@ -170,25 +140,16 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
     @Override
     public void onGalleryImageSelected(final Intent data) {
-
         try {
-
-
             deleteCache(mDataApi);
-
-
             if (tobedeletedTextView != null) {
                 tobedeletedTextView.setVisibility(View.GONE);
             }
-//            data.setClassName(getContext(),null);
-
             if (data.getClipData() != null && data.getClipData().getItemCount() > 0) {
-
                 setLoadingIndicator(true);
                 mSingleFileImageInfo = null;
                 mhHandler.postDelayed(() -> {
                     try {
-
                         List<ImageInfo> imageInfoList = new ArrayList<>(data.getClipData().getItemCount());
                         int count = data.getClipData().getItemCount();
                         if (count > MAX_LOAD_IMAGES) {
@@ -197,56 +158,31 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                         }
 
                         for (int i = 0; i < count; i++) {
-
-
                             Uri imageUri = data.getClipData().getItemAt(i).getUri();
-//                ImageInfo imageInfo = Utils.getImageInfo(getContext(),imageUri,mDataApi);
-
                             ImageInfo imageInfo = new ImageInfo();
                             imageInfo.setImageUri(imageUri);
-
                             imageInfoList.add(imageInfo);
-
                         }
                         mWebView.setVisibility(View.GONE);
-
                         setMultipleImagesView(imageInfoList);
                         mSingleFileImageInfo = null;
                         setLoadingIndicator(false);
                     } catch (Exception e) {
                         showError(R.string.unknown_error);
-                        return;
-
                     }
-
-
                 }, 100);
 
             } else {
-
                 mSingleFileImageInfo = new ImageInfo();
-
                 mMultipleImagesAdaptor = null;
-
-//                mWebView =null;
                 mWebView.setVisibility(View.VISIBLE);
                 sizeTextView.setVisibility(View.VISIBLE);
-
-
                 mMultiple = false;
                 Uri imageUri = data.getData();
                 mImageUrlString = imageUri.toString();
                 showCustomAppBar((AppCompatActivity) getActivity(), false);
                 mResizePresenter.setImageSelected(imageUri.toString());
             }
-
-//          imageUri =data.getClipData().getItemAt(0).getUri();// data.getData();
-
-//        mResizeIntent.setData(imageUri);
-
-//        mSelectPresenter.newResizeView(mResizeIntent);
-
-
         } catch (Exception e) {
             showError(R.string.unable_to_load_image);
         }
@@ -273,7 +209,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     }
 
     private void deleteCache(DataApi mDataApi) {
-
         mDataApi.deleteCache(getContext());
     }
 
@@ -305,45 +240,28 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
     private void fillMenuItems(final Context context, RecyclerView mRecyclerView, final BaseFragment baseFragment) {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-
-        List<apps.sai.com.imageresizer.select.MenuItem> menuItemList = new ArrayList<>();
-
-
-        menuItemList.add(apps.sai.com.imageresizer.select.MenuItem.newInstance(OPEN_ID, context.getString(R.string.action_open),
+        List<MenuItem> menuItemList = new ArrayList<>();
+        menuItemList.add(MenuItem.newInstance(OPEN_ID, context.getString(R.string.action_open),
                 R.drawable.ic_folder));
-
-
-        menuItemList.add(apps.sai.com.imageresizer.select.MenuItem.newInstance(COMPRESS_ID, context.getString(R.string.action_compress),
+        menuItemList.add(MenuItem.newInstance(COMPRESS_ID, context.getString(R.string.action_compress),
                 R.drawable.ic_compress));
-
-
-        menuItemList.add(apps.sai.com.imageresizer.select.MenuItem.newInstance(SCALE_ID, context.getString(R.string.action_scale),
+        menuItemList.add(MenuItem.newInstance(SCALE_ID, context.getString(R.string.action_scale),
                 R.drawable.ic_scale));
-
-
         if (mSingleFileImageInfo != null) {
-
-            menuItemList.add(apps.sai.com.imageresizer.select.MenuItem.newInstance(CROP_ID, context.getString(R.string.main_action_crop),
-
+            menuItemList.add(MenuItem.newInstance(CROP_ID, context.getString(R.string.main_action_crop),
                     R.drawable.ic_crop));
         }
         if (!autoSave) {
-            menuItemList.add(apps.sai.com.imageresizer.select.MenuItem.newInstance(SAVE_ID, context.getString(R.string.action_save),
+            menuItemList.add(MenuItem.newInstance(SAVE_ID, context.getString(R.string.action_save),
                     R.drawable.ic_save));
         }
-//        if(mSingleFileImageInfo!=null) {
-        menuItemList.add(apps.sai.com.imageresizer.select.MenuItem.newInstance(RESET_ID, context.getString(R.string.action_reset),
+        menuItemList.add(MenuItem.newInstance(RESET_ID, context.getString(R.string.action_reset),
                 R.drawable.ic_reset));
-
-
-        menuItemList.add(apps.sai.com.imageresizer.select.MenuItem.newInstance(SHARE_ID, context.getString(R.string.action_share),
+        menuItemList.add(MenuItem.newInstance(SHARE_ID, context.getString(R.string.action_share),
                 R.drawable.ic_share));
-
-
-//        }
         MenuAdaptor mResizeAdaptor = new MenuAdaptor(getContext(), menuItemList, new MenuAdaptor.OnMenuSelectedListener() {
             @Override
-            public void onMenuSelected(apps.sai.com.imageresizer.select.MenuItem menuItem) {
+            public void onMenuSelected(MenuItem menuItem) {
 
                 try {
                     switch (menuItem.getId()) {
@@ -359,14 +277,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
 
                             String path = mSingleFileImageInfo.getAbsoluteFilePathUri().toString();
-
-                            if (path == null) {
-                                showError(R.string.no_images);
-                                return;
-                            }
-
-//                 startUCrop(mSingleFileImageInfo.getAbsoluteFilePathUri());
-
                             Utils.setCropFragmentByPreset((AppCompatActivity) getActivity(), CropDemoPreset.RECT, (path));
                             mhHandler.postDelayed(new Runnable() {
                                 @Override
@@ -375,22 +285,17 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                                 }
                             }, 100);
 
-
                             break;
-
                         case SCALE_ID:
                             if (mSingleFileImageInfo != null) {
 
                                 showCustomScaleAlert(false, null, mSingleFileImageInfo, ResizeFragment.this);
                             } else {
-
                                 if (mMultipleImagesAdaptor == null) {
                                     showError(R.string.no_images);
                                     return;
                                 }
-                                //mImageInfoMin
                                 showCustomScaleAlert(true, null, mImageInfoMin, ResizeFragment.this);
-
                             }
                             break;
 
@@ -410,81 +315,34 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                                     showError(R.string.no_images);
                                     return;
                                 }
-
-//                                uri = mDataApi.getImageUriFromCacheWithFileProvider();//cached image
                             }
-
-
                             mResizePresenter.shareImage(getContext(), uri != null ? uri.toString() : "");
                             break;
                         case RESET_ID:
                             if (tobedeletedTextView != null) {
                                 tobedeletedTextView.setVisibility(View.GONE);
                             }
-
                             mResizePresenter.applyImageEffect(null, IMAGE_PROCESSING_TASKS.RESET, mMyOnImageProcessedListener, null);
-
                             break;
-
-
                         case COMPRESS_ID:
                             mCompressPercentage = 0;
                             mKbEnteredValue = 0;
                             if (mOnCompressTypeChangedListen == null) {
-                                mOnCompressTypeChangedListen = new OnCompressTypeChangedListener() {
-
-
-                                    @Override
-                                    public void doCompress(int quality, boolean kbEntered) {
-
-
-                                        if (kbEntered == false) {
-
-                                            mCompressPercentage = quality;
-                                        } else {
-                                            mKbEnteredValue = quality;
-                                        }
-                                        if (mSingleFileImageInfo != null) {
-//                                 final BitmapResult bitmapResult = mDataApi.getBitmapFromAbsolutePathUri(getContext(), mSingleFileImageInfo.getAbsoluteFilePathUri());
-
-                                            mResizePresenter.applyImageEffect(mSingleFileImageInfo, ResizeFragment.IMAGE_PROCESSING_TASKS.COMPRESS, mMyOnImageProcessedListener, null);
-
-                                        } else {
-
-                                       /* List<ImageInfo> imageInfoList = mMultipleImagesAdaptor.getImageInfoList();
-
-                                        for(int i=0;i<imageInfoList.size();i++) {
-
-                                            ImageInfo imageInfoInner =imageInfoList.get(i);
-
-                                           *//* BitmapProcessingTask bitmapProcessingTask = new BitmapProcessingTask(imageInfoInner,getContext()
-                                            ,0,0,0,null,IMAGE_PROCESSING_TASKS.COMPRESS
-                                            ,quality,mDataApi,true);
-
-                                            bitmapProcessingTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);*//*
-
-                                            compressImage(imageInfoInner, new BitmapProcessingTask.OnImageProcessedListener() {
-                                                @Override
-                                                public void onImageProcessed(BitmapResult bitmapResult, ImageInfo imageInfoOrg) {
-
-                                                }
-                                            });
-//
-                                        }*/
-                                            doMultipleImageProcessing(IMAGE_PROCESSING_TASKS.COMPRESS, null);
-
-                                        }
-//                                      doMultipleImageProcessing(IMAGE_PROCESSING_TASKS.COMPRESS, null);
-
+                                mOnCompressTypeChangedListen = (quality, kbEntered) -> {
+                                    if (!kbEntered) {
+                                        mCompressPercentage = quality;
+                                    } else {
+                                        mKbEnteredValue = quality;
                                     }
+                                    if (mSingleFileImageInfo != null) {
+                                        mResizePresenter.applyImageEffect(mSingleFileImageInfo, IMAGE_PROCESSING_TASKS.COMPRESS, mMyOnImageProcessedListener, null);
 
-
+                                    } else {
+                                        doMultipleImageProcessing(IMAGE_PROCESSING_TASKS.COMPRESS, null);
+                                    }
                                 };
                             }
-
-
                             baseFragment.showCompressAlert(getContext(), mOnCompressTypeChangedListen, hashMap, mSingleFileImageInfo != null);
-//                 mResizePresenter.applyImageEffect(mBitmap, IMAGE_PROCESSING_TASKS.COMPRESS);
                             break;
                         case SAVE_ID:
                             mResizePresenter.saveImage();
@@ -498,30 +356,11 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
             }
         });
-
         mRecyclerView.setLayoutManager(mLayoutManager);
-
         mRecyclerView.setAdapter(mResizeAdaptor);
-
-
     }
 
     private final static String TAG = ResizeFragment.class.getSimpleName();
-
-    public ImageInfo getImageInfoAtIndex(int i) {
-
-        if (mSingleFileImageInfo != null) {
-            return mSingleFileImageInfo;
-        }
-        if (mMultipleImagesAdaptor != null && mMultipleImagesAdaptor.getProcessedImageInfoList() != null) {
-            if (mMultipleImagesAdaptor.getProcessedImageInfoList().size() >= i + 1) {
-                return mMultipleImagesAdaptor.getProcessedImageInfoList().get(i);
-            }
-
-        }
-        return null;
-    }
-
     boolean autoSave;
     int gridSize;
     int gridApperaance;
@@ -547,15 +386,15 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     }
 
     public static class MenuAdaptor extends RecyclerView.Adapter<MenuAdaptor.ResizeHolder> {
-        List<apps.sai.com.imageresizer.select.MenuItem> mMenuItemList;
+        List<MenuItem> mMenuItemList;
         Context mContext;
         OnMenuSelectedListener mMenuSelectedListener;
 
         public interface OnMenuSelectedListener {
-            void onMenuSelected(apps.sai.com.imageresizer.select.MenuItem menuItem);
+            void onMenuSelected(MenuItem menuItem);
         }
 
-        public MenuAdaptor(Context context, List<apps.sai.com.imageresizer.select.MenuItem> menuItemList, OnMenuSelectedListener menuSelectedListener) {
+        public MenuAdaptor(Context context, List<MenuItem> menuItemList, OnMenuSelectedListener menuSelectedListener) {
             mMenuItemList = menuItemList;
             this.mContext = context;
             this.mMenuSelectedListener = menuSelectedListener;
@@ -563,7 +402,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
         @Override
         public MenuAdaptor.ResizeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
             return new MenuAdaptor.ResizeHolder(LayoutInflater.from(mContext).inflate(R.layout.menu_row, null));
         }
 
@@ -574,47 +412,24 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
         @Override
         public void onBindViewHolder(MenuAdaptor.ResizeHolder holder, int position) {
-//            TextView nameTextView = holder.nameTextView;
             ImageView imageView = holder.imageView;
-
-            final apps.sai.com.imageresizer.select.MenuItem menuItem = mMenuItemList.get(position);
-//            nameTextView.setText(menuItem.getName());
-
+            final MenuItem menuItem = mMenuItemList.get(position);
             imageView.setImageResource(menuItem.getImageResourcePath());
-
-
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    mMenuSelectedListener.onMenuSelected(menuItem);
-
-
-                }
-            });
-
-
+            holder.itemView.setOnClickListener(v -> mMenuSelectedListener.onMenuSelected(menuItem));
         }
-
         @Override
         public int getItemCount() {
             return mMenuItemList.size();
         }
 
         class ResizeHolder extends RecyclerView.ViewHolder {
-
-            //            TextView nameTextView;
             ImageView imageView;
             View itemView;
 
             public ResizeHolder(View itemView) {
                 super(itemView);
                 this.itemView = itemView;
-
-//                nameTextView = itemView.findViewById(R.id.text_name_menu);
                 imageView = itemView.findViewById(R.id.image_menu);
-
-
             }
         }
     }
@@ -1123,7 +938,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         mResizePresenter.takeView(this);
 
         SelectActivity selectActivity = (SelectActivity) getActivity();
-        if(selectActivity!=null) {
+        if (selectActivity != null) {
             selectActivity.setCurrentFragment(this);
         }
     }
@@ -1144,6 +959,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             unbinder.unbind();
         }
     }
+
     private ProgressBar mProgressBar;
 
     @Nullable
@@ -1202,52 +1018,30 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
     private void setResolutions(ImageInfo imageInfo) {
 
-        if (true) {
-            if (imageInfo == null) {
-                imageInfo = new ImageInfo();
-                imageInfo.setWidth(100);
-                imageInfo.setHeight(100);
-            }
+        if (imageInfo == null) {
+            imageInfo = new ImageInfo();
+            imageInfo.setWidth(100);
+            imageInfo.setHeight(100);
         }
-
         mResFileContent = getArguments().getString(FileApi.RES_FILE_NAME);
-
         if (mResFileContent == null) {
             mResFileContent = Utils.loadResolutionsFromAssets(getContext(), R.raw.res_camera);
         }
-        if (mResFileContent == null) {
-            return;
-        }
         List<String> nameList;
-
         String[] a = mResFileContent.split("\n");
-
-        if (a != null && a.length > 0) {
+        if (a.length > 0) {
             nameList = Arrays.asList(a);
-
-
-            String maxRes = null;//a[0];
+            String maxRes;//a[0];
 
             int orgWidth = imageInfo.getWidth();
             int orgHeight = imageInfo.getHeight();
-
-            //calculate aspect ratio height , lets make width fix
-            int newHeight = 0;
-//                    (int )Utils.calculateAspectRatioHeight(new Point(orgWidth,orgHeight),mWidth).y;
-            int newWidth = 0;
-
-
+            int newHeight;
+            int newWidth ;
             int newMaxResolution = 0;
             int index = -1;
             List<ResolutionInfo> newResolutionsList = new ArrayList<>();
             int orgResolution = orgWidth * orgHeight;
             int THRESHOLD = maxResolution;//allow 4 times up scale only
-            /*if(THRESHOLD<maxResolution/4){
-                THRESHOLD =maxResolution;
-            }else {
-                THRESHOLD = Math.min(THRESHOLD, maxResolution);
-            }*/
-
             for (int i = 0; i < nameList.size(); i++) {
                 maxRes = nameList.get(i);
                 index = maxRes.indexOf("x");
@@ -1264,20 +1058,10 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                 ratio = ratio * 100;
 
                 if (newResolution < THRESHOLD) {
-                    //remove it
-                    //nameList.remove(maxRes);
-//                    newMaxResolution =Math.max(newMaxResolution,newResolution);
                     if (newResolution > newMaxResolution) {
                         newMaxResolution = newResolution;
-//                        maxWidth = newWidth;
-//                        maxHeight =newHeight;
-
-
                     }
                     ResolutionInfo resolutionInfo = new ResolutionInfo();
-
-                    //nameList.remove(maxRes);
-
                     if (ratio >= 1) {
                         maxRes = String.format("%d %s %d (%.0f", newWidth, "x", newHeight, ratio) + "%)";
                     } else {
@@ -1291,11 +1075,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                     if (newResolutionsList.contains(resolutionInfo) == false) {
                         newResolutionsList.add(resolutionInfo);
                     }
-                    // nameList.add(i,maxRes);
-//                    break;
-
-
-//                a[i] = newWidth +"x"+newHeight;
                 }
             }
             ResolutionInfo resolutionInfo = new ResolutionInfo();
@@ -1305,142 +1084,74 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             resolutionInfo = new ResolutionInfo();
             resolutionInfo.setFormatedString("Scale->");
             newResolutionsList.add(0, resolutionInfo);
-//            nameList = newResolutionsList;
-//            nameList.addAll(newResolutionsList);
-//            maxResolution = newMaxResolution;
-
-
-//            mResolutionAdaptor = new ResolutionAdaptor(getContext(),
-//                    newResolutionsList, ResizeFragment.this,
-//                    mRecyclerView, new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-
-
-          /*  mResolutionAdaptorMenu =new ResolutionAdaptor(getContext(),
-                    newResolutionsList, ResizeFragment.this,
-                    mMenuRecyclerView, new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));*/
-//            mRecyclerView.setAdapter(mResolutionAdaptor);
-
-          /*  if(mBitmap==null){
-                mRecyclerView.setVisibility(View.GONE);//shwo only whwn image is loaded
-            }*/
         }
     }
-
-    //    Executor executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     Executor executor = AsyncTask.SERIAL_EXECUTOR;
-
     int count = 0;
     int lastIndex;
 
     public void setMultipleImagesView(final List<ImageInfo> imageInfoList) {
-
         count = 0;
         mMultiple = true;
-
         sizeTextView.setVisibility(View.GONE);
         showCustomAppBar((AppCompatActivity) getActivity(), false);
-//        showHideMutipleImageMenu(true);
-
-
         mMultipleImagesRecyclerView.setVisibility(View.VISIBLE);
-
         gridSize = SettingsManager.getInstance().getGridSize();
-
         mMultipleImagesAdaptor = new MultipleImagesAdaptor(this, imageInfoList,
                 mMultipleImagesRecyclerView,
                 new GridLayoutManager(getContext(), gridSize, GridLayoutManager.VERTICAL,
                         false), mDataApi);
         mMultipleImagesRecyclerView.setAdapter(mMultipleImagesAdaptor);
+        mhHandler.post(() -> {
+            try {
+                final ImageInfo processedImageInfo = Utils.getImageInfo(null, getContext(), imageInfoList.get(0).getImageUri(), mDataApi);
+                if (isEmpty(processedImageInfo)) {
+                    showError(R.string.unable_to_load_image);
+                }
+                mImageInfoMin = processedImageInfo;
+                imageInfoList.remove(0);
+                imageInfoList.add(0, processedImageInfo);
+                mhHandler.post(() -> {
+                    mImageInfoLoadingTasks = new ArrayList<>();
+                    cancelMultipleImageProcessing(false);
+                    for (int i = 0; i < imageInfoList.size(); i++) {
 
-        /*if(mMultipleImagesAdaptor.showAd() ==true){
-            Utils.showFacebookBanner(getContext(),mView,R.id.banner_container_top,"179547122769778_189237791800711");
-        }else{
-            Utils.hideFacebookBanner(getContext(),mView,R.id.banner_container_top);
-        }*/
-
-        mhHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-
-
-                    final ImageInfo processedImageInfo = Utils.getImageInfo(null, getContext(), imageInfoList.get(0).getImageUri(), mDataApi);
-                    if (isEmpty(processedImageInfo)) {
-                        showError(R.string.unable_to_load_image);
-                    }
-                    mImageInfoMin = processedImageInfo;
-                    imageInfoList.remove(0);
-                    imageInfoList.add(0, processedImageInfo);
-                    long resMin = mImageInfoMin.getWidth() * mImageInfoMin.getHeight();
-
-                    mhHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mImageInfoLoadingTasks = new ArrayList<>();
-                            cancelMultipleImageProcessing(false);
-
-
-                            for (int i = 0; i < imageInfoList.size(); i++) {
-
-                                ImageInfo imageInfoInner = imageInfoList.get(i);
-                                ImageInfoLoadingTask imageInfoLoadingTask =
-                                        new ImageInfoLoadingTask(getContext(), imageInfoInner, mDataApi
-                                                , new ImageInfoLoadingTask.OnImageInfoProcesedListener() {
-
-                                            @Override
-                                            public void onImageProcessed(ImageInfo imageInfo) {
-
-                                                try {
-                                                    Log.e(TAG, imageInfo.toString() + " Loaded ");
-
-
-                                                    if (mCancelMutipleTask == true) {
-                                                        lastIndex = imageInfoList.indexOf(imageInfo);
-                                                        return;
-                                                    }
-
-//                                             multipleImageProcessingDialog.onProcessingFinished(
-//                                                     imageInfo,imageInfoList.indexOf(imageInfo),imageInfoList.size());
-//                                             imageInfoList.remove(i);
-//                                             imageInfoList.add(i, procesedImageInfoInner);
-                                                    mMultipleImagesAdaptor.setImageInfo(imageInfo);
-                                                    if (isEmpty(processedImageInfo)) {
-                                                        showError(R.string.unable_to_load_image);
-                                                        mMultipleImagesAdaptor.remove(imageInfo);
-                                                      /*  if(mMultipleImagesAdaptor.showAd()==false) {
-                                                            Utils.hideFacebookBanner(getContext(), mView, R.id.banner_container_top);
-                                                        }*/
-
-                                                        return;
-                                                    }
-                                                    long resInner = imageInfo.getWidth() * imageInfo.getHeight();
-                                                    if (resInner < mImageInfoMin.getWidth() * mImageInfoMin.getHeight()) {
-                                                        mImageInfoMin = imageInfo;
-                                                    }
-                                                } catch (Exception e) {
-                                                    showError(R.string.unknown_error);
+                        ImageInfo imageInfoInner = imageInfoList.get(i);
+                        ImageInfoLoadingTask imageInfoLoadingTask =
+                                new ImageInfoLoadingTask(getContext(), imageInfoInner, mDataApi
+                                        , imageInfo -> {
+                                            try {
+                                                Log.e(TAG, imageInfo.toString() + " Loaded ");
+                                                if (mCancelMutipleTask == true) {
+                                                    lastIndex = imageInfoList.indexOf(imageInfo);
+                                                    return;
                                                 }
 
-
+                                                mMultipleImagesAdaptor.setImageInfo(imageInfo);
+                                                if (isEmpty(processedImageInfo)) {
+                                                    showError(R.string.unable_to_load_image);
+                                                    mMultipleImagesAdaptor.remove(imageInfo);
+                                                    return;
+                                                }
+                                                long resInner = imageInfo.getWidth() * imageInfo.getHeight();
+                                                if (resInner < mImageInfoMin.getWidth() * mImageInfoMin.getHeight()) {
+                                                    mImageInfoMin = imageInfo;
+                                                }
+                                            } catch (Exception e) {
+                                                showError(R.string.unknown_error);
                                             }
+
+
                                         }, ImageInfoLoadingTask.TASKS.IMAGE_INFO_LOAD);
-                                mImageInfoLoadingTasks.add(imageInfoLoadingTask);
-                                imageInfoLoadingTask.executeOnExecutor(executor);
-
-//                                imageInfoLoadingTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-//
-                            }
-                        }
-                    });
-                } catch (Throwable t) {
-                    showError(R.string.unknown_error);
-                }
-
+                        mImageInfoLoadingTasks.add(imageInfoLoadingTask);
+                        imageInfoLoadingTask.executeOnExecutor(executor);
+                    }
+                });
+            } catch (Throwable t) {
+                showError(R.string.unknown_error);
             }
-        });
-//        setResolutions(mImageInfoMin);
 
-//        setResolutionsByPercentages(mImageInfoMin,mRecyclerView);
+        });
     }
 
     private boolean isEmpty(ImageInfo imageInfo) {
@@ -1453,20 +1164,15 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
         if (menu != null) {
             if (multiple) {
-//                menu.setGroupVisible(R.id.groupSave,false);
-
                 menu.setGroupVisible(R.id.singleImageItemTwo, false);
                 menu.setGroupVisible(R.id.singleImageItem, false);
             } else {
-//                menu.setGroupVisible(R.id.groupSave,true);
-
                 menu.setGroupVisible(R.id.singleImageItemTwo, true);
                 menu.setGroupVisible(R.id.singleImageItem, true);
             }
 
         }
         mMenuRecyclerView.getAdapter().notifyDataSetChanged();
-//        mMenuAdaptor.notifyDataSetChanged();
     }
 
     private View mView;
@@ -1543,63 +1249,25 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
     private CropFragment mCurrentFragment;
 
-//    private Uri mCropImageUri;
-
     @Override
     public void setSelectedImage(final BitmapResult bitmapResult) {
-
         try {
-
             setLoadingIndicator(false);
-
             showWebView(bitmapResult);
-            if (mSingleFileImageInfo != null) {
-//               setResolutions(mSingleFileImageInfo);
-//               setResolutionsByPercentages(mSingleFileImageInfo,mRecyclerView);
-
-            }
 
         } catch (Throwable e) {
             showError(R.string.unknown_error);
         }
 
-
     }
-
     private final static String CACHE_FILE = "cached_";
-
-
-    private void showImageView(Bitmap bitmap, ImageInfo imageInfo) {
-        mhHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                setLoadingIndicator(true);
-            }
-        });
-
-
-        showFIleSize(imageInfo, sizeTextView);
-
-        bitmap = mDataApi.getBitmapFromAbsolutePathUri(getActivity(), mSingleFileImageInfo.getAbsoluteFilePathUri(),
-                imageInfo.getWidth(), imageInfo.getHeight()).getBitmap();
-
-//            mImageView.getCropImageView().setImageBitmap(bitmap);
-
-//        }
-
-    }
-
     static ImageInfo mSingleFileImageInfo;
 
     private void showWebView(BitmapResult bitmapResult) {
-
-
         if (getContext() == null) {
             return;
         }
 
-
-        String path = null;
         if (mSingleFileImageInfo == null) {//if it is loaded from gallery it becomes null
             mSingleFileImageInfo = new ImageInfo();
         }
@@ -1607,28 +1275,11 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             showError(R.string.unable_to_load_image);
             return;
         }
-//        path = mSingleFileImageInfo.getImageUri().getPath();
-          /*  if(bitmapResult.getContentUri()!=null){
-
-//               boolean isSaved = mSingleFileImageInfo.isSaved();
-//                Uri processedUri =mSingleFileImageInfo.getImageUri();
-
-                mSingleFileImageInfo = Utils.getImageInfo(mSingleFileImageInfo,getContext(),bitmapResult.getContentUri(),mDataApi);
-//                mSingleFileImageInfo.setProcessedUri(processedUri);
-                if(mSingleFileImageInfo.getAbsoluteFilePathUri()!=null) {
-                    path = mSingleFileImageInfo.getAbsoluteFilePathUri().toString();
-                }
-            }*/
-
         if (isEmpty(mSingleFileImageInfo) /*|| path ==null*/) {
             showError(R.string.unable_to_load_image);
             return;
         }
-
-
         showFIleSize(mSingleFileImageInfo, sizeTextView);//here too don't need file://
-//        mWebView.setVisibility(View.VISIBLE);
-
         final String mimeType = "text/html";
         final String encoding = "utf-8";
         mWebView.clearCache(true);
@@ -1636,9 +1287,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
                 + ", initial-scale=1.0 \" /></head>";
         data = data + "<body><center><img width=100%  src=\"" + mSingleFileImageInfo.getAbsoluteFilePathUri() + "\" /></center></body></html>";
-//        webView.loadData(data, "text/html", null);
-
-//        mWebView.setVisibility(View.GONE);
         mWebView.loadDataWithBaseURL("", data, mimeType, encoding, "");
         mWebView.getSettings().setBuiltInZoomControls(true);
         mWebView.getSettings().setDisplayZoomControls(true);
@@ -1658,36 +1306,19 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
 
     }
-
-
     Handler mhHandler;
     TextView sizeTextView;
-
     @BindView(R.id.tobedeletedTextview)
     TextView tobedeletedTextView;
 
-
     @Override
     public void setImageSelected(String imageUriString) {
-
-
         try {
-
-//            Uri imageUri = Uri.parse(imageUriString);
-//            mSingleFileImageInfo= Utils.getImageInfo(new ImageInfo(), getContext(),imageUri,mDataApi);
             mSingleFileImageInfo = new ImageInfo();
             mSingleFileImageInfo.setImageUri(Uri.parse(imageUriString));
             mSingleFileImageInfo.setOriginalContentUri(mSingleFileImageInfo.getImageUri());
-
             sizeTextView.setVisibility(View.VISIBLE);
-//            showHideMutipleImageMenu(false);
-//            mWebView.setVisibility(View.VISIBLE);
-
             mMultipleImagesRecyclerView.setVisibility(View.GONE);
-
-
-//           setImageUriAsyncNew(mSingleFileImageInfo.getImageUri());
-
             ImageInfoLoadingTask imageInfoLoadingTask =
                     new ImageInfoLoadingTask(getContext(), mSingleFileImageInfo, mDataApi
                             , new ImageInfoLoadingTask.OnImageInfoProcesedListener() {
@@ -1725,8 +1356,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         }
 
     }
-
-
     /**
      * Task used to load mBitmap async from UI thread
      */
@@ -1753,29 +1382,12 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             // either no existing task is working or we canceled it, need to load new URI
 
             BitmapLoadingTask bitmapLoadingTask = new BitmapLoadingTask(getContext(), mSingleFileImageInfo, mDataApi, desiredWidth, desiredHeight);
-
-
-            bitmapLoadingTask.setOnImageUriLoadedListener(new BitmapLoadingTask.OnImageUriLoadedListener() {
-
-
-                @Override
-                public void onImageLoaded(BitmapResult bitmapResult) {
-
-                    //   mDataApi.copyImageFromCacheToGallery()
-//                    mImageUrlString =bitmapResult.getContentUri().toString();
-//                    mSingleFileImageInfo =getImageInfo(getContext(),bitmapResult.getContentUri());
-                    mSingleFileImageInfo = null;
-                    mResizePresenter.setSelectedImage(bitmapResult);
-                }
-
-
+            bitmapLoadingTask.setOnImageUriLoadedListener(bitmapResult -> {
+                mSingleFileImageInfo = null;
+                mResizePresenter.setSelectedImage(bitmapResult);
             });
             mBitmapLoadingWorkerTask = new WeakReference<>(bitmapLoadingTask);
-
-//            bitmapLoadingTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             bitmapLoadingTask.executeOnExecutor(executor);
-
-
         }
     }
 
@@ -1856,15 +1468,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             return mCompressList.get(position);
         }
     }
-
-    CompressAdaptor mCompressAdaptor;
-    Compress mCompress;
-
-    static long mFileSize;
-
-
     static HashMap<Compress_TYPES, String> hashMap = new HashMap<>();
-
 
     OnCompressTypeChangedListener mOnCompressTypeChangedListen;
     OnResolutionSelectedListener mOnResolutionSelectedListener;
@@ -1882,9 +1486,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                             ResizeFragment.this.onResolutionSelected(resolutionInfo);
                         }
                     };
-
                 }
-
                 if (mSingleFileImageInfo != null) {
 
                     BitmapResult bitmapResult = mDataApi.getBitmapFromAbsolutePathUri(getContext(), mSingleFileImageInfo.getAbsoluteFilePathUri(),
@@ -1902,22 +1504,16 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             } else if (res.getFormatedString().startsWith("Scale")) {
 
             } else {
-//            String a[] = res.split("x");
-//            BitmapResult bitmapResult =mDataApi.getBitmapFromAbsolutePathUri(getContext(),mSingleFileImageInfo.getAbsoluteFilePathUri());
                 if (mSingleFileImageInfo != null) {
                     processImage(mSingleFileImageInfo, res.getWidth(), res.getHeight(), IMAGE_PROCESSING_TASKS.SCALE, mMyOnImageProcessedListener);
                 } else {
-
-
                     doMultipleImageProcessing(IMAGE_PROCESSING_TASKS.SCALE, res);
-
                 }
             }
         } catch (Throwable t) {
             showError(R.string.unknown_error);
         }
     }
-
 
     @Override
     public void showError(final Throwable ex) {
@@ -1927,39 +1523,9 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             setLoadingIndicator(false);
         }
         Toast.makeText(getActivity(), ex.toString(), Toast.LENGTH_LONG).show();
-        /*if(ex instanceof OutOfMemoryError || ex instanceof Error) {
-            Toast.makeText(getActivity(), R.string.memory_error, Toast.LENGTH_LONG).show();
-            System.gc();
-
-        }else{
-            Toast.makeText(getActivity(), R.string.some_error, Toast.LENGTH_LONG).show();
-
-        }
-       mhHandler.post(new Runnable() {
-           @Override
-           public void run() {
-
-
-
-               if(ex instanceof OutOfMemoryError || ex instanceof Error) {
-                   Toast.makeText(getActivity(), R.string.memory_error, Toast.LENGTH_LONG).show();
-                   System.gc();
-
-               }else{
-                   Toast.makeText(getActivity(), R.string.some_error, Toast.LENGTH_LONG).show();
-
-               }
-           }
-       });
-*/
     }
-
     NestedWebView mWebView;
-    String mCroppedUrlString;
-
     class MyOnImageProcessedListener implements BitmapProcessingTask.OnImageProcessedListener {
-
-
         @Override
         public void onImageLoaded(BitmapResult bitmapResult, final ImageInfo imageInfoOrg) {
 
@@ -1983,8 +1549,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                         return;
                     }
                 }
-
-
                 if (mSingleFileImageInfo != null && imageInfoOrg != null) {
                     mSingleFileImageInfo.setProcessedUri(bitmapResult.getContentUri());
                     mSingleFileImageInfo.setSaved(imageInfoOrg.isSaved());
@@ -1997,15 +1561,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                 if (adCount++ % 2 == 0) {
                     showAd();
                 }
-
-
                 mResizePresenter.setSelectedImage(bitmapResult);
-
-
-//            SaveBitmapToDevice saveBitmapToDevice = new SaveBitmapToDevice(getContext(),imageInfoOrg.getImageUri());
-//
-//            saveBitmapToDevice.execute(bitmapResult.getBitmap());
-
                 mhHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -2057,18 +1613,10 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                                 mSingleFileImageInfo.setTobeDeletedUri(tobedeleteduri);
                             }
 
-                        } else {
-
-//                            return;
                         }
                     }
-
-                } else {
-//                    return;
                 }
             }
-
-//            tobedeletedTextView.setVisibility(View.VISIBLE);
 
             String thisLink = getString(R.string.delete_org);
             String resizePics = getString(R.string.resized_photo);
@@ -2086,43 +1634,23 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                     @Override
                     public void onClick(View widget) {
                         if (mSingleFileImageInfo != null) {
-                            showDeleteAlert(getContext(), new OnDeleteSelectedListener() {
-                                @Override
-                                public void onDeleteSelected() {
+                            showDeleteAlert(getContext(), () -> {
 
-                                    if (mSingleFileImageInfo.getTobeDeletedUri() != null) {
-                                        mSingleFileImageInfo.setImageUri(mSingleFileImageInfo.getTobeDeletedUri());
+                                if (mSingleFileImageInfo.getTobeDeletedUri() != null) {
+                                    mSingleFileImageInfo.setImageUri(mSingleFileImageInfo.getTobeDeletedUri());
 
-                                        boolean deleted = mDataApi.deleteImageFile(activity, mSingleFileImageInfo, null);
-                                        if (deleted) {
-                                            showError(R.string.file_deleted);
-                                            tobedeletedTextView.setVisibility(View.GONE);
-//                                            mWebView.setVisibility(View.GONE);
-                                            sizeTextView.setVisibility(View.GONE);
+                                    boolean deleted = mDataApi.deleteImageFile(activity, mSingleFileImageInfo, null);
+                                    if (deleted) {
+                                        showError(R.string.file_deleted);
+                                        tobedeletedTextView.setVisibility(View.GONE);
+                                        sizeTextView.setVisibility(View.GONE);
 //                                            showAd();
-                                   /*         mhHandler.postDelayed(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    try {
-                                                        Utils.removeFragment((AppCompatActivity) getActivity(), ResizeFragment.this);
-                                                        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(MyImagesFragment.class.getSimpleName());
-                                                        if (fragment != null) {
-                                                            Utils.removeFragment((AppCompatActivity) getActivity(), fragment);
-                                                        }
-                                                    } catch (Exception e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-                                            }, 100);*/
-
-
-                                        } else {
-                                            showError(R.string.unable_to_delete);
-                                        }
+                                    } else {
+                                        showError(R.string.unable_to_delete);
                                     }
-
-
                                 }
+
+
                             });
 
                         } else {
@@ -2197,111 +1725,47 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         int nw = w;
         int nh = h;
 
+        mhHandler.post(() -> setLoadingIndicator(true));
 
 
-
-
-/*
-        BitmapProcessingTask currentTask = mBitmapProcessingTaskWeakReference!= null ? mBitmapProcessingTaskWeakReference.get() : null;
-        if (currentTask != null ) {
-            currentTask.cancel(true);
-            setLoadingIndicator(false);
-                Toast.makeText(getActivity(),"Processing old task..",Toast.LENGTH_SHORT).show();
-            mBitmapProcessingTaskWeakReference.clear();
-                return;
-            // cancel previous loading (no check if the same URI because camera URI can be the same for
-            // different images)
-//            currentTask.cancel(true);
-        }*/
-
-        if (imageInfo == null) {
-        }
-        mhHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                setLoadingIndicator(true);
-
-            }
-        });
-
-
-//        mBitmapProcessingTaskWeakReference = new WeakReference<BitmapProcessingTask>(
         BitmapProcessingTask bitmapProcessingTask = new BitmapProcessingTask(imageInfo, getContext(),
                 nw, nh, maxResolution, imageInfo.getDataFile(),
                 image_PROCESSING_tasks, mCompressPercentage, mKbEnteredValue, mDataApi, mMultiple, autoSave);
         bitmapProcessingTask.setOnImageProcessedListener(onImageProcessedListener);
-//        bitmapProcessingTask.execute();
         bitmapProcessingTask.executeOnExecutor(executor);
-
-
     }
 
     @Override
     public void onCropImageStart() {
-        mhHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                setLoadingIndicator(true);
-
-            }
-        });
+        mhHandler.post(() -> setLoadingIndicator(true));
     }
 
     @Override
     public void onCropImageComplete(CropImageView view, final CropImageView.CropResult result) {
-        mhHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (result.getBitmap() != null) {
-                    BitmapResult bitmapResult = new BitmapResult();
-
-                    Uri path = null;
-                    try {
-
-                        DataFile dataFile = mSingleFileImageInfo.getDataFile();
-                        if (dataFile != null && dataFile.getName() != null) {
-                            mDataApi.saveImageInCache(dataFile, result.getBitmap(), 95);
-                            path = mDataApi.getAbsoluteImagePathUriFromCache(dataFile);
-                        }/*else {
-                           mDataApi.saveImageInCache(result.getBitmap(), 95);
-                           path = mDataApi.getImageUriFromCache();
-                       }*/
-
-
-//                    mSingleFileImageInfo = getImageInfo(getContext(),path);
-
-//                    mImageUrlString =path.toString();
-//                    mCroppedUrlString =path.toString();
-
-//                     mCachedUrlString =path;
-//                        bitmapResult.setBitmap(result.getBitmap());
-                        bitmapResult.setContentUri(path);
-                        if (autoSave == true) {
-//                              mDataApi.saveImageInCache(mSingleFileImageInfo.getDataFile(),result.getBitmap(), 95);
-                            mDataApi.copyImageFromCacheToGallery(requireActivity(), mSingleFileImageInfo.getDataFile());
-//                            DataFile srcDatafile =mSingleFileImageInfo.
-//                            mDataApi.copyImageFromCacheToGallery(mDataApi.getImageUriFromCache());
-                        }
-                        mSingleFileImageInfo.setAbsoluteFilePath(path);
-
-                        mSingleFileImageInfo = Utils.getImageInfo(mSingleFileImageInfo, getContext(), path, mDataApi);
-
-                        result.getBitmap().recycle();
-
-                        if (autoSave) {
-
-                            showDeleteTextView(requireActivity());
-                        }
-                    } catch (Throwable t) {
-                        bitmapResult.setError(t);
+        mhHandler.post(() -> {
+            if (result.getBitmap() != null) {
+                BitmapResult bitmapResult = new BitmapResult();
+                Uri path = null;
+                try {
+                    DataFile dataFile = mSingleFileImageInfo.getDataFile();
+                    if (dataFile != null && dataFile.getName() != null) {
+                        mDataApi.saveImageInCache(dataFile, result.getBitmap(), 95);
+                        path = mDataApi.getAbsoluteImagePathUriFromCache(dataFile);
                     }
-
-                    mResizePresenter.setSelectedImage(bitmapResult);
-//                        showWebView(result.getBitmap());
-
-//                    mImageView.setImageBitmap(mBitmap);
-
+                    bitmapResult.setContentUri(path);
+                    if (autoSave) {
+                        mDataApi.copyImageFromCacheToGallery(requireActivity(), mSingleFileImageInfo.getDataFile());
+                    }
+                    mSingleFileImageInfo.setAbsoluteFilePath(path);
+                    mSingleFileImageInfo = Utils.getImageInfo(mSingleFileImageInfo, getContext(), path, mDataApi);
+                    result.getBitmap().recycle();
+                    if (autoSave) {
+                        showDeleteTextView(requireActivity());
+                    }
+                } catch (Throwable t) {
+                    bitmapResult.setError(t);
                 }
+                mResizePresenter.setSelectedImage(bitmapResult);
             }
         });
     }

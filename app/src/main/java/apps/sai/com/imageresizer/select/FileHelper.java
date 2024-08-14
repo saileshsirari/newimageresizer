@@ -12,10 +12,8 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import apps.sai.com.imageresizer.util.CustomMediaScanner;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -28,15 +26,6 @@ public class FileHelper {
      */
     public static final String ROOT_DIRECTORY = "/";
 
-    /**
-     * The parent directory
-     */
-    public static final String PARENT_DIRECTORY = "..";
-
-    /**
-     * The current directory
-     */
-    public static final String CURRENT_DIRECTORY = ".";
 
     /**
      * Method that check if a file is a symbolic link.
@@ -96,15 +85,6 @@ public class FileHelper {
         return name.substring(pos + 1);
     }
 
-    /**
-     * Returns true if the folder is the root directory
-     *
-     * @param folder The folder to check
-     * @return true if the folder is the root directory
-     */
-    public static boolean isRootDirectory(File folder) {
-        return folder.getPath().compareTo(FileHelper.ROOT_DIRECTORY) == 0;
-    }
 
     /**
      * Returns true if this OldFileObject can has read & write access
@@ -149,7 +129,6 @@ public class FileHelper {
                 filePath.equals("/storage/sdcard1/") ||
                 filePath.equals("/storage/sdcard2/") ||
                 filePath.equals("/sdcard") ||
-                filePath.equals("/mnt/sdcard2/") ||
                 filePath.equals("/sdcard2") ||
                 filePath.equals("/mnt/sdcard2/") ||
                 filePath.equals("/sdcard3") ||
@@ -207,40 +186,6 @@ public class FileHelper {
     }
 
     /**
-     * Recursively collects all the songs for the given directory and
-     * all of its sub-directories. Must be called Asynchronously.
-     *
-     * @param file      the File to retrieve the song Id's from
-     * @param recursive whether to recursively check the sub-directories for song Id's
-     * @return List<Song> a list of the songs for the given fileObject's directory & sub-directories
-     */
-  /*  public static Single<List<Song>> getSongList(final File file, final boolean recursive, final boolean inSameDir) {
-        return Single.fromCallable(
-                () -> walk(file, new ArrayList<>(), recursive, inSameDir))
-                .flatMap(filePaths -> DataManager.getInstance()
-                        .getSongsObservable(song -> song.path.contains(FileHelper.getPath(inSameDir ? file.getParentFile() : file)))
-                        .first(Collections.emptyList()))
-                .subscribeOn(Schedulers.io());
-    }*/
-
-    /**
-     * Gets the song for a given file
-     *//*
-    public static Single<Song> getSong(File file) {
-        return DataManager.getInstance()
-                .getSongsObservable(song -> song.path.contains(FileHelper.getPath(file)))
-                .firstOrError()
-                .flatMap(songs -> {
-                    try {
-                        return Single.just(Stream.of(songs).findFirst().get());
-                    } catch (NoSuchElementException e) {
-                        return Single.error(e);
-                    }
-                })
-                .subscribeOn(Schedulers.io());
-    }*/
-
-    /**
      * Recursively 'walks' the files subdirectories, gathering a list of paths.
      *
      * @param root      the root file to walk
@@ -283,7 +228,7 @@ public class FileHelper {
      * @return true if the deletion was successful
      */
     public static boolean deleteFile(File file) {
-        return DeleteRecursive(file);
+        return deleteRecursive(file);
     }
 
     /**
@@ -292,47 +237,17 @@ public class FileHelper {
      * @param fileOrDirectory the file or directory to delete
      * @return true id the deletion was successful
      */
-    private static boolean DeleteRecursive(File fileOrDirectory) {
+    private static boolean deleteRecursive(File fileOrDirectory) {
         if (fileOrDirectory == null) {
             return false;
         } else if (fileOrDirectory.isDirectory()) {
             File[] fileList = fileOrDirectory.listFiles();
             if (fileList != null) {
                 for (File child : fileList)
-                    DeleteRecursive(child);
+                    deleteRecursive(child);
             }
         }
         return fileOrDirectory.delete();
-    }
-
-    /**
-     * Renames an {@link FileObject} to the passed in newName
-     *
-     * @param context        Context
-     * @param baseFileObject the FileObject representation of the file to rename
-     * @param newName        the new name of the file
-     * @return
-     */
-    public static boolean renameFile(Context context, BaseFileObject baseFileObject, String newName) {
-        if (newName == null) {
-            return false;
-        }
-
-        if (baseFileObject instanceof FileObject) {
-            String ext = ((FileObject) baseFileObject).extension;
-            if (ext == null) {
-                ext = "";
-            }
-            newName = newName + "." + ext;
-        }
-        File file = new File(baseFileObject.path);
-        File newFile = new File(baseFileObject.getParent(), newName);
-        if (file.renameTo(newFile)) {
-            baseFileObject.name = FileHelper.getName(newFile.getName());
-            CustomMediaScanner.scanFiles(Collections.singletonList(file.getPath()), null);
-            return true;
-        }
-        return false;
     }
 
     /**
