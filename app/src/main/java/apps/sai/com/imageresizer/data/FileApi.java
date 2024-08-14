@@ -648,17 +648,15 @@ public class FileApi extends DataApi {
     public void deleteCache(Context context) {
 
         File file = new File(context.getFilesDir() + File.separator + PRIVATE_FOLDER_NAME + File.separator);
-        String b[] = file.list();
-
+        String[] b = file.list();
         if (b != null) {
-            for (int i = 0; i < b.length; i++) {
-                File fileInner = new File(file.getAbsolutePath(), b[i]);
+            for (String s : b) {
+                File fileInner = new File(file.getAbsolutePath(), s);
                 if (fileInner.exists()) {
                     fileInner.delete();
                 }
             }
         }
-
     }
 
     @Override

@@ -29,7 +29,6 @@ import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -55,6 +54,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -69,7 +69,6 @@ import apps.sai.com.imageresizer.data.DataApi;
 import apps.sai.com.imageresizer.data.DataFile;
 import apps.sai.com.imageresizer.data.FileApi;
 import apps.sai.com.imageresizer.data.ImageInfo;
-import apps.sai.com.imageresizer.data.OpenCvFileApi;
 import apps.sai.com.imageresizer.data.ResolutionInfo;
 import apps.sai.com.imageresizer.listener.MultipleImageProcessingDialog;
 import apps.sai.com.imageresizer.listener.OnPreferenceChangedListener;
@@ -97,7 +96,7 @@ import io.reactivex.observables.GroupedObservable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by sailesh on 03/01/18.
+ * Created by Sailesh on 03/01/18.
  */
 
 public class ResizeFragment extends BaseFragment implements ResizeContract.View, OnResolutionSelectedListener, CropImageView.OnCropImageCompleteListener, OnPreferenceChangedListener {
@@ -123,12 +122,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         autoSave = SettingsManager.getInstance().getAutoSaveImages();
-        if (BaseFragment.openCvLoaded) {
-
-            mDataApi = new OpenCvFileApi(getContext());
-        } else {
-            mDataApi = new FileApi(getContext());
-        }
+        mDataApi = new FileApi(getContext());
         mMyOnImageProcessedListener = new MyOnImageProcessedListener();
     }
 
@@ -218,24 +212,19 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     }
 
     Menu menu;
-    MenuAdaptor mResizeAdaptor;
-    RecyclerView.LayoutManager mLayoutManager;
-    public static final int OPEN_ID = 2;
-    public static final int COMPRESS_ID = 3;
-    public static final int SCALE_ID = 4;
-
-    public static final int CROP_ID = 5;
-    public static final int SHARE_ID = 6;
-
-    public static final int SAVE_ID = 7;
-    public static final int RESET_ID = 9;
-    public static final int SETTINGS_ID = 10;
-
-
+    private static final int OPEN_ID = 2;
+    private static final int COMPRESS_ID = 3;
+    private static final int SCALE_ID = 4;
+    private static final int CROP_ID = 5;
+    private static final int SHARE_ID = 6;
+    private static final int SAVE_ID = 7;
+    private static final int RESET_ID = 9;
     @Override
     public void showAd() {
         SelectActivity selectActivity = (SelectActivity) getActivity();
-        selectActivity.showFullScreenAd();
+        if (selectActivity != null) {
+            selectActivity.showFullScreenAd();
+        }
     }
 
     private void fillMenuItems(final Context context, RecyclerView mRecyclerView, final BaseFragment baseFragment) {
@@ -259,102 +248,90 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                 R.drawable.ic_reset));
         menuItemList.add(MenuItem.newInstance(SHARE_ID, context.getString(R.string.action_share),
                 R.drawable.ic_share));
-        MenuAdaptor mResizeAdaptor = new MenuAdaptor(getContext(), menuItemList, new MenuAdaptor.OnMenuSelectedListener() {
-            @Override
-            public void onMenuSelected(MenuItem menuItem) {
+        MenuAdaptor mResizeAdaptor = new MenuAdaptor(getContext(), menuItemList, menuItem -> {
 
-                try {
-                    switch (menuItem.getId()) {
-                        case OPEN_ID:
-                            mResizePresenter.launchgalleryExternalApp(false);
-                            break;
-                        case CROP_ID:
+            try {
+                switch (menuItem.getId()) {
+                    case OPEN_ID:
+                        mResizePresenter.launchgalleryExternalApp(false);
+                        break;
+                    case CROP_ID:
+                        if (mSingleFileImageInfo == null) {
+                            showError(R.string.no_images);
+                            return;
+                        }
+                        String path = mSingleFileImageInfo.getAbsoluteFilePathUri().toString();
+                        Utils.setCropFragmentByPreset((AppCompatActivity) getActivity(), CropDemoPreset.RECT, (path));
+                        mhHandler.postDelayed(() -> showCustomAppBar((AppCompatActivity) getActivity(), true), 100);
 
-                            if (mSingleFileImageInfo == null) {
+                        break;
+                    case SCALE_ID:
+                        if (mSingleFileImageInfo != null) {
+                            showCustomScaleAlert(false, null, mSingleFileImageInfo, ResizeFragment.this);
+                        } else {
+                            if (mMultipleImagesAdaptor == null) {
                                 showError(R.string.no_images);
                                 return;
                             }
+                            showCustomScaleAlert(true, null, mImageInfoMin, ResizeFragment.this);
+                        }
+                        break;
+
+                    case SHARE_ID:
+                        Uri uri = null;
+                        setLoadingIndicator(true);
+                        if (mSingleFileImageInfo != null && mSingleFileImageInfo.getDataFile() != null
+                                && mSingleFileImageInfo.getDataFile().getName() != null) {
 
 
-                            String path = mSingleFileImageInfo.getAbsoluteFilePathUri().toString();
-                            Utils.setCropFragmentByPreset((AppCompatActivity) getActivity(), CropDemoPreset.RECT, (path));
-                            mhHandler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    showCustomAppBar((AppCompatActivity) getActivity(), true);
-                                }
-                            }, 100);
-
-                            break;
-                        case SCALE_ID:
-                            if (mSingleFileImageInfo != null) {
-
-                                showCustomScaleAlert(false, null, mSingleFileImageInfo, ResizeFragment.this);
-                            } else {
-                                if (mMultipleImagesAdaptor == null) {
-                                    showError(R.string.no_images);
-                                    return;
-                                }
-                                showCustomScaleAlert(true, null, mImageInfoMin, ResizeFragment.this);
+                            uri = mDataApi.getImageUriFromCacheWithFileProvider(mSingleFileImageInfo.getDataFile().getName());
+                            if (uri == null) {
+                                uri = mSingleFileImageInfo.getImageUri();
                             }
-                            break;
-
-                        case SHARE_ID:
-                            Uri uri = null;
-                            setLoadingIndicator(true);
-                            if (mSingleFileImageInfo != null && mSingleFileImageInfo.getDataFile() != null
-                                    && mSingleFileImageInfo.getDataFile().getName() != null) {
-
-
-                                uri = mDataApi.getImageUriFromCacheWithFileProvider(mSingleFileImageInfo.getDataFile().getName());
-                                if (uri == null) {
-                                    uri = mSingleFileImageInfo.getImageUri();
+                        } else {
+                            if (mMultipleImagesAdaptor == null) {
+                                showError(R.string.no_images);
+                                return;
+                            }
+                        }
+                        mResizePresenter.shareImage(getContext(), uri != null ? uri.toString() : "");
+                        break;
+                    case RESET_ID:
+                        if (tobedeletedTextView != null) {
+                            tobedeletedTextView.setVisibility(View.GONE);
+                        }
+                        mResizePresenter.applyImageEffect(null, IMAGE_PROCESSING_TASKS.RESET, mMyOnImageProcessedListener, null);
+                        break;
+                    case COMPRESS_ID:
+                        mCompressPercentage = 0;
+                        mKbEnteredValue = 0;
+                        if (mOnCompressTypeChangedListen == null) {
+                            mOnCompressTypeChangedListen = (quality, kbEntered) -> {
+                                if (!kbEntered) {
+                                    mCompressPercentage = quality;
+                                } else {
+                                    mKbEnteredValue = quality;
                                 }
-                            } else {
-                                if (mMultipleImagesAdaptor == null) {
-                                    showError(R.string.no_images);
-                                    return;
+                                if (mSingleFileImageInfo != null) {
+                                    mResizePresenter.applyImageEffect(mSingleFileImageInfo, IMAGE_PROCESSING_TASKS.COMPRESS, mMyOnImageProcessedListener, null);
+
+                                } else {
+                                    doMultipleImageProcessing(IMAGE_PROCESSING_TASKS.COMPRESS, null);
                                 }
-                            }
-                            mResizePresenter.shareImage(getContext(), uri != null ? uri.toString() : "");
-                            break;
-                        case RESET_ID:
-                            if (tobedeletedTextView != null) {
-                                tobedeletedTextView.setVisibility(View.GONE);
-                            }
-                            mResizePresenter.applyImageEffect(null, IMAGE_PROCESSING_TASKS.RESET, mMyOnImageProcessedListener, null);
-                            break;
-                        case COMPRESS_ID:
-                            mCompressPercentage = 0;
-                            mKbEnteredValue = 0;
-                            if (mOnCompressTypeChangedListen == null) {
-                                mOnCompressTypeChangedListen = (quality, kbEntered) -> {
-                                    if (!kbEntered) {
-                                        mCompressPercentage = quality;
-                                    } else {
-                                        mKbEnteredValue = quality;
-                                    }
-                                    if (mSingleFileImageInfo != null) {
-                                        mResizePresenter.applyImageEffect(mSingleFileImageInfo, IMAGE_PROCESSING_TASKS.COMPRESS, mMyOnImageProcessedListener, null);
+                            };
+                        }
+                        baseFragment.showCompressAlert(getContext(), mOnCompressTypeChangedListen, hashMap, mSingleFileImageInfo != null);
+                        break;
+                    case SAVE_ID:
+                        mResizePresenter.saveImage();
 
-                                    } else {
-                                        doMultipleImageProcessing(IMAGE_PROCESSING_TASKS.COMPRESS, null);
-                                    }
-                                };
-                            }
-                            baseFragment.showCompressAlert(getContext(), mOnCompressTypeChangedListen, hashMap, mSingleFileImageInfo != null);
-                            break;
-                        case SAVE_ID:
-                            mResizePresenter.saveImage();
+                        break;
 
-                            break;
-
-                    }
-                } catch (Throwable e) {
-                    showError(R.string.unknown_error);
                 }
-
+            } catch (Throwable e) {
+                showError(R.string.unknown_error);
             }
+
         });
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mResizeAdaptor);
@@ -417,6 +394,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             imageView.setImageResource(menuItem.getImageResourcePath());
             holder.itemView.setOnClickListener(v -> mMenuSelectedListener.onMenuSelected(menuItem));
         }
+
         @Override
         public int getItemCount() {
             return mMenuItemList.size();
@@ -470,47 +448,11 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             compositeDisposable.dispose();
         }
     }
-
     private CompositeDisposable _disposables;
 
     private Observable<ImageInfo> getImageInfoObservable(List<ImageInfo> imageInfoList) {
         return Observable.fromIterable(imageInfoList);
-
     }
-
-    /**
-     * Will process the data with the callable by splitting the data into the specified number of threads.
-     * <b>T</b> is ths type of data being parsed, and <b>U</b> is the type of data being returned.
-     */
-    public static <T, U> Iterable<U> parseDataInParallel(@NonNull List<T> data, final Function<List<T>, Observable<U>> worker) {
-        final int threadCount = Runtime.getRuntime().availableProcessors();
-        ExecutorService threadPoolExecutor = Executors.newFixedThreadPool(threadCount);
-        final Scheduler scheduler = Schedulers.from(threadPoolExecutor);
-
-        final AtomicInteger groupIndex = new AtomicInteger();
-        return Observable.fromIterable(data).groupBy(new Function<T, Object>() {
-            @Override
-            public Object apply(T t) throws Exception {
-                return groupIndex.getAndIncrement() % threadCount;
-            }
-        }).flatMap(new Function<GroupedObservable<Object, T>, ObservableSource<T>>() {
-            @Override
-            public ObservableSource<T> apply(GroupedObservable<Object, T> group) throws Exception {
-
-
-                return group;
-//                return group;
-
-            }
-        }).observeOn(scheduler).toList().flatMapObservable(worker).blockingIterable();
-
-      /*  return Observable.fromIterable(data).groupBy(k -> groupIndex.getAndIncrement() % threadCount)
-                .flatMap(group -> group.observeOn(scheduler).toList().flatMapObservable(worker)).blockingIterable();*/
-
-    }
-
-    //    public ResolutionInfo mResolutionInfo;
-    //  private CompositeDisposable _disposables;
     CompositeDisposable compositeDisposable;
     int adCount = 1;
 
@@ -525,15 +467,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
 
             multipleImageProcessingListener = new MultipleImageProcessingDialog(
-                    new OnProcessingCancelListener() {
-                        @Override
-                        public void onProcessingCanceled(ImageInfo imageInfo, int pos) {
-
-
-                            cancelMultipleImageProcessing(true);
-
-                        }
-                    }, getContext(), image_processing_tasks);
+                    (imageInfo, pos) -> cancelMultipleImageProcessing(true), getContext(), image_processing_tasks);
 
             List<ImageInfo> imageInfoListProcessed = mMultipleImagesAdaptor.getProcessedImageInfoList();
 
@@ -681,31 +615,14 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
 //        super.shareImage(context,mUrlString);
     }
-
     List<ImageInfoLoadingTask> mImageInfoLoadingTasks;
-
-    public void cancelTask() {
-
-    }
-
     Reference<OnImagedSavedListener> mOnImagedSavedListenerWeakReference;
     OnImagedSavedListener mOnImagedSavedListener;
-
     public interface OnImagedSavedListener {
         void onImageSaved(ImageInfo imageInfo);
     }
-
-    public void setOnImagedSavedListener(OnImagedSavedListener onImagedSavedListener) {
-
-//        if(mOnImagedSavedListenerWeakReference==null){
-//            mOnImagedSavedListenerWeakReference = new SoftReference<OnImagedSavedListener>(onImagedSavedListener);
-//        }
-        this.mOnImagedSavedListener = mOnImagedSavedListener;
-    }
-
     boolean saved;
     List<ImageInfo> mImageInfoList;
-
     @Override
     public void saveImage() {
         try {
@@ -785,11 +702,8 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                                         showDeleteTextView(requireActivity());
                                         saved = true;
                                     }
-
                                 }
-
                                 multipleImageProcessingDialog.onProcessingFinished(imageInfo1, count1 + 1, mImageInfoList.size());
-
 
                             }, ImageInfoLoadingTask.TASKS.IMAGE_FILE_SAVE_GALLERY_TO_MY_FOLDER);
                         } else {
@@ -835,11 +749,11 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             if (image_PROCESSING_tasks == IMAGE_PROCESSING_TASKS.SCALE) {
                 int w = resolutionInfo.getWidth();
                 int h = resolutionInfo.getHeight();
-                if (mMultiple == true) {
+                if (mMultiple) {
                     int orgWidth = imageInfo.getWidth();
                     int orgHeight = imageInfo.getHeight();
-                    if (resolutionInfo.isPreResolutionSelected() == true) {
-                        if (resolutionInfo.isAspect() == true) {
+                    if (resolutionInfo.isPreResolutionSelected()) {
+                        if (resolutionInfo.isAspect()) {
                             if (orgWidth > orgHeight) {
 
                                 h = Utils.calculateAspectRatioHeight(new Point(orgWidth, orgHeight), w).y;
@@ -847,7 +761,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                                 w = Utils.calculateAspectRatioWidth(new Point(orgWidth, orgHeight), h).x;
                             }
                         }
-                    } else if (resolutionInfo.isPercentageSelected() == true) {
+                    } else if (resolutionInfo.isPercentageSelected()) {
 
                         if (orgWidth > orgHeight) {
                             w = (int) (orgWidth * w / (float) 100);
@@ -858,7 +772,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                         }
 
                     } else { //custom resolution
-                        if (resolutionInfo.isAspect() == true) {
+                        if (resolutionInfo.isAspect()) {
 
                             if (w > 0) {
 
@@ -883,14 +797,10 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             } else if (image_PROCESSING_tasks == IMAGE_PROCESSING_TASKS.RESET) {
                 //do rotate
                 if (mSingleFileImageInfo != null) {
-
                     mSingleFileImageInfo.setAbsoluteFilePath(mSingleFileImageInfo.getImageUri());
-//                    mImageUrlString = mSingleFileImageInfo.getImageUri().getPath();
-//                    mSingleFileImageInfo = Utils.getImageInfo(mSingleFileImageInfo,getContext(),mSingleFileImageInfo.getImageUri(),mDataApi);
                     mDataApi.copyImageFromGalleryToCache(mSingleFileImageInfo.getDataFile());
                     mResizePresenter.setImageSelected(mImageUrlString);
                 } else {
-
                     mMultipleImagesAdaptor.setmProcessedImageInfoList(new ArrayList<ImageInfo>());
                     List<ImageInfo> imageInfoList = mMultipleImagesAdaptor.getImageInfoList();
                     if (imageInfoList != null) {
@@ -978,21 +888,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         onGalleryImageSelected(mIntent);
         return mView;
     }
-
-    private void removeAd() {
-
-        try {
-            View adParent = getActivity().findViewById(R.id.coordinatorLayout);
-            LinearLayout adContainer = adParent.findViewById(R.id.banner_container_top);
-            if (adContainer != null) {
-                adContainer.removeAllViews();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
     private void showCustomAppBar(AppCompatActivity appCompatActivity, boolean hide) {
         try {
 
@@ -1036,20 +931,19 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             int orgWidth = imageInfo.getWidth();
             int orgHeight = imageInfo.getHeight();
             int newHeight;
-            int newWidth ;
+            int newWidth;
             int newMaxResolution = 0;
             int index = -1;
             List<ResolutionInfo> newResolutionsList = new ArrayList<>();
             int orgResolution = orgWidth * orgHeight;
-            int THRESHOLD = maxResolution;//allow 4 times up scale only
             for (int i = 0; i < nameList.size(); i++) {
                 maxRes = nameList.get(i);
                 index = maxRes.indexOf("x");
                 if (orgWidth > orgHeight) {
-                    newWidth = Integer.valueOf(maxRes.substring(0, index));
+                    newWidth = Integer.parseInt(maxRes.substring(0, index));
                     newHeight = Utils.calculateAspectRatioHeight(new Point(orgWidth, orgHeight), newWidth).y;
                 } else {
-                    newHeight = Integer.valueOf(maxRes.substring(index + 1));
+                    newHeight = Integer.parseInt(maxRes.substring(index + 1));
                     newWidth = Utils.calculateAspectRatioWidth(new Point(orgWidth, orgHeight), newHeight).x;
                 }
 
@@ -1057,22 +951,22 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                 float ratio = ((float) newResolution / (float) orgResolution);
                 ratio = ratio * 100;
 
-                if (newResolution < THRESHOLD) {
+                if (newResolution < maxResolution) {
                     if (newResolution > newMaxResolution) {
                         newMaxResolution = newResolution;
                     }
                     ResolutionInfo resolutionInfo = new ResolutionInfo();
                     if (ratio >= 1) {
-                        maxRes = String.format("%d %s %d (%.0f", newWidth, "x", newHeight, ratio) + "%)";
+                        maxRes = String.format(Locale.getDefault(),"%d %s %d (%.0f", newWidth, "x", newHeight, ratio) + "%)";
                     } else {
-                        maxRes = String.format("%d %s %d (%.1f", newWidth, "x", newHeight, ratio) + "%)";
+                        maxRes = String.format(Locale.getDefault(),"%d %s %d (%.1f", newWidth, "x", newHeight, ratio) + "%)";
 
                     }
                     resolutionInfo.setHeight(newHeight);
                     resolutionInfo.setWidth(newWidth);
                     resolutionInfo.setPercentageOfOriginal((int) ratio);
                     resolutionInfo.setFormatedString(maxRes);
-                    if (newResolutionsList.contains(resolutionInfo) == false) {
+                    if (!newResolutionsList.contains(resolutionInfo)) {
                         newResolutionsList.add(resolutionInfo);
                     }
                 }
@@ -1086,6 +980,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             newResolutionsList.add(0, resolutionInfo);
         }
     }
+
     Executor executor = AsyncTask.SERIAL_EXECUTOR;
     int count = 0;
     int lastIndex;
@@ -1120,29 +1015,29 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                         ImageInfoLoadingTask imageInfoLoadingTask =
                                 new ImageInfoLoadingTask(getContext(), imageInfoInner, mDataApi
                                         , imageInfo -> {
-                                            try {
-                                                Log.e(TAG, imageInfo.toString() + " Loaded ");
-                                                if (mCancelMutipleTask == true) {
-                                                    lastIndex = imageInfoList.indexOf(imageInfo);
-                                                    return;
-                                                }
+                                    try {
+                                        Log.e(TAG, imageInfo.toString() + " Loaded ");
+                                        if (mCancelMutipleTask == true) {
+                                            lastIndex = imageInfoList.indexOf(imageInfo);
+                                            return;
+                                        }
 
-                                                mMultipleImagesAdaptor.setImageInfo(imageInfo);
-                                                if (isEmpty(processedImageInfo)) {
-                                                    showError(R.string.unable_to_load_image);
-                                                    mMultipleImagesAdaptor.remove(imageInfo);
-                                                    return;
-                                                }
-                                                long resInner = imageInfo.getWidth() * imageInfo.getHeight();
-                                                if (resInner < mImageInfoMin.getWidth() * mImageInfoMin.getHeight()) {
-                                                    mImageInfoMin = imageInfo;
-                                                }
-                                            } catch (Exception e) {
-                                                showError(R.string.unknown_error);
-                                            }
+                                        mMultipleImagesAdaptor.setImageInfo(imageInfo);
+                                        if (isEmpty(processedImageInfo)) {
+                                            showError(R.string.unable_to_load_image);
+                                            mMultipleImagesAdaptor.remove(imageInfo);
+                                            return;
+                                        }
+                                        long resInner = (long) imageInfo.getWidth() * imageInfo.getHeight();
+                                        if (resInner < (long) mImageInfoMin.getWidth() * mImageInfoMin.getHeight()) {
+                                            mImageInfoMin = imageInfo;
+                                        }
+                                    } catch (Exception e) {
+                                        showError(R.string.unknown_error);
+                                    }
 
 
-                                        }, ImageInfoLoadingTask.TASKS.IMAGE_INFO_LOAD);
+                                }, ImageInfoLoadingTask.TASKS.IMAGE_INFO_LOAD);
                         mImageInfoLoadingTasks.add(imageInfoLoadingTask);
                         imageInfoLoadingTask.executeOnExecutor(executor);
                     }
@@ -1160,40 +1055,15 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                 imageInfo.getHeight() == 0 || imageInfo.getFileSize() == 0;
     }
 
-    private void showHideMutipleImageMenu(boolean multiple) {
-
-        if (menu != null) {
-            if (multiple) {
-                menu.setGroupVisible(R.id.singleImageItemTwo, false);
-                menu.setGroupVisible(R.id.singleImageItem, false);
-            } else {
-                menu.setGroupVisible(R.id.singleImageItemTwo, true);
-                menu.setGroupVisible(R.id.singleImageItem, true);
-            }
-
-        }
-        mMenuRecyclerView.getAdapter().notifyDataSetChanged();
-    }
-
     private View mView;
-
-
     MultipleImagesAdaptor mMultipleImagesAdaptor;
 
-    ResolutionAdaptor mResolutionAdaptor;
-    ResolutionAdaptor mResolutionAdaptorMenu;
-
     public static ResizeFragment newInstance(Intent intent) {
-
-
         Bundle args = new Bundle();
         Uri uri = intent.getData();
-
         if (uri != null) {
             args.putString(IMAGE_PATH, uri.toString());
-
         }
-
         mIntent = intent;
         mResFileContent = intent.getStringExtra(FileApi.RES_FILE_NAME);
         args.putString(FileApi.RES_FILE_NAME, mResFileContent);
@@ -1260,6 +1130,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         }
 
     }
+
     private final static String CACHE_FILE = "cached_";
     static ImageInfo mSingleFileImageInfo;
 
@@ -1306,6 +1177,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
 
     }
+
     Handler mhHandler;
     TextView sizeTextView;
     @BindView(R.id.tobedeletedTextview)
@@ -1356,42 +1228,12 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         }
 
     }
+
     /**
      * Task used to load mBitmap async from UI thread
      */
     private WeakReference<BitmapLoadingTask> mBitmapLoadingWorkerTask;
-
     private static WeakReference<BitmapProcessingTask> mBitmapProcessingTaskWeakReference;
-
-
-    public void setImageUriAsyncNew(Uri uri) {
-        if (uri != null) {
-            setLoadingIndicator(true);
-            BitmapLoadingTask currentTask =
-                    mBitmapLoadingWorkerTask != null ? mBitmapLoadingWorkerTask.get() : null;
-            if (currentTask != null) {
-                // cancel previous loading (no check if the same URI because camera URI can be the same for
-                // different images)
-                currentTask.cancel(true);
-            }
-
-
-            int desiredWidth = maxWidth;
-            int desiredHeight = maxHeight;
-
-            // either no existing task is working or we canceled it, need to load new URI
-
-            BitmapLoadingTask bitmapLoadingTask = new BitmapLoadingTask(getContext(), mSingleFileImageInfo, mDataApi, desiredWidth, desiredHeight);
-            bitmapLoadingTask.setOnImageUriLoadedListener(bitmapResult -> {
-                mSingleFileImageInfo = null;
-                mResizePresenter.setSelectedImage(bitmapResult);
-            });
-            mBitmapLoadingWorkerTask = new WeakReference<>(bitmapLoadingTask);
-            bitmapLoadingTask.executeOnExecutor(executor);
-        }
-    }
-
-
     public enum IMAGE_PROCESSING_TASKS {
         ROTATE_CLOCKWISE,
         SCALE,
@@ -1399,12 +1241,8 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         SHARPEN,
         RESET,
         COMPRESS
-
     }
-
     static int mCompressPercentage, mKbEnteredValue;
-
-
     //    boolean mChecked =true;\
     public enum Compress_TYPES {
         TEN(90),
@@ -1419,61 +1257,9 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             return code;
         }
     }
-
-    private static class Compress {
-        String name;
-
-
-        Compress_TYPES code;
-
-        Compress(String name, Compress_TYPES code) {
-            this.name = name;
-            this.code = code;
-
-        }
-    }
-
-
-    private class CompressAdaptor extends ArrayAdapter<Compress> {
-        List<Compress> mCompressList;
-        private final long fileSize;
-
-        public CompressAdaptor(@NonNull Context context, List<Compress> compressList, long fileSize) {
-            super(context, 0);
-            mCompressList = compressList;
-            this.fileSize = fileSize;
-        }
-
-        @Override
-        public int getCount() {
-            return mCompressList.size();
-        }
-
-        @NonNull
-        @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
-            View row = LayoutInflater.from(getContext()).inflate(R.layout.compress_row, null);
-
-            Compress compress = getItem(position);
-            TextView textView = row.findViewById(R.id.text_name_percentage);
-            textView.setText(compress.name);
-
-            return row;
-        }
-
-        @Nullable
-        @Override
-        public Compress getItem(int position) {
-            return mCompressList.get(position);
-        }
-    }
     static HashMap<Compress_TYPES, String> hashMap = new HashMap<>();
-
     OnCompressTypeChangedListener mOnCompressTypeChangedListen;
     OnResolutionSelectedListener mOnResolutionSelectedListener;
-
-
     @Override
     public void onResolutionSelected(ResolutionInfo res) {
 
@@ -1524,7 +1310,9 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         }
         Toast.makeText(getActivity(), ex.toString(), Toast.LENGTH_LONG).show();
     }
+
     NestedWebView mWebView;
+
     class MyOnImageProcessedListener implements BitmapProcessingTask.OnImageProcessedListener {
         @Override
         public void onImageLoaded(BitmapResult bitmapResult, final ImageInfo imageInfoOrg) {
@@ -1536,21 +1324,18 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                     if (getContext() == null) {
                         return;
                     }
-                    if (bitmapResult.getError() instanceof OutOfMemoryError) {
+                    if (bitmapResult != null && bitmapResult.getError() instanceof OutOfMemoryError) {
 
                         showError(R.string.not_enough_memory);
                         setLoadingIndicator(false);
                         return;
 
-                    } else {
-                        showError(R.string.unknown_error);
-                        setLoadingIndicator(false);
-
-                        return;
                     }
                 }
                 if (mSingleFileImageInfo != null && imageInfoOrg != null) {
-                    mSingleFileImageInfo.setProcessedUri(bitmapResult.getContentUri());
+                    if (bitmapResult != null) {
+                        mSingleFileImageInfo.setProcessedUri(bitmapResult.getContentUri());
+                    }
                     mSingleFileImageInfo.setSaved(imageInfoOrg.isSaved());
                     mSingleFileImageInfo = imageInfoOrg;
                 }
@@ -1562,14 +1347,11 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                     showAd();
                 }
                 mResizePresenter.setSelectedImage(bitmapResult);
-                mhHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        setLoadingIndicator(false);
+                mhHandler.postDelayed(() -> {
+                    setLoadingIndicator(false);
 
-                        if (mBitmapProcessingTaskWeakReference != null) {
-                            mBitmapProcessingTaskWeakReference.clear();
-                        }
+                    if (mBitmapProcessingTaskWeakReference != null) {
+                        mBitmapProcessingTaskWeakReference.clear();
                     }
                 }, 100);
 
@@ -1578,12 +1360,8 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                 showError(R.string.unknown_error);
             }
         }
-
-
     }
-
     private void showDeleteTextView(Activity activity) {
-
 
         try {
             boolean canDeleteFile = true;
@@ -1703,9 +1481,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             };
             spannableStringBuilder.setSpan(click,
                     startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        /*UnderlineSpan underlineSpan = new UnderlineSpan();
-                        spannableStringBuilder.setSpan(underlineSpan,
-                                startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);*/
             tobedeletedTextView.setText(spannableStringBuilder);
             tobedeletedTextView.setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -1722,14 +1497,10 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     private void processImage(final ImageInfo imageInfo, int w, int h,
                               final IMAGE_PROCESSING_TASKS image_PROCESSING_tasks,
                               BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
-        int nw = w;
-        int nh = h;
 
         mhHandler.post(() -> setLoadingIndicator(true));
-
-
         BitmapProcessingTask bitmapProcessingTask = new BitmapProcessingTask(imageInfo, getContext(),
-                nw, nh, maxResolution, imageInfo.getDataFile(),
+                w, h, maxResolution, imageInfo.getDataFile(),
                 image_PROCESSING_tasks, mCompressPercentage, mKbEnteredValue, mDataApi, mMultiple, autoSave);
         bitmapProcessingTask.setOnImageProcessedListener(onImageProcessedListener);
         bitmapProcessingTask.executeOnExecutor(executor);
