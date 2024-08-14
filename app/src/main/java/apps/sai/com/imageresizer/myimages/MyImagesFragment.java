@@ -35,8 +35,6 @@ import apps.sai.com.imageresizer.data.OpenCvFileApi;
 import apps.sai.com.imageresizer.select.SelectActivity;
 import apps.sai.com.imageresizer.settings.SettingsManager;
 import apps.sai.com.imageresizer.util.ImageInfoLoadingTask;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
@@ -121,13 +119,10 @@ public class MyImagesFragment extends BaseFragment implements MyImagesContract.V
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @BindView(R.id.multiple_image_recycler_view)
     RecyclerView mRecyclerView;
 
-    @BindView(R.id.progressMyImages)
     ProgressBar mProgressBar;
 
-    @BindView(R.id.no_images)
     TextView mNoImagesTextView;
 
     Handler mHandler = new Handler();
@@ -143,24 +138,12 @@ public class MyImagesFragment extends BaseFragment implements MyImagesContract.V
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.resized_images_view, null);
-
-
         mRecyclerView = view.findViewById(R.id.multiple_image_recycler_view);
         mProgressBar = view.findViewById(R.id.progressMyImages);
         mNoImagesTextView = view.findViewById(R.id.no_images);
-
-        ButterKnife.bind(this, view);
-
         setLoadingIndicator(false);
-
-
         final List<ImageInfo> imageInfoList = new ArrayList<>();
-
-//        loadMyImages();
-
         int size = SettingsManager.getInstance().getGridSize();
-
-
         myImagesAdaptor = new MyImagesAdaptor(myImagesPresenter, this, imageInfoList, mRecyclerView, new GridLayoutManager(getContext(), size)
                 , new MyImagesAdaptor.OnUiUpdateListener() {
             @Override

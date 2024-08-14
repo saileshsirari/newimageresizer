@@ -30,7 +30,6 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,9 +55,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import apps.sai.com.imageresizer.BaseFragment;
 import apps.sai.com.imageresizer.R;
@@ -72,7 +68,6 @@ import apps.sai.com.imageresizer.data.ImageInfo;
 import apps.sai.com.imageresizer.data.ResolutionInfo;
 import apps.sai.com.imageresizer.listener.MultipleImageProcessingDialog;
 import apps.sai.com.imageresizer.listener.OnPreferenceChangedListener;
-import apps.sai.com.imageresizer.listener.OnProcessingCancelListener;
 import apps.sai.com.imageresizer.listener.OnResolutionSelectedListener;
 import apps.sai.com.imageresizer.myimages.MyImagesFragment;
 import apps.sai.com.imageresizer.select.MenuItem;
@@ -84,16 +79,8 @@ import apps.sai.com.imageresizer.util.ImageInfoLoadingTask;
 import apps.sai.com.imageresizer.util.MultipleImagesAdaptor;
 import apps.sai.com.imageresizer.util.NestedWebView;
 import apps.sai.com.imageresizer.util.Utils;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.Scheduler;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Function;
-import io.reactivex.observables.GroupedObservable;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Sailesh on 03/01/18.
@@ -108,7 +95,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     private final ResizeContract.Presenter mResizePresenter;
     RecyclerView mMultipleImagesRecyclerView;
     private static Intent mIntent;
-    private Unbinder unbinder;
 
     public ResizeFragment() {
         mResizePresenter = new ResizePresenter();
@@ -357,7 +343,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         if (gridApperaance != gridAppe) {
             gridApperaance = gridAppe;
             if (mMultipleImagesAdaptor != null) {
-                mMultipleImagesAdaptor.setAppereance(gridApperaance);
+                mMultipleImagesAdaptor.setAppearance(gridApperaance);
             }
         }
     }
@@ -649,7 +635,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                 saved = false;
                 if (mMultipleImagesAdaptor == null) {
                     showError(R.string.no_images);
-
                     return;
                 }
 
@@ -865,9 +850,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         super.onDestroy();
         cancelMultipleImageProcessing(true);
         mResizePresenter.dropView();
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
     }
 
     private ProgressBar mProgressBar;
@@ -875,15 +857,15 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_resize, null);
+        View mView = inflater.inflate(R.layout.fragment_resize, null);
         mWebView = mView.findViewById(R.id.webview);
         tobedeletedTextView = mView.findViewById(R.id.tobedeletedTextview);
         if (mhHandler == null) {
             mhHandler = new Handler(Looper.getMainLooper());
         }
-        mProgressBar = getActivity().findViewById(R.id.activityProgressBar);
-        unbinder = ButterKnife.bind(this, mView);
+        mProgressBar = requireActivity().findViewById(R.id.activityProgressBar);
         sizeTextView = mView.findViewById(R.id.size);
+        tobedeletedTextView = mView.findViewById(R.id.tobedeletedTextview);
         mMultipleImagesRecyclerView = mView.findViewById(R.id.multiple_image_recycler_view);
         onGalleryImageSelected(mIntent);
         return mView;
@@ -907,7 +889,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
         } catch (Exception e) {
             e.printStackTrace();
-
         }
     }
 
@@ -918,9 +899,11 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             imageInfo.setWidth(100);
             imageInfo.setHeight(100);
         }
-        mResFileContent = getArguments().getString(FileApi.RES_FILE_NAME);
+        if (getArguments() != null) {
+            mResFileContent = getArguments().getString(FileApi.RES_FILE_NAME);
+        }
         if (mResFileContent == null) {
-            mResFileContent = Utils.loadResolutionsFromAssets(getContext(), R.raw.res_camera);
+            mResFileContent = Utils.loadResolutionsFromAssets(requireContext(), R.raw.res_camera);
         }
         List<String> nameList;
         String[] a = mResFileContent.split("\n");
@@ -1055,9 +1038,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                 imageInfo.getHeight() == 0 || imageInfo.getFileSize() == 0;
     }
 
-    private View mView;
     MultipleImagesAdaptor mMultipleImagesAdaptor;
-
     public static ResizeFragment newInstance(Intent intent) {
         Bundle args = new Bundle();
         Uri uri = intent.getData();
@@ -1180,7 +1161,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
     Handler mhHandler;
     TextView sizeTextView;
-    @BindView(R.id.tobedeletedTextview)
     TextView tobedeletedTextView;
 
     @Override

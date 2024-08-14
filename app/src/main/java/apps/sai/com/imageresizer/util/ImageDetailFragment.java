@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,8 +32,6 @@ import apps.sai.com.imageresizer.data.DataFile;
 import apps.sai.com.imageresizer.data.FileApi;
 import apps.sai.com.imageresizer.data.ImageInfo;
 import apps.sai.com.imageresizer.data.OpenCvFileApi;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by sailesh on 20/01/18.
@@ -41,11 +40,8 @@ import butterknife.ButterKnife;
 public class ImageDetailFragment extends BaseFragment {
     private static final String IMAGE_URI_STRING ="_image_" ;
     private static final String IMAGE_URI_STRING_ORG ="_org" ;
-
     Handler mHandler = new Handler();
-    @BindView(R.id.progressMyImages)
     ProgressBar mProgressBar;
-
     @Override
     public void showError(Throwable th) {
         
@@ -98,7 +94,10 @@ public class ImageDetailFragment extends BaseFragment {
 
         if(orgUri!=null) {
 
-            int orientation = Utils.getImageOrientation(getContext(),orgUri);
+            int orientation = 0;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                orientation = Utils.getImageOrientation(getContext(),orgUri);
+            }
             mImageInfoOrg = new ImageInfo();
             mImageInfoOrg.setImageUri(orgUri);
             mImageInfoOrg.setAbsoluteFilePath(orgUri);
@@ -150,26 +149,33 @@ public class ImageDetailFragment extends BaseFragment {
 
 
     }
-    @BindView(R.id.image_multiple)
     public ImageView webviewOrg;
-    @BindView(R.id.image_multiple_compressed)
     public ImageView webviewCompressed;
-
-    @BindView(R.id.text_name_resolution)
     public TextView resTextView;
-    @BindView(R.id.text_name_size)
     public TextView sizeTextView;
 
-    @BindView(R.id.text_name_compressed_resolution)
     public TextView resTextViewCompressed;
-    @BindView(R.id.text_name_compressed_size)
     public TextView sizeTextViewCompressed;
 
-    @BindView(R.id.seperator)
     public TextView sepTextView;
 
-    @BindView(R.id.parentCompressed)
     View parentCompressedView;
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
+        super.onViewCreated(view, savedInstanceState);
+        webviewOrg = view.findViewById(R.id.image_multiple);
+        webviewCompressed = view.findViewById(R.id.image_multiple_compressed);
+        resTextView = view.findViewById(R.id.text_name_resolution);
+        sizeTextView = view.findViewById(R.id.text_name_size);
+        resTextViewCompressed = view.findViewById(R.id.text_name_compressed_resolution);
+        sizeTextViewCompressed = view.findViewById(R.id.text_name_compressed_size);
+        sepTextView = view.findViewById(R.id.seperator);
+        parentCompressedView = view.findViewById(R.id.parentCompressed);
+        mProgressBar = view.findViewById(R.id.progressMyImages);
+
+    }
 
     ImageInfo mImageInfoOrg,mImageInfoCompressed;
     public static ImageDetailFragment newInstance() {

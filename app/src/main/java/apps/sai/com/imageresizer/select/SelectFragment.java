@@ -42,8 +42,6 @@ import apps.sai.com.imageresizer.resize.ResizeFragment;
 import apps.sai.com.imageresizer.settings.SettingsFragment;
 import apps.sai.com.imageresizer.util.UpgradeDialog;
 import apps.sai.com.imageresizer.util.Utils;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by sailesh on 03/01/18.
@@ -51,17 +49,10 @@ import butterknife.ButterKnife;
 
 public class SelectFragment extends BaseFragment implements SelectContract.View {
 
-
-    //    private static final int REQUEST_WRITE_STORAGE = 3;
-    @BindView(R.id.res_recycler_view)
     RecyclerView mRecyclerView;
-
     SelectContract.Presenter mSelectPresenter;
-
     RecyclerView.LayoutManager mLayoutManager;
     ResizeAdaptor mResizeAdaptor;
-
-
     @Override
     public void showAd() {
         SelectActivity selectActivity = (SelectActivity) getActivity();
@@ -96,6 +87,12 @@ public class SelectFragment extends BaseFragment implements SelectContract.View 
             }
         }, 1000);
         mLayoutManager = new LinearLayoutManager(getContext());
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        mRecyclerView = view.findViewById(R.id.res_recycler_view);
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
@@ -189,8 +186,7 @@ public class SelectFragment extends BaseFragment implements SelectContract.View 
                 case LoaderCallbackInterface.SUCCESS: {
                     Log.i(TAG, "OpenCV loaded successfully");
                     openCvLoaded = true;
-                    BaseFragment.openCvLoaded = true;
-
+                    BaseFragment.openCvLoaded = false;
                     if (getContext() == null) {
                         return;
                     }
@@ -220,7 +216,6 @@ public class SelectFragment extends BaseFragment implements SelectContract.View 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_select, null);
-        ButterKnife.bind(this, view);
         mRecyclerView = view.findViewById(R.id.res_recycler_view);
         mRecyclerView.setLayoutManager(mLayoutManager);
         fillMenuItems();
@@ -366,12 +361,7 @@ public class SelectFragment extends BaseFragment implements SelectContract.View 
             final MenuItem menuItem = mMenuItemList.get(position);
             nameTextView.setText(menuItem.getName());
             imageView.setImageResource(menuItem.getImageResourcePath());
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mMenuSelectedListener.onMenuSelected(menuItem);
-                }
-            });
+            holder.itemView.setOnClickListener(v -> mMenuSelectedListener.onMenuSelected(menuItem));
         }
 
         @Override

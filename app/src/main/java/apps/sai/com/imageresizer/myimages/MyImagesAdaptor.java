@@ -34,8 +34,6 @@ import apps.sai.com.imageresizer.util.ImageDetailFragment;
 import apps.sai.com.imageresizer.util.ImageInfoLoadingTask;
 import apps.sai.com.imageresizer.util.SpacesItemDecoration;
 import apps.sai.com.imageresizer.util.Utils;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by sailesh on 20/01/18.
@@ -357,7 +355,7 @@ public class MyImagesAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             View view = LayoutInflater.from(mContext.getContext()).inflate(R.layout.mymultiple_image_row, null);
 
-            return new MyImagesAdaptor.MutilpleImagesHolder(view);
+            return new MultipleImagesHolder(view);
         }
 
         View view = LayoutInflater.from(mContext.getContext()).inflate(R.layout.header_gridview, null);
@@ -394,8 +392,8 @@ public class MyImagesAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolde
         ImageInfo imageInfo = mImageInfoList.get(position);
 
 
-        if (holder1 instanceof MyImagesAdaptor.MutilpleImagesHolder) {
-            MyImagesAdaptor.MutilpleImagesHolder holder = (MutilpleImagesHolder) holder1;
+        if (holder1 instanceof MultipleImagesHolder) {
+            MultipleImagesHolder holder = (MultipleImagesHolder) holder1;
 
 
             RelativeLayout.LayoutParams reLayoutParams = new RelativeLayout.LayoutParams(holder.imageView.getLayoutParams().width, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -569,28 +567,21 @@ public class MyImagesAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return mImageInfoList.size();
     }
 
-    public static class MutilpleImagesHolder extends RecyclerView.ViewHolder {
+    public static class MultipleImagesHolder extends RecyclerView.ViewHolder {
 
         View rootView;
-        @BindView(R.id.image_multiple)
         public ImageView imageView;
-        @BindView(R.id.text_name_resolution)
         public TextView resTextView;
-        @BindView(R.id.text_name_size)
         public TextView sizeTextView;
-        @BindView(R.id.checkbox)
         public CheckBox checkBox;
 
 
-        public MutilpleImagesHolder(View itemView) {
+        public MultipleImagesHolder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.image_multiple);
             resTextView = itemView.findViewById(R.id.text_name_resolution);
             sizeTextView = itemView.findViewById(R.id.text_name_size);
             checkBox = itemView.findViewById(R.id.checkbox);
-
-            ButterKnife.bind(this, itemView);
-
         }
     }
 }
