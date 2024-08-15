@@ -33,6 +33,7 @@ import apps.sai.com.imageresizer.data.ImageInfo;
 import apps.sai.com.imageresizer.select.SelectActivity;
 import apps.sai.com.imageresizer.settings.SettingsManager;
 import apps.sai.com.imageresizer.util.ImageInfoLoadingTask;
+import apps.sai.com.imageresizer.util.ImageOperations;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
@@ -214,7 +215,7 @@ public class MyImagesFragment extends BaseFragment implements MyImagesContract.V
 
             ImageInfoLoadingTask imageInfoLoadingTask =
                     new ImageInfoLoadingTask(getContext(), imageInfoInner, dataApi
-                            , new ImageInfoLoadingTask.OnImageInfoProcesedListener() {
+                            , new ImageInfoLoadingTask.OnImageInfoProcessedListener() {
 
                         @Override
                         public void onImageProcessed(ImageInfo imageInfo) {
@@ -237,7 +238,7 @@ public class MyImagesFragment extends BaseFragment implements MyImagesContract.V
 
 
                         }
-                    }, ImageInfoLoadingTask.TASKS.IMAGE_INFO_LOAD);
+                    }, ImageOperations.IMAGE_INFO_LOAD);
             imageInfoLoadingTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
             mImageInfoLoadingTaskList.add(imageInfoLoadingTask);
 //

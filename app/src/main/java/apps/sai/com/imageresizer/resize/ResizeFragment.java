@@ -76,7 +76,10 @@ import apps.sai.com.imageresizer.select.SelectActivity;
 import apps.sai.com.imageresizer.settings.SettingsManager;
 import apps.sai.com.imageresizer.util.BitmapLoadingTask;
 import apps.sai.com.imageresizer.util.BitmapProcessingTask;
+import apps.sai.com.imageresizer.util.ImageInfoLoader;
 import apps.sai.com.imageresizer.util.ImageInfoLoadingTask;
+import apps.sai.com.imageresizer.util.ImageOperations;
+import apps.sai.com.imageresizer.util.ImageProcessor;
 import apps.sai.com.imageresizer.util.MultipleImagesAdaptor;
 import apps.sai.com.imageresizer.util.NestedWebView;
 import apps.sai.com.imageresizer.util.Utils;
@@ -96,7 +99,8 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     private final ResizeContract.Presenter mResizePresenter;
     RecyclerView mMultipleImagesRecyclerView;
     private static Intent mIntent;
-    ResizeViewModel resizeViewModel ;
+    ResizeViewModel resizeViewModel;
+
     public ResizeFragment() {
         mResizePresenter = new ResizePresenter();
     }
@@ -117,7 +121,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     public void proccessGalleryImage(Intent data) {
         mResizePresenter.onGalleryImageSelected(data);
     }
-
 
 
     @Override
@@ -205,6 +208,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     private static final int SHARE_ID = 6;
     private static final int SAVE_ID = 7;
     private static final int RESET_ID = 9;
+
     @Override
     public void showAd() {
         SelectActivity selectActivity = (SelectActivity) getActivity();
@@ -404,28 +408,16 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         menu.clear();
         this.menu = menu;
         showCustomAppBar((AppCompatActivity) getActivity(), false);
-
-//         inflater.inflate(R.menu.main, menu);
-//        super.onCreateOptionsMenu(menu,inflater);
-
-
     }
 
-    List<ImageInfo> mImageInfoListCached;
-
-
     MultipleImageProcessingDialog multipleImageProcessingListener;
-
-    //static String mCachedUrlString;
-
     volatile boolean mCancelMutipleTask;
 
     public void cancelMultipleImageProcessing(boolean cancel) {
-
         mCancelMutipleTask = cancel;
         if (mImageInfoLoadingTasks != null) {
             for (int i = 0; i < mImageInfoLoadingTasks.size(); i++) {
-                mImageInfoLoadingTasks.get(i).cancel(false);
+              //  mImageInfoLoadingTasks.get(i).cancel(false);
             }
         }
 
@@ -434,11 +426,13 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             compositeDisposable.dispose();
         }
     }
+
     private CompositeDisposable _disposables;
 
     private Observable<ImageInfo> getImageInfoObservable(List<ImageInfo> imageInfoList) {
         return Observable.fromIterable(imageInfoList);
     }
+
     CompositeDisposable compositeDisposable;
     int adCount = 1;
 
@@ -601,14 +595,18 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
 //        super.shareImage(context,mUrlString);
     }
-    List<ImageInfoLoadingTask> mImageInfoLoadingTasks;
+
+    List<ImageInfoLoader> mImageInfoLoadingTasks;
     Reference<OnImagedSavedListener> mOnImagedSavedListenerWeakReference;
     OnImagedSavedListener mOnImagedSavedListener;
+
     public interface OnImagedSavedListener {
         void onImageSaved(ImageInfo imageInfo);
     }
+
     boolean saved;
     List<ImageInfo> mImageInfoList;
+
     @Override
     public void saveImage() {
         try {
@@ -690,10 +688,10 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                                 }
                                 multipleImageProcessingDialog.onProcessingFinished(imageInfo1, count1 + 1, mImageInfoList.size());
 
-                            }, ImageInfoLoadingTask.TASKS.IMAGE_FILE_SAVE_GALLERY_TO_MY_FOLDER);
+                            }, ImageOperations.IMAGE_FILE_SAVE_GALLERY_TO_MY_FOLDER);
                         } else {
                             imageInfoLoadingTask = new ImageInfoLoadingTask(getContext(), imageInfo,
-                                    mDataApi, new ImageInfoLoadingTask.OnImageInfoProcesedListener() {
+                                    mDataApi, new ImageInfoLoadingTask.OnImageInfoProcessedListener() {
                                 @Override
                                 public void onImageProcessed(ImageInfo imageInfo) {
                                     int count = mImageInfoList.indexOf(imageInfo);
@@ -715,9 +713,9 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                                     }
                                     multipleImageProcessingDialog.onProcessingFinished(imageInfo, count + 1, mImageInfoList.size());
                                 }
-                            }, ImageInfoLoadingTask.TASKS.IMAGE_FILE_SAVE_CACHE_TO_GALLERY);
+                            }, ImageOperations.IMAGE_FILE_SAVE_CACHE_TO_GALLERY);
                         }
-                        mImageInfoLoadingTasks.add(imageInfoLoadingTask);
+                       // mImageInfoLoadingTasks.add(imageInfoLoadingTask);
                         imageInfoLoadingTask.executeOnExecutor(executor);
                     }
                     setLoadingIndicator(false);
@@ -831,7 +829,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mResizePresenter.takeView(this);
-        resizeViewModel= new ViewModelProvider(this).get(ResizeViewModel.class);
+        resizeViewModel = new ViewModelProvider(this).get(ResizeViewModel.class);
         SelectActivity selectActivity = (SelectActivity) getActivity();
         if (selectActivity != null) {
             selectActivity.setCurrentFragment(this);
@@ -869,6 +867,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         onGalleryImageSelected(mIntent);
         return mView;
     }
+
     private void showCustomAppBar(AppCompatActivity appCompatActivity, boolean hide) {
         try {
 
@@ -939,9 +938,9 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                     }
                     ResolutionInfo resolutionInfo = new ResolutionInfo();
                     if (ratio >= 1) {
-                        maxRes = String.format(Locale.getDefault(),"%d %s %d (%.0f", newWidth, "x", newHeight, ratio) + "%)";
+                        maxRes = String.format(Locale.getDefault(), "%d %s %d (%.0f", newWidth, "x", newHeight, ratio) + "%)";
                     } else {
-                        maxRes = String.format(Locale.getDefault(),"%d %s %d (%.1f", newWidth, "x", newHeight, ratio) + "%)";
+                        maxRes = String.format(Locale.getDefault(), "%d %s %d (%.1f", newWidth, "x", newHeight, ratio) + "%)";
 
                     }
                     resolutionInfo.setHeight(newHeight);
@@ -992,36 +991,32 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                     mImageInfoLoadingTasks = new ArrayList<>();
                     cancelMultipleImageProcessing(false);
                     for (int i = 0; i < imageInfoList.size(); i++) {
-
                         ImageInfo imageInfoInner = imageInfoList.get(i);
-                        ImageInfoLoadingTask imageInfoLoadingTask =
-                                new ImageInfoLoadingTask(getContext(), imageInfoInner, mDataApi
-                                        , imageInfo -> {
-                                    try {
-                                        Log.e(TAG, imageInfo.toString() + " Loaded ");
-                                        if (mCancelMutipleTask) {
-                                            lastIndex = imageInfoList.indexOf(imageInfo);
-                                            return;
-                                        }
+                        ImageInfoLoader imageInfoLoadingTask =
+                                new ImageInfoLoader(imageInfoInner, mDataApi
+                                        , ImageOperations.IMAGE_INFO_LOAD);
+                        ImageInfo imageInfo = imageInfoLoadingTask.process(getContext());
+                        try {
+                            Log.e(TAG, imageInfo + " Loaded ");
+                            if (mCancelMutipleTask) {
+                                lastIndex = imageInfoList.indexOf(imageInfo);
+                                return;
+                            }
 
-                                        mMultipleImagesAdaptor.setImageInfo(imageInfo);
-                                        if (isEmpty(processedImageInfo)) {
-                                            showError(R.string.unable_to_load_image);
-                                            mMultipleImagesAdaptor.remove(imageInfo);
-                                            return;
-                                        }
-                                        long resInner = (long) imageInfo.getWidth() * imageInfo.getHeight();
-                                        if (resInner < (long) mImageInfoMin.getWidth() * mImageInfoMin.getHeight()) {
-                                            mImageInfoMin = imageInfo;
-                                        }
-                                    } catch (Exception e) {
-                                        showError(R.string.unknown_error);
-                                    }
-
-
-                                }, ImageInfoLoadingTask.TASKS.IMAGE_INFO_LOAD);
+                            mMultipleImagesAdaptor.setImageInfo(imageInfo);
+                            if (isEmpty(processedImageInfo)) {
+                                showError(R.string.unable_to_load_image);
+                                mMultipleImagesAdaptor.remove(imageInfo);
+                                return;
+                            }
+                            long resInner = (long) imageInfo.getWidth() * imageInfo.getHeight();
+                            if (resInner < (long) mImageInfoMin.getWidth() * mImageInfoMin.getHeight()) {
+                                mImageInfoMin = imageInfo;
+                            }
+                        } catch (Exception e) {
+                            showError(R.string.unknown_error);
+                        }
                         mImageInfoLoadingTasks.add(imageInfoLoadingTask);
-                        imageInfoLoadingTask.executeOnExecutor(executor);
                     }
                 });
             } catch (Throwable t) {
@@ -1038,6 +1033,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     }
 
     MultipleImagesAdaptor mMultipleImagesAdaptor;
+
     public static ResizeFragment newInstance(Intent intent) {
         Bundle args = new Bundle();
         Uri uri = intent.getData();
@@ -1172,7 +1168,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             mMultipleImagesRecyclerView.setVisibility(View.GONE);
             ImageInfoLoadingTask imageInfoLoadingTask =
                     new ImageInfoLoadingTask(getContext(), mSingleFileImageInfo, mDataApi
-                            , new ImageInfoLoadingTask.OnImageInfoProcesedListener() {
+                            , new ImageInfoLoadingTask.OnImageInfoProcessedListener() {
 
 
                         @Override
@@ -1196,7 +1192,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                             }
 
                         }
-                    }, ImageInfoLoadingTask.TASKS.IMAGE_INFO_LOAD);
+                    }, ImageOperations.IMAGE_INFO_LOAD);
             imageInfoLoadingTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
 
 
@@ -1214,6 +1210,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     private WeakReference<BitmapLoadingTask> mBitmapLoadingWorkerTask;
     private static WeakReference<BitmapProcessingTask> mBitmapProcessingTaskWeakReference;
     static int mCompressPercentage, mKbEnteredValue;
+
     //    boolean mChecked =true;\
     public enum Compress_TYPES {
         TEN(90),
@@ -1228,9 +1225,11 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             return code;
         }
     }
+
     static HashMap<Compress_TYPES, String> hashMap = new HashMap<>();
     OnCompressTypeChangedListener mOnCompressTypeChangedListen;
     OnResolutionSelectedListener mOnResolutionSelectedListener;
+
     @Override
     public void onResolutionSelected(ResolutionInfo res) {
 
@@ -1332,6 +1331,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             }
         }
     }
+
     private void showDeleteTextView(Activity activity) {
 
         try {
@@ -1468,13 +1468,13 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     private void processImage(final ImageInfo imageInfo, int w, int h,
                               final ImageProcessingTasks imageProcessingTasks,
                               BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
-
-        mhHandler.post(() -> setLoadingIndicator(true));
-        BitmapProcessingTask bitmapProcessingTask = new BitmapProcessingTask(imageInfo, getContext(),
+        setLoadingIndicator(true);
+        ImageProcessor imageProcessor = new ImageProcessor(imageInfo, getContext(),
                 w, h, maxResolution, imageInfo.getDataFile(),
                 imageProcessingTasks, mCompressPercentage, mKbEnteredValue, mDataApi, mMultiple, autoSave);
-        bitmapProcessingTask.setOnImageProcessedListener(onImageProcessedListener);
-        bitmapProcessingTask.executeOnExecutor(executor);
+        imageProcessor.setOnImageProcessedListener(onImageProcessedListener);
+        imageProcessor.process();
+        setLoadingIndicator(false);
     }
 
     @Override
