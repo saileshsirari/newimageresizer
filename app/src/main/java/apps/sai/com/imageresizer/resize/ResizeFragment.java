@@ -39,6 +39,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -95,7 +96,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     private final ResizeContract.Presenter mResizePresenter;
     RecyclerView mMultipleImagesRecyclerView;
     private static Intent mIntent;
-
+    ResizeViewModel resizeViewModel ;
     public ResizeFragment() {
         mResizePresenter = new ResizePresenter();
     }
@@ -116,6 +117,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     public void proccessGalleryImage(Intent data) {
         mResizePresenter.onGalleryImageSelected(data);
     }
+
 
 
     @Override
@@ -284,7 +286,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                         if (tobedeletedTextView != null) {
                             tobedeletedTextView.setVisibility(View.GONE);
                         }
-                        mResizePresenter.applyImageEffect(null, IMAGE_PROCESSING_TASKS.RESET, mMyOnImageProcessedListener, null);
+                        mResizePresenter.applyImageEffect(null, ImageProcessingTasks.RESET, mMyOnImageProcessedListener, null);
                         break;
                     case COMPRESS_ID:
                         mCompressPercentage = 0;
@@ -297,10 +299,10 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                                     mKbEnteredValue = quality;
                                 }
                                 if (mSingleFileImageInfo != null) {
-                                    mResizePresenter.applyImageEffect(mSingleFileImageInfo, IMAGE_PROCESSING_TASKS.COMPRESS, mMyOnImageProcessedListener, null);
+                                    mResizePresenter.applyImageEffect(mSingleFileImageInfo, ImageProcessingTasks.COMPRESS, mMyOnImageProcessedListener, null);
 
                                 } else {
-                                    doMultipleImageProcessing(IMAGE_PROCESSING_TASKS.COMPRESS, null);
+                                    doMultipleImageProcessing(ImageProcessingTasks.COMPRESS, null);
                                 }
                             };
                         }
@@ -440,7 +442,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     CompositeDisposable compositeDisposable;
     int adCount = 1;
 
-    private void doMultipleImageProcessing(final IMAGE_PROCESSING_TASKS image_processing_tasks, final ResolutionInfo resolutionInfo) {
+    private void doMultipleImageProcessing(final ImageProcessingTasks imageProcessingTasks, final ResolutionInfo resolutionInfo) {
         try {
 
             if (mMultipleImagesAdaptor == null) {
@@ -451,7 +453,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
 
             multipleImageProcessingListener = new MultipleImageProcessingDialog(
-                    (imageInfo, pos) -> cancelMultipleImageProcessing(true), getContext(), image_processing_tasks);
+                    (imageInfo, pos) -> cancelMultipleImageProcessing(true), getContext(), imageProcessingTasks);
 
             List<ImageInfo> imageInfoListProcessed = mMultipleImagesAdaptor.getProcessedImageInfoList();
 
@@ -465,7 +467,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                 int index = imageInfoList.indexOf(imageInfo);
                 if (index != -1) {
                     index = index + 1;
-                    mMultipleImagesAdaptor.showProcessedInfoList(new ArrayList<>(), image_processing_tasks);
+                    mMultipleImagesAdaptor.showProcessedInfoList(new ArrayList<>(), imageProcessingTasks);
                     multipleImageProcessingListener.onProcessingStarted(imageInfo, index, count);
 
                 }
@@ -477,7 +479,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                         }
                     }
                 }));
-                mResizePresenter.applyImageEffect(imageInfo, image_processing_tasks, new BitmapProcessingTask.OnImageProcessedListener() {
+                mResizePresenter.applyImageEffect(imageInfo, imageProcessingTasks, new BitmapProcessingTask.OnImageProcessedListener() {
                     @Override
                     public void onImageLoaded(final BitmapResult bitmapResult, final ImageInfo imageInfoOrg) {
                         try {
@@ -530,9 +532,9 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                                     mCancelMutipleTask = false;
                                     return;
                                 }
-                                mResizePresenter.applyImageEffect(imageInfo, image_processing_tasks, this, resolutionInfo);
+                                mResizePresenter.applyImageEffect(imageInfo, imageProcessingTasks, this, resolutionInfo);
                             } else {
-                                mMultipleImagesAdaptor.showProcessedInfoList(mImageInfoListCached, image_processing_tasks);
+                                mMultipleImagesAdaptor.showProcessedInfoList(mImageInfoListCached, imageProcessingTasks);
 
                                 multipleImageProcessingListener.onProcessingDone(mImageInfoListCached);
                             }
@@ -727,9 +729,9 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     }
 
     @Override
-    public Bitmap applyImageEffect(ImageInfo imageInfo, IMAGE_PROCESSING_TASKS image_PROCESSING_tasks, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo) {
-        if (image_PROCESSING_tasks != null) {
-            if (image_PROCESSING_tasks == IMAGE_PROCESSING_TASKS.SCALE) {
+    public Bitmap applyImageEffect(ImageInfo imageInfo, ImageProcessingTasks imageProcessingTasks, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo) {
+        if (imageProcessingTasks != null) {
+            if (imageProcessingTasks == ImageProcessingTasks.SCALE) {
                 int w = resolutionInfo.getWidth();
                 int h = resolutionInfo.getHeight();
                 if (mMultiple) {
@@ -771,13 +773,13 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                 }
                 //do scaling
                 scaleImage(imageInfo, w, h, onImageProcessedListener);
-            } else if (image_PROCESSING_tasks == IMAGE_PROCESSING_TASKS.ROTATE_CLOCKWISE) {
+            } else if (imageProcessingTasks == ImageProcessingTasks.ROTATE_CLOCKWISE) {
                 //do rotate
                 rotateImageClockWise(imageInfo, onImageProcessedListener);
-            } else if (image_PROCESSING_tasks == IMAGE_PROCESSING_TASKS.BLUR) {
+            } else if (imageProcessingTasks == ImageProcessingTasks.BLUR) {
                 //do rotate
                 blurImage(imageInfo, onImageProcessedListener);
-            } else if (image_PROCESSING_tasks == IMAGE_PROCESSING_TASKS.RESET) {
+            } else if (imageProcessingTasks == ImageProcessingTasks.RESET) {
                 //do rotate
                 if (mSingleFileImageInfo != null) {
                     mSingleFileImageInfo.setAbsoluteFilePath(mSingleFileImageInfo.getImageUri());
@@ -794,10 +796,10 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                     }
                 }
 
-            } else if (image_PROCESSING_tasks == IMAGE_PROCESSING_TASKS.SHARPEN) {
+            } else if (imageProcessingTasks == ImageProcessingTasks.SHARPEN) {
                 //do rotate
                 sharpenImage(imageInfo, onImageProcessedListener);
-            } else if (image_PROCESSING_tasks == IMAGE_PROCESSING_TASKS.COMPRESS) {
+            } else if (imageProcessingTasks == ImageProcessingTasks.COMPRESS) {
                 compressImage(imageInfo, onImageProcessedListener);
             }
         }
@@ -805,31 +807,31 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     }
 
     public void blurImage(ImageInfo bitmap, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
-        processImage(bitmap, 0, 0, IMAGE_PROCESSING_TASKS.BLUR, onImageProcessedListener);
+        processImage(bitmap, 0, 0, ImageProcessingTasks.BLUR, onImageProcessedListener);
     }
 
     public void sharpenImage(ImageInfo bitmap, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
-        processImage(bitmap, 0, 0, IMAGE_PROCESSING_TASKS.SHARPEN, onImageProcessedListener);
+        processImage(bitmap, 0, 0, ImageProcessingTasks.SHARPEN, onImageProcessedListener);
     }
 
     public void compressImage(ImageInfo bitmap, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
-        processImage(bitmap, 0, 0, IMAGE_PROCESSING_TASKS.COMPRESS, onImageProcessedListener);
+        processImage(bitmap, 0, 0, ImageProcessingTasks.COMPRESS, onImageProcessedListener);
     }
 
     public void rotateImageClockWise(ImageInfo bitmap, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
-        processImage(bitmap, 0, 0, IMAGE_PROCESSING_TASKS.ROTATE_CLOCKWISE, onImageProcessedListener);
+        processImage(bitmap, 0, 0, ImageProcessingTasks.ROTATE_CLOCKWISE, onImageProcessedListener);
     }
 
 
     public void scaleImage(ImageInfo bitmap, int w, int h, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
-        processImage(bitmap, w, h, IMAGE_PROCESSING_TASKS.SCALE, onImageProcessedListener);
+        processImage(bitmap, w, h, ImageProcessingTasks.SCALE, onImageProcessedListener);
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mResizePresenter.takeView(this);
-
+        resizeViewModel= new ViewModelProvider(this).get(ResizeViewModel.class);
         SelectActivity selectActivity = (SelectActivity) getActivity();
         if (selectActivity != null) {
             selectActivity.setCurrentFragment(this);
@@ -838,7 +840,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
     @Override
     public void onDestroyView() {
-
         showCustomAppBar((AppCompatActivity) getActivity(), true);
         super.onDestroyView();
     }
@@ -998,7 +999,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                                         , imageInfo -> {
                                     try {
                                         Log.e(TAG, imageInfo.toString() + " Loaded ");
-                                        if (mCancelMutipleTask == true) {
+                                        if (mCancelMutipleTask) {
                                             lastIndex = imageInfoList.indexOf(imageInfo);
                                             return;
                                         }
@@ -1056,7 +1057,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     public void setLoadingIndicator(boolean show) {
 
         if (mProgressBar != null) {
-            if (true == show) {
+            if (show) {
                 mProgressBar.setVisibility(View.VISIBLE);
             } else {
                 mProgressBar.setVisibility(View.GONE);
@@ -1212,14 +1213,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
      */
     private WeakReference<BitmapLoadingTask> mBitmapLoadingWorkerTask;
     private static WeakReference<BitmapProcessingTask> mBitmapProcessingTaskWeakReference;
-    public enum IMAGE_PROCESSING_TASKS {
-        ROTATE_CLOCKWISE,
-        SCALE,
-        BLUR,
-        SHARPEN,
-        RESET,
-        COMPRESS
-    }
     static int mCompressPercentage, mKbEnteredValue;
     //    boolean mChecked =true;\
     public enum Compress_TYPES {
@@ -1269,9 +1262,9 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
             } else {
                 if (mSingleFileImageInfo != null) {
-                    processImage(mSingleFileImageInfo, res.getWidth(), res.getHeight(), IMAGE_PROCESSING_TASKS.SCALE, mMyOnImageProcessedListener);
+                    processImage(mSingleFileImageInfo, res.getWidth(), res.getHeight(), ImageProcessingTasks.SCALE, mMyOnImageProcessedListener);
                 } else {
-                    doMultipleImageProcessing(IMAGE_PROCESSING_TASKS.SCALE, res);
+                    doMultipleImageProcessing(ImageProcessingTasks.SCALE, res);
                 }
             }
         } catch (Throwable t) {
@@ -1473,13 +1466,13 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     static int counter;
 
     private void processImage(final ImageInfo imageInfo, int w, int h,
-                              final IMAGE_PROCESSING_TASKS image_PROCESSING_tasks,
+                              final ImageProcessingTasks imageProcessingTasks,
                               BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
 
         mhHandler.post(() -> setLoadingIndicator(true));
         BitmapProcessingTask bitmapProcessingTask = new BitmapProcessingTask(imageInfo, getContext(),
                 w, h, maxResolution, imageInfo.getDataFile(),
-                image_PROCESSING_tasks, mCompressPercentage, mKbEnteredValue, mDataApi, mMultiple, autoSave);
+                imageProcessingTasks, mCompressPercentage, mKbEnteredValue, mDataApi, mMultiple, autoSave);
         bitmapProcessingTask.setOnImageProcessedListener(onImageProcessedListener);
         bitmapProcessingTask.executeOnExecutor(executor);
     }

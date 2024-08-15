@@ -9,7 +9,6 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.os.SystemClock;
-import android.util.Log;
 
 
 import java.io.Closeable;
@@ -24,26 +23,11 @@ import java.nio.ByteBuffer;
 
 public class ImageUtils {
 
-    public static Bitmap scaleImage(Context context , Bitmap unscaledBitmap,int newWidth,int newHeight) {
+    public static Bitmap scaleImage(Bitmap unscaledBitmap, int newWidth, int newHeight) {
         final long startTime = SystemClock.uptimeMillis();
-//        int mDstWidth =(int)(unscaledBitmap.getWidth()*times);// (int)(times*context.getResources().getDimensionPixelSize(R.dimen.destination_width));
-//        int  mDstHeight =(int)(unscaledBitmap.getHeight()*times);
-//        int  mDstHeight =(int) (times*context.getResources().getDimensionPixelSize(R.dimen.destination_height));
-        // Part 1: Decode image
-        /*Bitmap unscaledBitmap = ScalingUtilities.decodeResource(getResources(), mSourceId,
-                mDstWidth, mDstHeight, ScalingLogic.FIT);*/
-
-        // Part 2: Scale image
         Bitmap scaledBitmap = ScalingUtilities.createScaledBitmap(unscaledBitmap, newWidth,
                 newHeight, ScalingUtilities.ScalingLogic.FIT);
-
-        // Calculate memory usage and performance statistics
-        final int memUsageKb = (unscaledBitmap.getRowBytes() * unscaledBitmap.getHeight()) / 1024;
-        final long stopTime = SystemClock.uptimeMillis();
-
-        // Publish results
         unscaledBitmap.recycle();
-
         return scaledBitmap;
     }
 

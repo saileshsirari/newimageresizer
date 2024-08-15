@@ -93,13 +93,10 @@ public class Utils {
             return true;
         }
 
-        if (SettingsManager.getInstance().isLegacyUpgraded()) {
-            return true;
-        }
+        return SettingsManager.getInstance().isLegacyUpgraded();
 
 
         //If something goes wrong, assume the user has the pro version
-        return false;
     }
     /**
      * In most cases you need only to set crop aspect ration and max size for resulting image.
@@ -290,9 +287,8 @@ public class Utils {
 
     public static String getPath(Context context, Uri uri) {
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-
         // DocumentProvider
-        if (isKitKat == true) {
+        if (isKitKat) {
             if (DocumentsContract.isDocumentUri(context, uri)) {
                 // ExternalStorageProvider
                 if (isExternalStorageDocument(uri)) {
@@ -334,7 +330,6 @@ public class Utils {
             }
         } else if ("content".equalsIgnoreCase(uri.getScheme())) {
             // MediaStore (and general)
-
             // Return the remote address
             if (isGooglePhotosUri(uri)) {
                 return uri.getLastPathSegment();
@@ -424,26 +419,22 @@ public class Utils {
                    /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                         savedOnSD = DocumentsContract.deleteDocument(context.getContentResolver(), url);
                     }*/
-                if (savedOnSD == false) {
+                if (!savedOnSD) {
                     ImageInfo imageInfo = null;
                     DataApi dataApi = new FileApi(context);
                     imageInfo = Utils.getImageInfo(imageInfo, context, url, dataApi);
-                    dataApi.deleteImageFile(context,imageInfo, null);
+                    dataApi.deleteImageFile(context, imageInfo, null);
 
 
                     File file = new File(imageInfo.getAbsoluteFilePathUri().getPath());
-                    if (file.exists() == true) {
+                    if (file.exists()) {
                         savedOnSD = file.delete();
                     }
 
                 }
 
-                if (savedOnSD == false) {
-
-                    int deleted = cr.delete(url, null, null);
-                    if (deleted >= 1) {
-                        savedOnSD = true;
-                    }
+                if (!savedOnSD) {
+                    cr.delete(url, null, null);
                 }
 
 
@@ -471,7 +462,7 @@ public class Utils {
                 String returned = (getPath(context, mUri));
                 if (returned != null) {
                     File file = new File(returned);
-                    if (file.exists() == true) {
+                    if (file.exists()) {
                         return Uri.fromFile(new File(returned));
                     }
                 }
@@ -642,7 +633,7 @@ public class Utils {
             }
             imageInfo.setWidth(options.outWidth);
             imageInfo.setHeight(options.outHeight);
-            if (isFilePath == true) {
+            if (isFilePath) {
                 imageInfo.setFileSize(new File(path.getPath()).length());
             } else {
                 imageInfo.setFileSize(getRealSizeFromUri(context, imageInfo.getImageUri()));
@@ -736,7 +727,7 @@ public class Utils {
 
     public static void showFacebookBanner(Context context, final View view, int resid, String id) {
 
-        if (Utils.isUpgradedMy() == true) {
+        if (Utils.isUpgradedMy()) {
 
             return;
         }

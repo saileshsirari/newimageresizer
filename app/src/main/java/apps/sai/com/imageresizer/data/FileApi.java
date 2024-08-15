@@ -18,7 +18,6 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 import androidx.core.provider.DocumentsContractCompat;
 
@@ -143,18 +142,13 @@ public class FileApi extends DataApi {
     }
 
     @Override
-    public Bitmap scaleImage(Context context, Bitmap unscaledBitmap, int newWidth, int newHeight, int type) {
-        return ImageUtils.scaleImage(context, unscaledBitmap, newWidth, newHeight);
+    public Bitmap scaleImage( Bitmap unscaledBitmap, int newWidth, int newHeight, int type) {
+        return ImageUtils.scaleImage(unscaledBitmap, newWidth, newHeight);
     }
-
     public String getMyFolderPath() {
-
         if (myFolderPath == null) {
-
             myFolderPath = SettingsManager.getInstance().getFolderPath();
         }
-
-
         return myFolderPath;
     }
 
@@ -169,14 +163,10 @@ public class FileApi extends DataApi {
         if (!createFoldersIfRequired()) {
             return imageInfoList;
         }
-//        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+File.separator+PUBLIC_FOLDER_NAME+File.separator);
-
         File file = new File(getMyFolderPath() + File.separator);
         if (!file.exists()) {
             return imageInfoList;
-
         }
-
         Uri uriBase = Uri.fromFile(file);
         String a[] = file.list();
 

@@ -14,13 +14,13 @@ import java.util.List;
 
 import apps.sai.com.imageresizer.R;
 import apps.sai.com.imageresizer.data.ImageInfo;
-import apps.sai.com.imageresizer.resize.ResizeFragment;
+import apps.sai.com.imageresizer.resize.ImageProcessingTasks;
 
 /**
  * Created by sailesh on 17/01/18.
  */
 public class MultipleImageProcessingDialog implements OnMultipleImageProcessingListener {
-    ResizeFragment.IMAGE_PROCESSING_TASKS mImage_processing_tasks;
+    ImageProcessingTasks mImageProcessingTasks;
 //    ResizeFragment resizeFragment;
     Context mContext;
 //    MultipleImagesAdaptor mMultipleImagesAdaptor;
@@ -36,8 +36,8 @@ public class MultipleImageProcessingDialog implements OnMultipleImageProcessingL
         this.mOnDialogDismmistedListener = mOnDialogDismmistedListener;
     }
 
-    public MultipleImageProcessingDialog(OnProcessingCancelListener onProceesingCancelListener, Context context, ResizeFragment.IMAGE_PROCESSING_TASKS image_processing_tasks) {
-        mImage_processing_tasks = image_processing_tasks;
+    public MultipleImageProcessingDialog(OnProcessingCancelListener onProceesingCancelListener, Context context, ImageProcessingTasks imageProcessingTasks) {
+        mImageProcessingTasks = imageProcessingTasks;
 //        this.resizeFragment=resizeFragment;
         mContext =context;
         mHandler = new Handler(Looper.getMainLooper());
@@ -49,7 +49,7 @@ public class MultipleImageProcessingDialog implements OnMultipleImageProcessingL
     public void onProcessingDone(List<ImageInfo> imageInfoList) {
 //            mImageInfoListCached =imageInfoList;
 
-//        mMultipleImagesAdaptor.showProcessedInfoList(imageInfoList, mImage_processing_tasks);
+//        mMultipleImagesAdaptor.showProcessedInfoList(imageInfoList, mImageProcessingTasks);
 
         if(alertDialog!=null && alertDialog.isShowing()){
             alertDialog.dismiss();
@@ -196,14 +196,14 @@ AlertDialog alertDialog;
     }
 
     private void showProgress(int position, int total) {
-        if (mImage_processing_tasks == ResizeFragment.IMAGE_PROCESSING_TASKS.COMPRESS) {
+        if (mImageProcessingTasks == ImageProcessingTasks.COMPRESS) {
             if(alertDialog!=null && mContext!=null){
 //                alertDialog.setMessage(String.format(mContext.getString(R.string.processing),position,total));
                 textViewProgress.setText(String.format(mContext.getString(R.string.processing),position,total));
             }
 
 //            Toast.makeText(mContext, "Compressing " + position + " out of " + total + " images", Toast.LENGTH_LONG).show();
-        } else if (mImage_processing_tasks == ResizeFragment.IMAGE_PROCESSING_TASKS.SCALE) {
+        } else if (mImageProcessingTasks == ImageProcessingTasks.SCALE) {
 
 //            Toast.makeText(mContext, "Scaling " + position + " out of " + total + " images", Toast.LENGTH_LONG).show();
             if(alertDialog!=null && mContext!=null){
@@ -250,7 +250,7 @@ AlertDialog alertDialog;
 
         }*/
         showProgress(position, total);
-//            if(mImage_processing_tasks==IMAGE_PROCESSING_TASKS.COMPRESS) {
+//            if(mImageProcessingTasks==ImageProcessingTasks.COMPRESS) {
         if(progressBar!=null &&mContext!=null && alertDialog!=null && alertDialog.isShowing()) {
 
            /* if(total!=0) {

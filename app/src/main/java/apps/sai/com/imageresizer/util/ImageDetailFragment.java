@@ -231,7 +231,7 @@ public class ImageDetailFragment extends BaseFragment {
 
                             try {
 
-                                bitmap = mDataApi.scaleImage(getContext(), bitmap, w, h, 0);
+                                bitmap = mDataApi.scaleImage( bitmap, w, h, 0);
 
                             } catch (Throwable e) {
                                 e.printStackTrace();

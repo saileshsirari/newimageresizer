@@ -31,7 +31,7 @@ public interface ResizeContract {
 
             public void setImageSelected(String imageUriString);
 
-            Bitmap applyImageEffect(ImageInfo bitmap, ResizeFragment.IMAGE_PROCESSING_TASKS image_PROCESSING_tasks, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo);
+            Bitmap applyImageEffect(ImageInfo bitmap, ImageProcessingTasks imageProcessingTasks, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo);
 
             void saveImage();
 
@@ -46,7 +46,7 @@ public interface ResizeContract {
             void setSelectedImage(BitmapResult bitmapResult);
 
 
-            Bitmap applyImageEffect(ImageInfo imageInfo, ResizeFragment.IMAGE_PROCESSING_TASKS image_PROCESSING_tasks, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo);
+            Bitmap applyImageEffect(ImageInfo imageInfo, ImageProcessingTasks imageProcessingTasks, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo);
 
 
             void saveImage();
