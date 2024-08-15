@@ -12,7 +12,7 @@ import apps.sai.com.imageresizer.data.BitmapResult;
 import apps.sai.com.imageresizer.data.DataApi;
 import apps.sai.com.imageresizer.data.DataFile;
 import apps.sai.com.imageresizer.data.ImageInfo;
-import apps.sai.com.imageresizer.resize.ImageProcessingTasks;
+import apps.sai.com.imageresizer.resize.ImageProcessingTask;
 
 /**
  * Created by sailesh on 13/01/18.
@@ -20,7 +20,7 @@ import apps.sai.com.imageresizer.resize.ImageProcessingTasks;
 
 public class BitmapProcessingTask extends AsyncTask<Void, Void, BitmapResult> {
     private final Context context;
-    private final ImageProcessingTasks imageProcessingTasks;
+    private final ImageProcessingTask imageProcessingTask;
     private final boolean mAutoSave;
     private final int mKbEnteredValue;
     private OnImageProcessedListener mOnImageProcessedListener;
@@ -41,7 +41,7 @@ public class BitmapProcessingTask extends AsyncTask<Void, Void, BitmapResult> {
     public BitmapProcessingTask(ImageInfo imageInfo, Context context,
                                 int desiredWidth, int desiredHeight,
                                 int maxResolution, DataFile dataFile,
-                                ImageProcessingTasks imageProcessingTasks,
+                                ImageProcessingTask imageProcessingTask,
                                 int mCompressPercentage, int mKbEnteredValue,
                                 DataApi dataApi, boolean multipleTask, boolean autoSave) {
 
@@ -51,7 +51,7 @@ public class BitmapProcessingTask extends AsyncTask<Void, Void, BitmapResult> {
         this.mImageInfo = imageInfo;
         this.maxResolution = maxResolution;
         this.mDataFile = dataFile;
-        this.imageProcessingTasks = imageProcessingTasks;
+        this.imageProcessingTask = imageProcessingTask;
         this.mQuality = mCompressPercentage;
         this.mDataApi = dataApi;
         this.mMultipleTask = multipleTask;
@@ -76,7 +76,7 @@ public class BitmapProcessingTask extends AsyncTask<Void, Void, BitmapResult> {
                     mImageInfo.getWidth(), mImageInfo.getHeight()).getBitmap();
             int quality = 95;
             Bitmap bitmapRes = null;
-            if (imageProcessingTasks == ImageProcessingTasks.SCALE) {
+            if (imageProcessingTask == ImageProcessingTask.SCALE) {
                 if (width == 0) {
                     //calculate new width
                     width = Utils.calculateAspectRatioWidth(new Point(mImageInfo.getWidth(), mImageInfo.getHeight()), height).x;
@@ -104,7 +104,7 @@ public class BitmapProcessingTask extends AsyncTask<Void, Void, BitmapResult> {
                         mImageInfo.setAbsoluteFilePath(mUri);
                     }
                 }
-            } else if (imageProcessingTasks == ImageProcessingTasks.COMPRESS) {
+            } else if (imageProcessingTask == ImageProcessingTask.COMPRESS) {
                 quality = mQuality;
                 if (!mMultipleTask) {
                     mDataApi.saveImageInCacheWithSizeLimit(mImageInfo.getDataFile(), bitmap, quality, mKbEnteredValue);

@@ -1,6 +1,6 @@
 package apps.sai.com.imageresizer.resize;
 
-public enum ImageProcessingTasks {
+public enum ImageProcessingTask {
     ROTATE_CLOCKWISE,
     SCALE,
     BLUR,

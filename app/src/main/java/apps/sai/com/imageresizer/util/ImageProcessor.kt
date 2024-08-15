@@ -9,7 +9,7 @@ import apps.sai.com.imageresizer.data.BitmapResult
 import apps.sai.com.imageresizer.data.DataApi
 import apps.sai.com.imageresizer.data.DataFile
 import apps.sai.com.imageresizer.data.ImageInfo
-import apps.sai.com.imageresizer.resize.ImageProcessingTasks
+import apps.sai.com.imageresizer.resize.ImageProcessingTask
 import apps.sai.com.imageresizer.util.BitmapProcessingTask.OnImageProcessedListener
 
 class ImageProcessor(
@@ -19,7 +19,7 @@ class ImageProcessor(
     desiredHeight: Int,
     private var maxResolution: Int,
     dataFile: DataFile?,
-    private var imageProcessingTasks: ImageProcessingTasks?,
+    private var imageProcessingTask: ImageProcessingTask?,
     mCompressPercentage: Int,
     private var mKbEnteredValue: Int,
     dataApi: DataApi,
@@ -56,7 +56,7 @@ class ImageProcessor(
             ).bitmap
             var quality = 95
             var bitmapRes: Bitmap? = null
-            if (imageProcessingTasks == ImageProcessingTasks.SCALE) {
+            if (imageProcessingTask == ImageProcessingTask.SCALE) {
                 if (width == 0) {
                     //calculate new width
                     width = Utils.calculateAspectRatioWidth(
@@ -92,7 +92,7 @@ class ImageProcessor(
                         mImageInfo.setAbsoluteFilePath(mUri)
                     }
                 }
-            } else if (imageProcessingTasks == ImageProcessingTasks.COMPRESS) {
+            } else if (imageProcessingTask == ImageProcessingTask.COMPRESS) {
                 quality = mQuality
                 if (!mMultipleTask) {
                     mDataApi.saveImageInCacheWithSizeLimit(

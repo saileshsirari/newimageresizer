@@ -253,7 +253,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                         String path = mSingleFileImageInfo.getAbsoluteFilePathUri().toString();
                         Utils.setCropFragmentByPreset((AppCompatActivity) getActivity(), CropDemoPreset.RECT, (path));
                         mhHandler.postDelayed(() -> showCustomAppBar((AppCompatActivity) getActivity(), true), 100);
-
                         break;
                     case SCALE_ID:
                         if (mSingleFileImageInfo != null) {
@@ -272,8 +271,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                         setLoadingIndicator(true);
                         if (mSingleFileImageInfo != null && mSingleFileImageInfo.getDataFile() != null
                                 && mSingleFileImageInfo.getDataFile().getName() != null) {
-
-
                             uri = mDataApi.getImageUriFromCacheWithFileProvider(mSingleFileImageInfo.getDataFile().getName());
                             if (uri == null) {
                                 uri = mSingleFileImageInfo.getImageUri();
@@ -290,7 +287,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                         if (tobedeletedTextView != null) {
                             tobedeletedTextView.setVisibility(View.GONE);
                         }
-                        mResizePresenter.applyImageEffect(null, ImageProcessingTasks.RESET, mMyOnImageProcessedListener, null);
+                        mResizePresenter.applyImageEffect(null, ImageProcessingTask.RESET, mMyOnImageProcessedListener, null);
                         break;
                     case COMPRESS_ID:
                         mCompressPercentage = 0;
@@ -303,10 +300,10 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                                     mKbEnteredValue = quality;
                                 }
                                 if (mSingleFileImageInfo != null) {
-                                    mResizePresenter.applyImageEffect(mSingleFileImageInfo, ImageProcessingTasks.COMPRESS, mMyOnImageProcessedListener, null);
+                                    mResizePresenter.applyImageEffect(mSingleFileImageInfo, ImageProcessingTask.COMPRESS, mMyOnImageProcessedListener, null);
 
                                 } else {
-                                    doMultipleImageProcessing(ImageProcessingTasks.COMPRESS, null);
+                                    doMultipleImageProcessing(ImageProcessingTask.COMPRESS, null);
                                 }
                             };
                         }
@@ -410,14 +407,14 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         showCustomAppBar((AppCompatActivity) getActivity(), false);
     }
 
-    MultipleImageProcessingDialog multipleImageProcessingListener;
+    //    MultipleImageProcessingDialog multipleImageProcessingListener;
     volatile boolean mCancelMutipleTask;
 
     public void cancelMultipleImageProcessing(boolean cancel) {
         mCancelMutipleTask = cancel;
         if (mImageInfoLoadingTasks != null) {
             for (int i = 0; i < mImageInfoLoadingTasks.size(); i++) {
-              //  mImageInfoLoadingTasks.get(i).cancel(false);
+                //  mImageInfoLoadingTasks.get(i).cancel(false);
             }
         }
 
@@ -436,44 +433,127 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     CompositeDisposable compositeDisposable;
     int adCount = 1;
 
-    private void doMultipleImageProcessing(final ImageProcessingTasks imageProcessingTasks, final ResolutionInfo resolutionInfo) {
-        try {
+    private void doMultipleImageProcessing(final ImageProcessingTask imageProcessingTask, final ResolutionInfo resolutionInfo) {
+        if (mMultipleImagesAdaptor == null) {
+            showError(R.string.no_images);
+            return;
+        }
+        setLoadingIndicator(true);
+        List<ImageInfo> imageInfoList = mMultipleImagesAdaptor.getImageInfoList();
+        final List<ImageInfo> mImageInfoListCached = new ArrayList<>();
+        for (int i = 0; i < imageInfoList.size(); i++) {
+            ImageInfo imageInfo = imageInfoList.get(i);
+            BitmapResult bitmapResult = applyImageEffectNew(imageInfo, imageProcessingTask, null, resolutionInfo);
+            if (bitmapResult.getError() != null) {
+                if (bitmapResult.getError() instanceof OutOfMemoryError) {
+                    Toast.makeText(getContext(), getString(R.string.out_of_memory), Toast.LENGTH_LONG).show();
+                    setLoadingIndicator(false);
+                    return;
+                } else {
+                    showError(R.string.unknown_error);
+                }
+            }
+            ImageInfo compressedImageInfo;
+            compressedImageInfo = Utils.getImageInfo(imageInfo, getContext(), bitmapResult.getContentUri(), mDataApi);
+            compressedImageInfo.setImageUri(bitmapResult.getContentUri());
+            mMultipleImagesAdaptor.showProcessedInfo(compressedImageInfo);
+            mImageInfoListCached.add(compressedImageInfo);
+        }
+        mMultipleImagesAdaptor.showProcessedInfoList(mImageInfoListCached, imageProcessingTask);
+        if (autoSave) {
+            showDeleteTextView(requireActivity());
+        }
+        setLoadingIndicator(false);
+    }
 
+    public BitmapResult applyImageEffectNew(ImageInfo imageInfo, ImageProcessingTask imageProcessingTask, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo) {
+
+        if (imageProcessingTask != null) {
+            if (imageProcessingTask == ImageProcessingTask.SCALE) {
+                int w = resolutionInfo.getWidth();
+                int h = resolutionInfo.getHeight();
+                if (mMultiple) {
+                    int orgWidth = imageInfo.getWidth();
+                    int orgHeight = imageInfo.getHeight();
+                    if (resolutionInfo.isPreResolutionSelected()) {
+                        if (resolutionInfo.isAspect()) {
+                            if (orgWidth > orgHeight) {
+                                h = Utils.calculateAspectRatioHeight(new Point(orgWidth, orgHeight), w).y;
+                            } else {
+                                w = Utils.calculateAspectRatioWidth(new Point(orgWidth, orgHeight), h).x;
+                            }
+                        }
+                    } else if (resolutionInfo.isPercentageSelected()) {
+                        if (orgWidth > orgHeight) {
+                            w = (int) (orgWidth * w / (float) 100);
+                            h = Utils.calculateAspectRatioHeight(new Point(orgWidth, orgHeight), w).y;
+                        } else {
+                            h = (int) (orgHeight * h / (float) 100);
+                            w = Utils.calculateAspectRatioWidth(new Point(orgWidth, orgHeight), h).x;
+                        }
+
+                    } else { //custom resolution
+                        if (resolutionInfo.isAspect()) {
+                            if (w > 0) {
+                                h = Utils.calculateAspectRatioHeight(new Point(orgWidth, orgHeight), w).y;
+                            } else if (h > 0) {
+                                w = Utils.calculateAspectRatioWidth(new Point(orgWidth, orgHeight), h).x;
+                            } else {
+                                return null;
+                            }
+                        }
+                    }
+                }
+                //do scaling
+                return scaleImage(imageInfo, w, h, onImageProcessedListener);
+            } else if (imageProcessingTask == ImageProcessingTask.ROTATE_CLOCKWISE) {
+                //do rotate
+                return rotateImageClockWise(imageInfo, onImageProcessedListener);
+            } else if (imageProcessingTask == ImageProcessingTask.BLUR) {
+                return blurImage(imageInfo, onImageProcessedListener);
+            } else if (imageProcessingTask == ImageProcessingTask.RESET) {
+                if (mSingleFileImageInfo != null) {
+                    mSingleFileImageInfo.setAbsoluteFilePath(mSingleFileImageInfo.getImageUri());
+                    mDataApi.copyImageFromGalleryToCache(mSingleFileImageInfo.getDataFile());
+                    mResizePresenter.setImageSelected(mImageUrlString);
+                } else {
+                    mMultipleImagesAdaptor.setmProcessedImageInfoList(new ArrayList<ImageInfo>());
+                    List<ImageInfo> imageInfoList = mMultipleImagesAdaptor.getImageInfoList();
+                    if (imageInfoList != null) {
+                        for (ImageInfo imageInfoOrg : imageInfoList) {
+                            Uri orgUri = imageInfoOrg.getImageUri();
+                            imageInfoOrg.setAbsoluteFilePath(orgUri);
+                        }
+                    }
+                }
+
+            } else if (imageProcessingTask == ImageProcessingTask.SHARPEN) {
+                //do rotate
+                return sharpenImage(imageInfo, onImageProcessedListener);
+            } else if (imageProcessingTask == ImageProcessingTask.COMPRESS) {
+                return compressImage(imageInfo, onImageProcessedListener);
+            }
+        }
+        return null;
+    }
+
+    private void doMultipleImageProcessingOld(final ImageProcessingTask imageProcessingTask, final ResolutionInfo resolutionInfo) {
+        try {
             if (mMultipleImagesAdaptor == null) {
                 showError(R.string.no_images);
                 return;
             }
-            cancelMultipleImageProcessing(false);
-
-
-            multipleImageProcessingListener = new MultipleImageProcessingDialog(
-                    (imageInfo, pos) -> cancelMultipleImageProcessing(true), getContext(), imageProcessingTasks);
-
             List<ImageInfo> imageInfoListProcessed = mMultipleImagesAdaptor.getProcessedImageInfoList();
-
-            final List<ImageInfo> imageInfoList = imageInfoListProcessed != null && imageInfoListProcessed.size() > 0 ? imageInfoListProcessed : mMultipleImagesAdaptor.getImageInfoList();
-            final int count = imageInfoList.size();
+            final List<ImageInfo> imageInfoList = imageInfoListProcessed != null && !imageInfoListProcessed.isEmpty() ? imageInfoListProcessed : mMultipleImagesAdaptor.getImageInfoList();
             final Iterator<ImageInfo> imageInfoIterator = imageInfoList.iterator();
             final ImageInfo imageInfo = imageInfoIterator.hasNext() ? imageInfoIterator.next() : null;
             final List<ImageInfo> mImageInfoListCached = new ArrayList<>();
             if (imageInfo != null) {
-
                 int index = imageInfoList.indexOf(imageInfo);
                 if (index != -1) {
-                    index = index + 1;
-                    mMultipleImagesAdaptor.showProcessedInfoList(new ArrayList<>(), imageProcessingTasks);
-                    multipleImageProcessingListener.onProcessingStarted(imageInfo, index, count);
-
+                    mMultipleImagesAdaptor.showProcessedInfoList(new ArrayList<>(), imageProcessingTask);
                 }
-                multipleImageProcessingListener.setmOnDialogDismmistedListener(() -> mhHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (autoSave) {
-                            showDeleteTextView(requireActivity());
-                        }
-                    }
-                }));
-                mResizePresenter.applyImageEffect(imageInfo, imageProcessingTasks, new BitmapProcessingTask.OnImageProcessedListener() {
+                applyImageEffectNew(imageInfo, imageProcessingTask, new BitmapProcessingTask.OnImageProcessedListener() {
                     @Override
                     public void onImageLoaded(final BitmapResult bitmapResult, final ImageInfo imageInfoOrg) {
                         try {
@@ -484,62 +564,45 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                                 }
                                 if (bitmapResult != null && bitmapResult.getError() instanceof OutOfMemoryError) {
                                     Toast.makeText(getContext(), getString(R.string.out_of_memory), Toast.LENGTH_LONG).show();
-                                    multipleImageProcessingListener.onProcessingDone(mImageInfoListCached);
                                     return;
-
                                 } else {
                                     showError(R.string.unknown_error);
                                 }
                             }
                             int index = imageInfoList.indexOf(imageInfo);
                             if (index != -1) {
-                                index = index + 1;
-                                ImageInfo compressedImageInfo = new ImageInfo();
+                                ImageInfo compressedImageInfo;
                                 if (bitmapResult == null) {
                                     showError(R.string.unknown_error);
-                                    multipleImageProcessingListener.onProcessingDone(mImageInfoListCached);
                                     return;
                                 }
                                 compressedImageInfo = Utils.getImageInfo(imageInfoOrg, getContext(), bitmapResult.getContentUri(), mDataApi);
                                 compressedImageInfo.setImageUri(bitmapResult.getContentUri());
                                 mMultipleImagesAdaptor.showProcessedInfo(compressedImageInfo);
-                                multipleImageProcessingListener.onProcessingFinished(compressedImageInfo, index, count);
                                 mImageInfoListCached.add(compressedImageInfo);
-
                             }
-
                             if (mBitmapProcessingTaskWeakReference != null) {
                                 mBitmapProcessingTaskWeakReference.clear();
                             }
                             final ImageInfo imageInfo = imageInfoIterator.hasNext() ? imageInfoIterator.next() : null;
                             if (imageInfo != null) {
-                                mhHandler.post(() -> {
-                                    int index1 = imageInfoList.indexOf(imageInfo);
-                                    if (index1 != -1) {
-                                        index1 = index1 + 1;
-                                        multipleImageProcessingListener.onProcessingStarted(imageInfo, index1, count);
-
-                                    }
-                                });
                                 if (mCancelMutipleTask) {
-                                    multipleImageProcessingListener.onProcessingDone(mImageInfoListCached);
                                     mCancelMutipleTask = false;
                                     return;
                                 }
-                                mResizePresenter.applyImageEffect(imageInfo, imageProcessingTasks, this, resolutionInfo);
+                                applyImageEffectNew(imageInfo, imageProcessingTask, this, resolutionInfo);
                             } else {
-                                mMultipleImagesAdaptor.showProcessedInfoList(mImageInfoListCached, imageProcessingTasks);
-
-                                multipleImageProcessingListener.onProcessingDone(mImageInfoListCached);
+                                mMultipleImagesAdaptor.showProcessedInfoList(mImageInfoListCached, imageProcessingTask);
+                                if (autoSave) {
+                                    showDeleteTextView(requireActivity());
+                                }
                             }
-
                         } catch (Exception e) {
                             if (mCancelMutipleTask) {
                                 return;
                             }
                             e.printStackTrace();
                         }
-                        //
                     }
                 }, resolutionInfo);
 
@@ -569,7 +632,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             }
             //multiple
             List<ImageInfo> imageInfoList = mMultipleImagesAdaptor.getProcessedImageInfoList();
-            if (imageInfoList != null && imageInfoList.size() > 0) {
+            if (imageInfoList != null && !imageInfoList.isEmpty()) {
                 for (int i = 0; i < imageInfoList.size(); i++) {
                     DataFile dataFile = imageInfoList.get(i).getDataFile();
                     Uri uri = mDataApi.getImageUriFromCacheWithFileProvider(dataFile.getName());
@@ -578,7 +641,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
             } else {
                 imageInfoList = mMultipleImagesAdaptor.getImageInfoList();
-                if (imageInfoList == null || imageInfoList.size() == 0) {
+                if (imageInfoList == null || imageInfoList.isEmpty()) {
                     showError(R.string.no_images);
                     return;
                 }
@@ -635,13 +698,12 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                     showError(R.string.no_images);
                     return;
                 }
-
                 cancelMultipleImageProcessing(true);
                 mImageInfoLoadingTasks = new ArrayList<>();
                 mhHandler.post(() -> {
                     mImageInfoList = mMultipleImagesAdaptor.getProcessedImageInfoList();
                     boolean original = true;
-                    if (mImageInfoList != null && mImageInfoList.size() > 0) {
+                    if (mImageInfoList != null && !mImageInfoList.isEmpty()) {
                         //images are original yet
                         original = false;
                     } else {
@@ -650,22 +712,23 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                     if (mImageInfoList == null) {
                         return;
                     }
-
                     setLoadingIndicator(true);
                     int count = 0;
                     final MultipleImageProcessingDialog multipleImageProcessingDialog = new MultipleImageProcessingDialog(
                             (imageInfo, pos) -> cancelMultipleImageProcessing(true), getContext(), null);
 
+                    for (ImageInfo imageInfo : mImageInfoList) {
 
-                    for (Iterator<ImageInfo> imageInfoIterator = mImageInfoList.iterator(); imageInfoIterator.hasNext(); ) {
-                        ImageInfo imageInfo = imageInfoIterator.next();
+
+                    }
+
+                    for (ImageInfo imageInfo : mImageInfoList) {
                         count++;
                         if (count == 1) {
                             multipleImageProcessingDialog.onProcessingStarted(imageInfo, count, mImageInfoList.size());
                         }
                         ImageInfoLoadingTask imageInfoLoadingTask = null;
                         if (original) {
-
                             imageInfoLoadingTask = new ImageInfoLoadingTask(getContext(), imageInfo,
                                     mDataApi, imageInfo1 -> {
                                 int count1 = mImageInfoList.indexOf(imageInfo1);
@@ -691,31 +754,28 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                             }, ImageOperations.IMAGE_FILE_SAVE_GALLERY_TO_MY_FOLDER);
                         } else {
                             imageInfoLoadingTask = new ImageInfoLoadingTask(getContext(), imageInfo,
-                                    mDataApi, new ImageInfoLoadingTask.OnImageInfoProcessedListener() {
-                                @Override
-                                public void onImageProcessed(ImageInfo imageInfo) {
-                                    int count = mImageInfoList.indexOf(imageInfo);
-                                    if (count == mImageInfoList.size() - 1) {
-                                        if (!imageInfo.isSaved()) {
-                                            showError(R.string.unable_to_save_image);
-                                        }
-                                        if (mOnImagedSavedListenerWeakReference != null) {
-                                            OnImagedSavedListener onImagedSavedListener = mOnImagedSavedListenerWeakReference.get();
-                                            if (onImagedSavedListener != null) {
-                                                onImagedSavedListener.onImageSaved(imageInfo);
-                                            }
-                                        }
-                                        imageInfo.setSaved(true);
+                                    mDataApi, imageInfo12 -> {
+                                int count12 = mImageInfoList.indexOf(imageInfo12);
+                                if (count12 == mImageInfoList.size() - 1) {
+                                    if (!imageInfo12.isSaved()) {
+                                        showError(R.string.unable_to_save_image);
                                     }
-                                    if (!saved) {
-                                        showDeleteTextView(requireActivity());
-                                        saved = true;
+                                    if (mOnImagedSavedListenerWeakReference != null) {
+                                        OnImagedSavedListener onImagedSavedListener = mOnImagedSavedListenerWeakReference.get();
+                                        if (onImagedSavedListener != null) {
+                                            onImagedSavedListener.onImageSaved(imageInfo12);
+                                        }
                                     }
-                                    multipleImageProcessingDialog.onProcessingFinished(imageInfo, count + 1, mImageInfoList.size());
+                                    imageInfo12.setSaved(true);
                                 }
+                                if (!saved) {
+                                    showDeleteTextView(requireActivity());
+                                    saved = true;
+                                }
+                                multipleImageProcessingDialog.onProcessingFinished(imageInfo12, count12 + 1, mImageInfoList.size());
                             }, ImageOperations.IMAGE_FILE_SAVE_CACHE_TO_GALLERY);
                         }
-                       // mImageInfoLoadingTasks.add(imageInfoLoadingTask);
+                        // mImageInfoLoadingTasks.add(imageInfoLoadingTask);
                         imageInfoLoadingTask.executeOnExecutor(executor);
                     }
                     setLoadingIndicator(false);
@@ -727,9 +787,9 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     }
 
     @Override
-    public Bitmap applyImageEffect(ImageInfo imageInfo, ImageProcessingTasks imageProcessingTasks, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo) {
-        if (imageProcessingTasks != null) {
-            if (imageProcessingTasks == ImageProcessingTasks.SCALE) {
+    public Bitmap applyImageEffect(ImageInfo imageInfo, ImageProcessingTask imageProcessingTask, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo) {
+        if (imageProcessingTask != null) {
+            if (imageProcessingTask == ImageProcessingTask.SCALE) {
                 int w = resolutionInfo.getWidth();
                 int h = resolutionInfo.getHeight();
                 if (mMultiple) {
@@ -738,14 +798,12 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                     if (resolutionInfo.isPreResolutionSelected()) {
                         if (resolutionInfo.isAspect()) {
                             if (orgWidth > orgHeight) {
-
                                 h = Utils.calculateAspectRatioHeight(new Point(orgWidth, orgHeight), w).y;
                             } else {
                                 w = Utils.calculateAspectRatioWidth(new Point(orgWidth, orgHeight), h).x;
                             }
                         }
                     } else if (resolutionInfo.isPercentageSelected()) {
-
                         if (orgWidth > orgHeight) {
                             w = (int) (orgWidth * w / (float) 100);
                             h = Utils.calculateAspectRatioHeight(new Point(orgWidth, orgHeight), w).y;
@@ -756,13 +814,10 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
                     } else { //custom resolution
                         if (resolutionInfo.isAspect()) {
-
                             if (w > 0) {
-
                                 h = Utils.calculateAspectRatioHeight(new Point(orgWidth, orgHeight), w).y;
                             } else if (h > 0) {
                                 w = Utils.calculateAspectRatioWidth(new Point(orgWidth, orgHeight), h).x;
-
                             } else {
                                 return null;
                             }
@@ -770,14 +825,14 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                     }
                 }
                 //do scaling
-                scaleImage(imageInfo, w, h, onImageProcessedListener);
-            } else if (imageProcessingTasks == ImageProcessingTasks.ROTATE_CLOCKWISE) {
+                return scaleImage(imageInfo, w, h, onImageProcessedListener).getBitmap();
+            } else if (imageProcessingTask == ImageProcessingTask.ROTATE_CLOCKWISE) {
                 //do rotate
-                rotateImageClockWise(imageInfo, onImageProcessedListener);
-            } else if (imageProcessingTasks == ImageProcessingTasks.BLUR) {
+                return rotateImageClockWise(imageInfo, onImageProcessedListener).getBitmap();
+            } else if (imageProcessingTask == ImageProcessingTask.BLUR) {
                 //do rotate
-                blurImage(imageInfo, onImageProcessedListener);
-            } else if (imageProcessingTasks == ImageProcessingTasks.RESET) {
+                return blurImage(imageInfo, onImageProcessedListener).getBitmap();
+            } else if (imageProcessingTask == ImageProcessingTask.RESET) {
                 //do rotate
                 if (mSingleFileImageInfo != null) {
                     mSingleFileImageInfo.setAbsoluteFilePath(mSingleFileImageInfo.getImageUri());
@@ -794,35 +849,35 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                     }
                 }
 
-            } else if (imageProcessingTasks == ImageProcessingTasks.SHARPEN) {
+            } else if (imageProcessingTask == ImageProcessingTask.SHARPEN) {
                 //do rotate
-                sharpenImage(imageInfo, onImageProcessedListener);
-            } else if (imageProcessingTasks == ImageProcessingTasks.COMPRESS) {
-                compressImage(imageInfo, onImageProcessedListener);
+                return sharpenImage(imageInfo, onImageProcessedListener).getBitmap();
+            } else if (imageProcessingTask == ImageProcessingTask.COMPRESS) {
+                return compressImage(imageInfo, onImageProcessedListener).getBitmap();
             }
         }
         return null;
     }
 
-    public void blurImage(ImageInfo bitmap, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
-        processImage(bitmap, 0, 0, ImageProcessingTasks.BLUR, onImageProcessedListener);
+    public BitmapResult blurImage(ImageInfo bitmap, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
+        return processImage(bitmap, 0, 0, ImageProcessingTask.BLUR, onImageProcessedListener);
     }
 
-    public void sharpenImage(ImageInfo bitmap, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
-        processImage(bitmap, 0, 0, ImageProcessingTasks.SHARPEN, onImageProcessedListener);
+    public BitmapResult sharpenImage(ImageInfo bitmap, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
+        return processImage(bitmap, 0, 0, ImageProcessingTask.SHARPEN, onImageProcessedListener);
     }
 
-    public void compressImage(ImageInfo bitmap, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
-        processImage(bitmap, 0, 0, ImageProcessingTasks.COMPRESS, onImageProcessedListener);
+    public BitmapResult compressImage(ImageInfo bitmap, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
+        return processImage(bitmap, 0, 0, ImageProcessingTask.COMPRESS, onImageProcessedListener);
     }
 
-    public void rotateImageClockWise(ImageInfo bitmap, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
-        processImage(bitmap, 0, 0, ImageProcessingTasks.ROTATE_CLOCKWISE, onImageProcessedListener);
+    public BitmapResult rotateImageClockWise(ImageInfo bitmap, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
+        return processImage(bitmap, 0, 0, ImageProcessingTask.ROTATE_CLOCKWISE, onImageProcessedListener);
     }
 
 
-    public void scaleImage(ImageInfo bitmap, int w, int h, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
-        processImage(bitmap, w, h, ImageProcessingTasks.SCALE, onImageProcessedListener);
+    public BitmapResult scaleImage(ImageInfo bitmap, int w, int h, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
+        return processImage(bitmap, w, h, ImageProcessingTask.SCALE, onImageProcessedListener);
     }
 
     @Override
@@ -1261,9 +1316,9 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
             } else {
                 if (mSingleFileImageInfo != null) {
-                    processImage(mSingleFileImageInfo, res.getWidth(), res.getHeight(), ImageProcessingTasks.SCALE, mMyOnImageProcessedListener);
+                    processImage(mSingleFileImageInfo, res.getWidth(), res.getHeight(), ImageProcessingTask.SCALE, mMyOnImageProcessedListener);
                 } else {
-                    doMultipleImageProcessing(ImageProcessingTasks.SCALE, res);
+                    doMultipleImageProcessing(ImageProcessingTask.SCALE, res);
                 }
             }
         } catch (Throwable t) {
@@ -1465,16 +1520,16 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     boolean mMultiple;
     static int counter;
 
-    private void processImage(final ImageInfo imageInfo, int w, int h,
-                              final ImageProcessingTasks imageProcessingTasks,
-                              BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
+    private BitmapResult processImage(final ImageInfo imageInfo, int w, int h,
+                                      final ImageProcessingTask imageProcessingTask,
+                                      BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
         setLoadingIndicator(true);
         ImageProcessor imageProcessor = new ImageProcessor(imageInfo, getContext(),
                 w, h, maxResolution, imageInfo.getDataFile(),
-                imageProcessingTasks, mCompressPercentage, mKbEnteredValue, mDataApi, mMultiple, autoSave);
+                imageProcessingTask, mCompressPercentage, mKbEnteredValue, mDataApi, mMultiple, autoSave);
         imageProcessor.setOnImageProcessedListener(onImageProcessedListener);
-        imageProcessor.process();
         setLoadingIndicator(false);
+        return imageProcessor.process();
     }
 
     @Override

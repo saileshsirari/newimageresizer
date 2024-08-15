@@ -176,7 +176,7 @@ public class MyImagesAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
         mImageInfoLoadingTasks = new ArrayList<>();
-        if (mSelectedImageInfoList.size() > 0) {
+        if (!mSelectedImageInfoList.isEmpty()) {
             multipleImageProcessingDialog.onProcessingStarted(mSelectedImageInfoList.get(0), 1,
                     mSelectedImageInfoList.size());
         }

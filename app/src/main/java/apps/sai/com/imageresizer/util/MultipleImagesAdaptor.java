@@ -22,7 +22,7 @@ import apps.sai.com.imageresizer.BaseFragment;
 import apps.sai.com.imageresizer.R;
 import apps.sai.com.imageresizer.data.DataApi;
 import apps.sai.com.imageresizer.data.ImageInfo;
-import apps.sai.com.imageresizer.resize.ImageProcessingTasks;
+import apps.sai.com.imageresizer.resize.ImageProcessingTask;
 import apps.sai.com.imageresizer.settings.SettingsManager;
 
 /**
@@ -62,11 +62,11 @@ public class MultipleImagesAdaptor extends RecyclerView.Adapter<MultipleImagesAd
     }
 
     List<ImageInfo> mProcessedImageInfoList;
-    ImageProcessingTasks mImageProcessingTasks;
+    ImageProcessingTask mImageProcessingTask;
 
-    public void showProcessedInfoList(List<ImageInfo> processedImageInfoList, ImageProcessingTasks imageProcessingTasks) {
+    public void showProcessedInfoList(List<ImageInfo> processedImageInfoList, ImageProcessingTask imageProcessingTask) {
         mProcessedImageInfoList = processedImageInfoList;
-        mImageProcessingTasks = imageProcessingTasks;
+        mImageProcessingTask = imageProcessingTask;
     }
 
     public void showProcessedInfo(ImageInfo imageInfo) {

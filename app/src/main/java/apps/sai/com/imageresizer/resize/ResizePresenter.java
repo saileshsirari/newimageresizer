@@ -44,9 +44,9 @@ public class ResizePresenter implements ResizeContract.Presenter {
     }
 
     @Override
-    public Bitmap applyImageEffect(ImageInfo bitmap, ImageProcessingTasks imageProcessingTasks, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo) {
+    public Bitmap applyImageEffect(ImageInfo bitmap, ImageProcessingTask imageProcessingTask, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo) {
         if(mView!=null) {
-            return mView.applyImageEffect(bitmap, imageProcessingTasks, onImageProcessedListener, resolutionInfo);
+            return mView.applyImageEffect(bitmap, imageProcessingTask, onImageProcessedListener, resolutionInfo);
         }
         return null;
     }
