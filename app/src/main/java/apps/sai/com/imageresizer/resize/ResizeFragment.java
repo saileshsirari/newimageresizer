@@ -5,7 +5,6 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -52,7 +51,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executor;
@@ -443,7 +441,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         final List<ImageInfo> mImageInfoListCached = new ArrayList<>();
         for (int i = 0; i < imageInfoList.size(); i++) {
             ImageInfo imageInfo = imageInfoList.get(i);
-            BitmapResult bitmapResult = applyImageEffectNew(imageInfo, imageProcessingTask, null, resolutionInfo);
+            BitmapResult bitmapResult = mResizePresenter.applyImageEffect(imageInfo, imageProcessingTask, null, resolutionInfo);
             if (bitmapResult.getError() != null) {
                 if (bitmapResult.getError() instanceof OutOfMemoryError) {
                     Toast.makeText(getContext(), getString(R.string.out_of_memory), Toast.LENGTH_LONG).show();
@@ -465,8 +463,8 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         }
         setLoadingIndicator(false);
     }
-
-    public BitmapResult applyImageEffectNew(ImageInfo imageInfo, ImageProcessingTask imageProcessingTask, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo) {
+    @Override
+    public BitmapResult applyImageEffect(ImageInfo imageInfo, ImageProcessingTask imageProcessingTask, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo) {
 
         if (imageProcessingTask != null) {
             if (imageProcessingTask == ImageProcessingTask.SCALE) {
@@ -535,81 +533,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             }
         }
         return null;
-    }
-
-    private void doMultipleImageProcessingOld(final ImageProcessingTask imageProcessingTask, final ResolutionInfo resolutionInfo) {
-        try {
-            if (mMultipleImagesAdaptor == null) {
-                showError(R.string.no_images);
-                return;
-            }
-            List<ImageInfo> imageInfoListProcessed = mMultipleImagesAdaptor.getProcessedImageInfoList();
-            final List<ImageInfo> imageInfoList = imageInfoListProcessed != null && !imageInfoListProcessed.isEmpty() ? imageInfoListProcessed : mMultipleImagesAdaptor.getImageInfoList();
-            final Iterator<ImageInfo> imageInfoIterator = imageInfoList.iterator();
-            final ImageInfo imageInfo = imageInfoIterator.hasNext() ? imageInfoIterator.next() : null;
-            final List<ImageInfo> mImageInfoListCached = new ArrayList<>();
-            if (imageInfo != null) {
-                int index = imageInfoList.indexOf(imageInfo);
-                if (index != -1) {
-                    mMultipleImagesAdaptor.showProcessedInfoList(new ArrayList<>(), imageProcessingTask);
-                }
-                applyImageEffectNew(imageInfo, imageProcessingTask, new BitmapProcessingTask.OnImageProcessedListener() {
-                    @Override
-                    public void onImageLoaded(final BitmapResult bitmapResult, final ImageInfo imageInfoOrg) {
-                        try {
-                            setLoadingIndicator(false);
-                            if (bitmapResult == null || bitmapResult.getError() != null) {
-                                if (getContext() == null) {
-                                    return;
-                                }
-                                if (bitmapResult != null && bitmapResult.getError() instanceof OutOfMemoryError) {
-                                    Toast.makeText(getContext(), getString(R.string.out_of_memory), Toast.LENGTH_LONG).show();
-                                    return;
-                                } else {
-                                    showError(R.string.unknown_error);
-                                }
-                            }
-                            int index = imageInfoList.indexOf(imageInfo);
-                            if (index != -1) {
-                                ImageInfo compressedImageInfo;
-                                if (bitmapResult == null) {
-                                    showError(R.string.unknown_error);
-                                    return;
-                                }
-                                compressedImageInfo = Utils.getImageInfo(imageInfoOrg, getContext(), bitmapResult.getContentUri(), mDataApi);
-                                compressedImageInfo.setImageUri(bitmapResult.getContentUri());
-                                mMultipleImagesAdaptor.showProcessedInfo(compressedImageInfo);
-                                mImageInfoListCached.add(compressedImageInfo);
-                            }
-                            if (mBitmapProcessingTaskWeakReference != null) {
-                                mBitmapProcessingTaskWeakReference.clear();
-                            }
-                            final ImageInfo imageInfo = imageInfoIterator.hasNext() ? imageInfoIterator.next() : null;
-                            if (imageInfo != null) {
-                                if (mCancelMutipleTask) {
-                                    mCancelMutipleTask = false;
-                                    return;
-                                }
-                                applyImageEffectNew(imageInfo, imageProcessingTask, this, resolutionInfo);
-                            } else {
-                                mMultipleImagesAdaptor.showProcessedInfoList(mImageInfoListCached, imageProcessingTask);
-                                if (autoSave) {
-                                    showDeleteTextView(requireActivity());
-                                }
-                            }
-                        } catch (Exception e) {
-                            if (mCancelMutipleTask) {
-                                return;
-                            }
-                            e.printStackTrace();
-                        }
-                    }
-                }, resolutionInfo);
-
-            }
-        } catch (Exception e) {
-            showError(R.string.unknown_error);
-        }
     }
 
 
@@ -786,78 +709,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         }
     }
 
-    @Override
-    public Bitmap applyImageEffect(ImageInfo imageInfo, ImageProcessingTask imageProcessingTask, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo) {
-        if (imageProcessingTask != null) {
-            if (imageProcessingTask == ImageProcessingTask.SCALE) {
-                int w = resolutionInfo.getWidth();
-                int h = resolutionInfo.getHeight();
-                if (mMultiple) {
-                    int orgWidth = imageInfo.getWidth();
-                    int orgHeight = imageInfo.getHeight();
-                    if (resolutionInfo.isPreResolutionSelected()) {
-                        if (resolutionInfo.isAspect()) {
-                            if (orgWidth > orgHeight) {
-                                h = Utils.calculateAspectRatioHeight(new Point(orgWidth, orgHeight), w).y;
-                            } else {
-                                w = Utils.calculateAspectRatioWidth(new Point(orgWidth, orgHeight), h).x;
-                            }
-                        }
-                    } else if (resolutionInfo.isPercentageSelected()) {
-                        if (orgWidth > orgHeight) {
-                            w = (int) (orgWidth * w / (float) 100);
-                            h = Utils.calculateAspectRatioHeight(new Point(orgWidth, orgHeight), w).y;
-                        } else {
-                            h = (int) (orgHeight * h / (float) 100);
-                            w = Utils.calculateAspectRatioWidth(new Point(orgWidth, orgHeight), h).x;
-                        }
-
-                    } else { //custom resolution
-                        if (resolutionInfo.isAspect()) {
-                            if (w > 0) {
-                                h = Utils.calculateAspectRatioHeight(new Point(orgWidth, orgHeight), w).y;
-                            } else if (h > 0) {
-                                w = Utils.calculateAspectRatioWidth(new Point(orgWidth, orgHeight), h).x;
-                            } else {
-                                return null;
-                            }
-                        }
-                    }
-                }
-                //do scaling
-                return scaleImage(imageInfo, w, h, onImageProcessedListener).getBitmap();
-            } else if (imageProcessingTask == ImageProcessingTask.ROTATE_CLOCKWISE) {
-                //do rotate
-                return rotateImageClockWise(imageInfo, onImageProcessedListener).getBitmap();
-            } else if (imageProcessingTask == ImageProcessingTask.BLUR) {
-                //do rotate
-                return blurImage(imageInfo, onImageProcessedListener).getBitmap();
-            } else if (imageProcessingTask == ImageProcessingTask.RESET) {
-                //do rotate
-                if (mSingleFileImageInfo != null) {
-                    mSingleFileImageInfo.setAbsoluteFilePath(mSingleFileImageInfo.getImageUri());
-                    mDataApi.copyImageFromGalleryToCache(mSingleFileImageInfo.getDataFile());
-                    mResizePresenter.setImageSelected(mImageUrlString);
-                } else {
-                    mMultipleImagesAdaptor.setmProcessedImageInfoList(new ArrayList<ImageInfo>());
-                    List<ImageInfo> imageInfoList = mMultipleImagesAdaptor.getImageInfoList();
-                    if (imageInfoList != null) {
-                        for (ImageInfo imageInfoOrg : imageInfoList) {
-                            Uri orgUri = imageInfoOrg.getImageUri();
-                            imageInfoOrg.setAbsoluteFilePath(orgUri);
-                        }
-                    }
-                }
-
-            } else if (imageProcessingTask == ImageProcessingTask.SHARPEN) {
-                //do rotate
-                return sharpenImage(imageInfo, onImageProcessedListener).getBitmap();
-            } else if (imageProcessingTask == ImageProcessingTask.COMPRESS) {
-                return compressImage(imageInfo, onImageProcessedListener).getBitmap();
-            }
-        }
-        return null;
-    }
 
     public BitmapResult blurImage(ImageInfo bitmap, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
         return processImage(bitmap, 0, 0, ImageProcessingTask.BLUR, onImageProcessedListener);

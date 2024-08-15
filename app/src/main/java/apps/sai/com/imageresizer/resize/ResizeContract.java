@@ -1,7 +1,6 @@
 package apps.sai.com.imageresizer.resize;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 
 import apps.sai.com.imageresizer.BasePresenter;
 import apps.sai.com.imageresizer.BaseView;
@@ -31,7 +30,7 @@ public interface ResizeContract {
 
             public void setImageSelected(String imageUriString);
 
-            Bitmap applyImageEffect(ImageInfo bitmap, ImageProcessingTask imageProcessingTask, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo);
+            BitmapResult applyImageEffect(ImageInfo bitmap, ImageProcessingTask imageProcessingTask, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo);
 
             void saveImage();
 
@@ -46,7 +45,7 @@ public interface ResizeContract {
             void setSelectedImage(BitmapResult bitmapResult);
 
 
-            Bitmap applyImageEffect(ImageInfo imageInfo, ImageProcessingTask imageProcessingTask, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo);
+            BitmapResult applyImageEffect(ImageInfo imageInfo, ImageProcessingTask imageProcessingTask, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo);
 
 
             void saveImage();
