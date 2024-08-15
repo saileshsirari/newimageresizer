@@ -31,7 +31,6 @@ import apps.sai.com.imageresizer.data.DataApi;
 import apps.sai.com.imageresizer.data.DataFile;
 import apps.sai.com.imageresizer.data.FileApi;
 import apps.sai.com.imageresizer.data.ImageInfo;
-import apps.sai.com.imageresizer.data.OpenCvFileApi;
 
 /**
  * Created by sailesh on 20/01/18.
@@ -82,14 +81,7 @@ public class ImageDetailFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
-        if(BaseFragment.openCvLoaded==true) {
-            mDataApi = new OpenCvFileApi(getContext());
-        }else{
             mDataApi = new FileApi(getContext());
-
-        }
-
         Uri orgUri =getArguments().getString(IMAGE_URI_STRING_ORG)!=null?Uri.parse(getArguments().getString(IMAGE_URI_STRING_ORG)):null;
 
         if(orgUri!=null) {

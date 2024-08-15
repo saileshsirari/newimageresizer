@@ -22,9 +22,6 @@ import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 import androidx.core.provider.DocumentsContractCompat;
 
-import org.opencv.core.Mat;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -1142,21 +1139,6 @@ public class FileApi extends DataApi {
         return null;
     }
 
-    private void createAlphaMat(Mat mat) {
-        int UCHAR_MAX = 255;
-        for (int i = 0; i < mat.rows(); ++i) {
-            for (int j = 0; j < mat.cols(); ++j) {
-
-                double[] bgra = mat.get(i, j);
-                bgra[0] = UCHAR_MAX; // Blue
-                bgra[1] = (((mat.cols() - j)) / ((float) mat.cols()) * UCHAR_MAX); // Green
-                bgra[2] = (((mat.rows() - i)) / ((float) mat.rows()) * UCHAR_MAX); // Red
-                bgra[3] = (0.5 * (bgra[1] + bgra[2])); // Alpha
-
-
-            }
-        }
-    }
 
     static int COMPRESSION_PERCENTAGE_START = 80;
     static int IMAGE_COMPRESSION_EXPECTED_MAX_ITERATIONS = 3;
@@ -1222,7 +1204,6 @@ public class FileApi extends DataApi {
 
     private Uri storeImageInCacheWithSizeLimit(Bitmap image, DataFile dataFile, int quality, int maxSizeKb) {
 
-
         if (!createFoldersIfRequired()) {
             return null;
         }
@@ -1231,16 +1212,12 @@ public class FileApi extends DataApi {
         File file = new File(context.getFilesDir() + File.separator + PRIVATE_FOLDER_NAME + File.separator, fileName);
         boolean result = false;
 
-        if (SettingsManager.getInstance().isJpg(dataFile.getName()) == true) {
+        if (SettingsManager.getInstance().isJpg(dataFile.getName())) {
             result = FileUtils.storeImageWithSizeLimit(image, file, quality, maxSizeKb);
         } else {
             result = FileUtils.storeImage(image, file, quality);
         }
-
-//        boolean result =  FileUtils.storeImage(image,file);
-//         result =  FileUtils.storeImageWithSizeLimit(image,file,quality,maxSizeKb);
-
-        if (result == true) {
+        if (result) {
 //            Uri contentUri = FileProvider.getUriForFile(context, CACHE_URI_PROVIDER, file);
             return Uri.fromFile(file);
         }
@@ -1298,8 +1275,6 @@ public class FileApi extends DataApi {
 
     @Override
     public void getBitmapFromAbsolutePathUriAsync(Context context, Uri fileUri, OnBitMapLoaded onBitMapLoaded) {
-
-        getBitmapFromOpenCVAsync(context, fileUri, onBitMapLoaded);
     }
 
 
@@ -1377,26 +1352,6 @@ public class FileApi extends DataApi {
         }
         return null;
 
-    }
-
-    @NonNull
-    public static void getBitmapFromOpenCVAsync(Context context, Uri fileUri, OnBitMapLoaded onBitMapLoaded) {
-        Bitmap bitmapRes = null;
-
-
-        try {
-
-            Mat mat = Imgcodecs.imread(fileUri.getPath());
-            Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2RGB);
-            bitmapRes = Bitmap.createBitmap(mat.width(), mat.height(), Bitmap.Config.ARGB_8888);
-            org.opencv.android.Utils.matToBitmap(mat, bitmapRes);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } catch (OutOfMemoryError oe) {
-
-            System.gc();
-
-        }
     }
 
     /*@NonNull

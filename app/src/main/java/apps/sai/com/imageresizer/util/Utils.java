@@ -36,7 +36,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import apps.sai.com.imageresizer.BaseFragment;
-import apps.sai.com.imageresizer.BuildConfig;
 import apps.sai.com.imageresizer.ImageResizeApplication;
 import apps.sai.com.imageresizer.R;
 import apps.sai.com.imageresizer.crop.CropDemoPreset;
@@ -85,9 +84,9 @@ public class Utils {
         if (false) {
             return true;
         }
-        if (BuildConfig.DEBUG == true) {
+       /* if (BuildConfig.DEBUG == true) {
             return false;
-        }
+        }*/
 
 
         if (ImageResizeApplication.getInstance().getIsUpgraded()) {

@@ -24,14 +24,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import apps.sai.com.imageresizer.BaseFragment;
 import apps.sai.com.imageresizer.R;
 import apps.sai.com.imageresizer.data.DataApi;
 import apps.sai.com.imageresizer.data.FileApi;
 import apps.sai.com.imageresizer.data.ImageInfo;
-import apps.sai.com.imageresizer.data.OpenCvFileApi;
 import apps.sai.com.imageresizer.select.SelectActivity;
 import apps.sai.com.imageresizer.settings.SettingsManager;
 import apps.sai.com.imageresizer.util.ImageInfoLoadingTask;
@@ -104,12 +102,8 @@ public class MyImagesFragment extends BaseFragment implements MyImagesContract.V
         super.onCreate(savedInstanceState);
         myImagesPresenter = new MyImagesPresenter();
         mImageInfoLoadingTaskList = new ArrayList<>();
-
-        dataApi = BaseFragment.openCvLoaded ? new OpenCvFileApi(getContext()) : new FileApi(getContext());
-
+        dataApi = new FileApi(getContext());
         setHasOptionsMenu(true);
-
-
     }
 
     @Override
@@ -326,69 +320,54 @@ public class MyImagesFragment extends BaseFragment implements MyImagesContract.V
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_select_all_my_images) {
+            myImagesAdaptor.selectAllItems();
+            menu.setGroupEnabled(R.id.my_images_clear_all_group, true);
+            menu.setGroupEnabled(R.id.my_images_select_all_group, false);
+            menu.setGroupEnabled(R.id.my_images_group, true);
+        } else if (itemId == R.id.action_clear_all_my_images) {
+            myImagesAdaptor.clearAllItems();
+            menu.setGroupEnabled(R.id.my_images_select_all_group, true);
+            menu.setGroupEnabled(R.id.my_images_clear_all_group, false);
+            menu.setGroupEnabled(R.id.my_images_group, false);
+        } else if (itemId == R.id.action_delete_my_image) {//                cancelPendingTasks();
 
-            case R.id.action_select_all_my_images:
+            showDeleteAlert(getContext(), new OnDeleteSelectedListener() {
+                @Override
+                public void onDeleteSelected() {
+                    myImagesAdaptor.setOnUiUpdateListener(new MyImagesAdaptor.OnUiUpdateListener() {
+                        @Override
+                        public void onDataChanged(int newAdaptorSize) {
 
-                myImagesAdaptor.selectAllItems();
-                menu.setGroupEnabled(R.id.my_images_clear_all_group, true);
-                menu.setGroupEnabled(R.id.my_images_select_all_group, false);
-                menu.setGroupEnabled(R.id.my_images_group, true);
+                        }
 
-                break;
-            case R.id.action_clear_all_my_images:
-                myImagesAdaptor.clearAllItems();
-                menu.setGroupEnabled(R.id.my_images_select_all_group, true);
-                menu.setGroupEnabled(R.id.my_images_clear_all_group, false);
-                menu.setGroupEnabled(R.id.my_images_group, false);
+                        @Override
+                        public void onImageDeleted(ImageInfo imageInfo) {
 
-                break;
-            case R.id.action_delete_my_image:
+                        }
 
-//                cancelPendingTasks();
+                        @Override
+                        public void onAllImagesDeleted(List<ImageInfo> mImageInfoList) {
+                            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                                for (ImageInfo imageInfo : mImageInfoList) {
+                                    myImagesAdaptor.remove(imageInfo);
+                                }
+                                mProgressBar.setVisibility(View.GONE);
 
-                showDeleteAlert(getContext(), new OnDeleteSelectedListener() {
-                    @Override
-                    public void onDeleteSelected() {
-                        myImagesAdaptor.setOnUiUpdateListener(new MyImagesAdaptor.OnUiUpdateListener() {
-                            @Override
-                            public void onDataChanged(int newAdaptorSize) {
+                            }, 2000);
 
-                            }
+                        }
+                    });
+                    mProgressBar.setVisibility(View.VISIBLE);
 
-                            @Override
-                            public void onImageDeleted(ImageInfo imageInfo) {
-
-                            }
-
-                            @Override
-                            public void onAllImagesDeleted(List<ImageInfo> mImageInfoList) {
-                                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                                    for(ImageInfo imageInfo:mImageInfoList) {
-                                        myImagesAdaptor.remove(imageInfo);
-                                    }
-                                    mProgressBar.setVisibility(View.GONE);
-
-                                },2000);
-
-                            }
-                        });
-                        mProgressBar.setVisibility(View.VISIBLE);
-
-                        myImagesAdaptor.deleteSelectedImages();
+                    myImagesAdaptor.deleteSelectedImages();
 
 
-                    }
-                });
-
-                break;
-            case R.id.action_share_my_image:
-
-
-                shareImage(getContext(), null);
-                break;
-
-
+                }
+            });
+        } else if (itemId == R.id.action_share_my_image) {
+            shareImage(getContext(), null);
         }
         if (myImagesAdaptor.getItemCount() == 0) {
             showNoImagesMenu(menu, false);

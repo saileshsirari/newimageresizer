@@ -31,7 +31,6 @@ import java.io.File;
 import java.util.List;
 
 import apps.sai.com.imageresizer.BaseFragment;
-import apps.sai.com.imageresizer.BuildConfig;
 import apps.sai.com.imageresizer.ImageResizeApplication;
 import apps.sai.com.imageresizer.MyUncaughtExceptionHandler;
 import apps.sai.com.imageresizer.R;
@@ -42,9 +41,6 @@ import apps.sai.com.imageresizer.util.Config;
 import apps.sai.com.imageresizer.util.UiState;
 import apps.sai.com.imageresizer.util.UpgradeDialog;
 import apps.sai.com.imageresizer.util.Utils;
-//import com.startapp.android.publish.adsCommon.StartAppAd;
-//import com.startapp.android.publish.adsCommon.StartAppSDK;
-//import com.startapp.android.publish.adsCommon.adListeners.AdDisplayListener;
 
 /**
  * Created by sailesh on 03/01/18.
@@ -126,14 +122,7 @@ public class SelectActivity extends AppCompatActivity implements
         AdListener adListener = new AdListener() {
             @Override
             public void onError(Ad ad, AdError adError) {
-                if(BuildConfig.DEBUG) {
-// Ad error callback
-                   /* Toast.makeText(
-                                    SelectActivity.this,
-                                    "Error: " + adError.getErrorMessage(),
-                                    Toast.LENGTH_LONG)
-                            .show();*/
-                }
+
             }
 
             @Override

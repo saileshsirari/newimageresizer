@@ -10,8 +10,6 @@ android {
         minSdkVersion project.minSdkVersion
         targetSdkVersion project.targetSdkVersion
         targetSdkVersion rootProject.compileSdkVersion
-        versionCode 1
-        versionName PUBLISH_VERSION
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17

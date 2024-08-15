@@ -7,7 +7,6 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
 
-import org.opencv.imgproc.Imgproc;
 
 import apps.sai.com.imageresizer.data.BitmapResult;
 import apps.sai.com.imageresizer.data.DataApi;
@@ -121,12 +120,6 @@ public class BitmapProcessingTask extends AsyncTask<Void, Void, BitmapResult> {
 
 //                return null;
                 }
-                int type = Imgproc.INTER_LANCZOS4;
-                if (oldRes > newRes) {
-                    //down sampling
-                    type = Imgproc.INTER_AREA;
-                }
-
 //                this.bitmap =bitmap;
 //            String res = "( " + width + "x" + height + ")_";
 
@@ -137,7 +130,7 @@ public class BitmapProcessingTask extends AsyncTask<Void, Void, BitmapResult> {
 
 
                 try {
-                    bitmapRes = mDataApi.scaleImage(context, bitmap, width, height, type);
+                    bitmapRes = mDataApi.scaleImage(context, bitmap, width, height, 0);
 
                 } catch (Throwable e) {
                     e.printStackTrace();
@@ -180,7 +173,7 @@ public class BitmapProcessingTask extends AsyncTask<Void, Void, BitmapResult> {
 //                mDataApi = new FileApi(context);
 
 //             mDataApi.saveImageInCache(bitmapRes,quality);
-                if (mMultipleTask == false) {
+                if (!mMultipleTask) {
 
 
 //                    mDataApi.saveImageInCache(mImageInfo.getDataFile(), bitmap, quality);
@@ -227,16 +220,12 @@ public class BitmapProcessingTask extends AsyncTask<Void, Void, BitmapResult> {
 
 //                    return bitmap;
             } else if (image_PROCESSING_tasks == ResizeFragment.IMAGE_PROCESSING_TASKS.BLUR) {
-                bitmapRes = ImageUtils.blurImage(bitmap);
 
 //                    return bitmapRes;
             } else if (image_PROCESSING_tasks == ResizeFragment.IMAGE_PROCESSING_TASKS.SHARPEN) {
-                bitmapRes = ImageUtils.sharpenImage(bitmap);
 
 //                    return bitmapRes;
             } else if (image_PROCESSING_tasks == ResizeFragment.IMAGE_PROCESSING_TASKS.ROTATE_CLOCKWISE) {
-                bitmapRes = ImageUtils.rotateImageClockWise(bitmap);
-
 //                    return bitmapRes;
             }
 

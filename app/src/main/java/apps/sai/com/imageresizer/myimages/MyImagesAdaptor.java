@@ -26,7 +26,6 @@ import apps.sai.com.imageresizer.R;
 import apps.sai.com.imageresizer.data.DataApi;
 import apps.sai.com.imageresizer.data.FileApi;
 import apps.sai.com.imageresizer.data.ImageInfo;
-import apps.sai.com.imageresizer.data.OpenCvFileApi;
 import apps.sai.com.imageresizer.listener.MultipleImageProcessingDialog;
 import apps.sai.com.imageresizer.resize.ResizeFragment;
 import apps.sai.com.imageresizer.settings.SettingsManager;
@@ -205,9 +204,9 @@ public class MyImagesAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolde
         mDataApi.deleteImageFiles((Activity) mContext.getContext(), imageInfoList);
         if (mOnUiUpdateListener != null) {
             List<ImageInfo> list = new ArrayList<>();
-            for(ImageInfo imageInfo:imageInfoList){
-                if(!imageInfo.isDeleted()){
-                    list.add(imageInfo) ;
+            for (ImageInfo imageInfo : imageInfoList) {
+                if (!imageInfo.isDeleted()) {
+                    list.add(imageInfo);
                 }
             }
             mOnUiUpdateListener.onAllImagesDeleted(list);
@@ -268,14 +267,7 @@ public class MyImagesAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         mOnImagesSelectedListener = (OnImagesSelectedListener) context;
         this.mOnULoadingCancelListener = onULoadingCancelListener;
-
-        if (BaseFragment.openCvLoaded) {
-            mDataApi = new OpenCvFileApi(context.getContext());
-        } else {
-            mDataApi = new FileApi(context.getContext());
-
-        }
-
+        mDataApi = new FileApi(context.getContext());
         adImageInfoList = new ArrayList<>();
         this.layoutManager = layoutManager;
 

@@ -32,7 +32,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.sai.com.imageresizer.BuildConfig;
 import apps.sai.com.imageresizer.R;
 import apps.sai.com.imageresizer.listener.OnPreferenceChangedListener;
 import apps.sai.com.imageresizer.select.MenuItem;
@@ -234,8 +233,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
 
         Preference versionPreference = findPreference(SettingsManager.KEY_PREF_VERSION);
         if (versionPreference != null) {
-           versionPreference.setSummary(BuildConfig.VERSION_NAME);
-
+          // versionPreference.setSummary(BuildConfig.VERSION_NAME);
         }
 
 

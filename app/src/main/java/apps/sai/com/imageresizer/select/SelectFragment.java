@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,10 +24,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.android.OpenCVLoader;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +31,6 @@ import apps.sai.com.imageresizer.BaseFragment;
 import apps.sai.com.imageresizer.R;
 import apps.sai.com.imageresizer.data.DataApi;
 import apps.sai.com.imageresizer.data.FileApi;
-import apps.sai.com.imageresizer.data.OpenCvFileApi;
 import apps.sai.com.imageresizer.myimages.MyImagesFragment;
 import apps.sai.com.imageresizer.resize.ResizeFragment;
 import apps.sai.com.imageresizer.settings.SettingsFragment;
@@ -70,17 +64,12 @@ public class SelectFragment extends BaseFragment implements SelectContract.View 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mMyBaseLoaderCallback = new MyBaseLoaderCallback(getContext());
-        mHandler.postDelayed(() -> {
-            if (!OpenCVLoader.initDebug()) {
-                Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
-//                    OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION, getContext(), mMyBaseLoaderCallback);
-            } else {
-                if (mMyBaseLoaderCallback != null) {
-                    mMyBaseLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-                }
-            }
-        }, 1000);
+
+        try {
+            mDataApi = new FileApi(getContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         mLayoutManager = new LinearLayoutManager(getContext());
     }
 
@@ -164,46 +153,6 @@ public class SelectFragment extends BaseFragment implements SelectContract.View 
     }
 
     private static final String TAG = SelectFragment.class.getSimpleName();
-
-    private class MyBaseLoaderCallback extends BaseLoaderCallback {
-
-        MyBaseLoaderCallback(Context context) {
-            super(context);
-
-        }
-
-        @Override
-        public void onManagerConnected(int status) {
-            switch (status) {
-                case LoaderCallbackInterface.SUCCESS: {
-                    Log.i(TAG, "OpenCV loaded successfully");
-                    openCvLoaded = true;
-                    BaseFragment.openCvLoaded = false;
-                    if (getContext() == null) {
-                        return;
-                    }
-                    try {
-                        mDataApi = new OpenCvFileApi(getContext());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                break;
-                default: {
-
-                }
-                break;
-            }
-            try {
-                mDataApi = new FileApi(getContext());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private MyBaseLoaderCallback mMyBaseLoaderCallback;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
