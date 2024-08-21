@@ -46,7 +46,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
-import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,7 +71,6 @@ import apps.sai.com.imageresizer.settings.SettingsManager;
 import apps.sai.com.imageresizer.util.BitmapLoadingTask;
 import apps.sai.com.imageresizer.util.BitmapProcessingTask;
 import apps.sai.com.imageresizer.util.ImageInfoLoader;
-import apps.sai.com.imageresizer.util.ImageInfoLoadingTask;
 import apps.sai.com.imageresizer.util.ImageOperations;
 import apps.sai.com.imageresizer.util.ImageProcessor;
 import apps.sai.com.imageresizer.util.MultipleImagesAdaptor;
@@ -933,36 +931,21 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             mSingleFileImageInfo.setOriginalContentUri(mSingleFileImageInfo.getImageUri());
             sizeTextView.setVisibility(View.VISIBLE);
             mMultipleImagesRecyclerView.setVisibility(View.GONE);
-            ImageInfoLoadingTask imageInfoLoadingTask =
-                    new ImageInfoLoadingTask(getContext(), mSingleFileImageInfo, mDataApi
-                            , new ImageInfoLoadingTask.OnImageInfoProcessedListener() {
-
-
-                        @Override
-                        public void onImageProcessed(ImageInfo imageInfo) {
-
-                            try {
-
-                                if (imageInfo == null || imageInfo.getImageUri() == null) {
-                                    showError(R.string.image_does_not_exists);
-                                    return;
-
-                                }
-                                imageInfo.setOriginalContentUri(mSingleFileImageInfo.getOriginalContentUri());
-                                mSingleFileImageInfo = imageInfo;
-                                BitmapResult bitmapResult = new BitmapResult();
-                                bitmapResult.setContentUri(mSingleFileImageInfo.getImageUri());
-                                mResizePresenter.setSelectedImage(bitmapResult);
-
-                            } catch (Exception e) {
-                                showError(R.string.unknown_error);
-                            }
-
-                        }
-                    }, ImageOperations.IMAGE_INFO_LOAD);
-            imageInfoLoadingTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-
-
+            ImageInfoLoader imageInfoLoader = new
+                    ImageInfoLoader(
+                    mSingleFileImageInfo, mDataApi,
+                    ImageOperations.IMAGE_INFO_LOAD
+            );
+            ImageInfo imageInfo = imageInfoLoader.process(requireContext());
+            if (imageInfo.getImageUri() == null) {
+                showError(R.string.image_does_not_exists);
+                return;
+            }
+            imageInfo.setOriginalContentUri(mSingleFileImageInfo.getOriginalContentUri());
+            mSingleFileImageInfo = imageInfo;
+            BitmapResult bitmapResult = new BitmapResult();
+            bitmapResult.setContentUri(mSingleFileImageInfo.getImageUri());
+            mResizePresenter.setSelectedImage(bitmapResult);
         } catch (Exception e) {
             e.printStackTrace();
         } catch (OutOfMemoryError oe) {
@@ -1192,13 +1175,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             click = new ClickableSpan() {
                 @Override
                 public void onClick(View widget) {
-                    mhHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            showCustomAppBar((AppCompatActivity) getActivity(), true);
-                        }
-                    }, 100);
-
+                    mhHandler.postDelayed(() -> showCustomAppBar((AppCompatActivity) getActivity(), true), 100);
                     MyImagesFragment myImagesFragment = MyImagesFragment.newInstance();
                     Utils.addFragment((AppCompatActivity) requireActivity(), myImagesFragment, R.id.contentFrame, true);
                 }
