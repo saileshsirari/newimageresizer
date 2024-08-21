@@ -168,11 +168,10 @@ public class FileApi extends DataApi {
             return imageInfoList;
         }
         Uri uriBase = Uri.fromFile(file);
-        String a[] = file.list();
+        String[] a = file.list();
 
         if (a != null) {
-            for (int i = 0; i < a.length; i++) {
-                String b = a[i];
+            for (String b : a) {
                 File bfile = new File(file, b);
                 if (bfile.length() == 0) {
                     bfile.delete();
@@ -194,15 +193,9 @@ public class FileApi extends DataApi {
                                 imageInfo.setImageUri(fileUri);
                             }
                         }
-//                        imageInfo = Utils.getImageInfo(context,imageInfo.getImageUri(),this);
-
-//                        if(imageInfo.getWidth()>0 && imageInfo.getHeight()>0) {
-
                         if (imageInfo.getImageUri() != null) {
-
                             imageInfoList.add(imageInfo);
                         }
-//                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

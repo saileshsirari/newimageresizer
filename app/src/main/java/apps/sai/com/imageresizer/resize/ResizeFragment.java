@@ -49,10 +49,8 @@ import java.io.File;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.Executor;
 
 import apps.sai.com.imageresizer.BaseFragment;
@@ -65,7 +63,6 @@ import apps.sai.com.imageresizer.data.DataFile;
 import apps.sai.com.imageresizer.data.FileApi;
 import apps.sai.com.imageresizer.data.ImageInfo;
 import apps.sai.com.imageresizer.data.ResolutionInfo;
-import apps.sai.com.imageresizer.listener.MultipleImageProcessingDialog;
 import apps.sai.com.imageresizer.listener.OnPreferenceChangedListener;
 import apps.sai.com.imageresizer.listener.OnResolutionSelectedListener;
 import apps.sai.com.imageresizer.myimages.MyImagesFragment;
@@ -81,8 +78,6 @@ import apps.sai.com.imageresizer.util.ImageProcessor;
 import apps.sai.com.imageresizer.util.MultipleImagesAdaptor;
 import apps.sai.com.imageresizer.util.NestedWebView;
 import apps.sai.com.imageresizer.util.Utils;
-import io.reactivex.Observable;
-import io.reactivex.disposables.CompositeDisposable;
 
 /**
  * Created by Sailesh on 03/01/18.
@@ -128,7 +123,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             if (tobedeletedTextView != null) {
                 tobedeletedTextView.setVisibility(View.GONE);
             }
-            if (data.getClipData() != null && data.getClipData().getItemCount() > 0) {
+            if ((data.getClipData() != null) && (data.getClipData().getItemCount() > 0)) {
                 setLoadingIndicator(true);
                 mSingleFileImageInfo = null;
                 mhHandler.postDelayed(() -> {
@@ -364,7 +359,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
         @Override
         public MenuAdaptor.ResizeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new MenuAdaptor.ResizeHolder(LayoutInflater.from(mContext).inflate(R.layout.menu_row, null));
+            return new ResizeHolder(LayoutInflater.from(mContext).inflate(R.layout.menu_row, null));
         }
 
         public void clear() {
@@ -385,7 +380,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             return mMenuItemList.size();
         }
 
-        class ResizeHolder extends RecyclerView.ViewHolder {
+        static class ResizeHolder extends RecyclerView.ViewHolder {
             ImageView imageView;
             View itemView;
 
@@ -399,7 +394,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(Menu menu, @NonNull MenuInflater inflater) {
         menu.clear();
         this.menu = menu;
         showCustomAppBar((AppCompatActivity) getActivity(), false);
@@ -408,27 +403,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     //    MultipleImageProcessingDialog multipleImageProcessingListener;
     volatile boolean mCancelMutipleTask;
 
-    public void cancelMultipleImageProcessing(boolean cancel) {
-        mCancelMutipleTask = cancel;
-        if (mImageInfoLoadingTasks != null) {
-            for (int i = 0; i < mImageInfoLoadingTasks.size(); i++) {
-                //  mImageInfoLoadingTasks.get(i).cancel(false);
-            }
-        }
-
-        if (compositeDisposable != null) {
-            compositeDisposable.clear();
-            compositeDisposable.dispose();
-        }
-    }
-
-    private CompositeDisposable _disposables;
-
-    private Observable<ImageInfo> getImageInfoObservable(List<ImageInfo> imageInfoList) {
-        return Observable.fromIterable(imageInfoList);
-    }
-
-    CompositeDisposable compositeDisposable;
     int adCount = 1;
 
     private void doMultipleImageProcessing(final ImageProcessingTask imageProcessingTask, final ResolutionInfo resolutionInfo) {
@@ -449,6 +423,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                     return;
                 } else {
                     showError(R.string.unknown_error);
+                    continue;
                 }
             }
             ImageInfo compressedImageInfo;
@@ -621,7 +596,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                     showError(R.string.no_images);
                     return;
                 }
-                cancelMultipleImageProcessing(true);
                 mImageInfoLoadingTasks = new ArrayList<>();
                 mhHandler.post(() -> {
                     mImageInfoList = mMultipleImagesAdaptor.getProcessedImageInfoList();
@@ -636,21 +610,9 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                         return;
                     }
                     setLoadingIndicator(true);
-                    int count = 0;
-                    final MultipleImageProcessingDialog multipleImageProcessingDialog = new MultipleImageProcessingDialog(
-                            (imageInfo, pos) -> cancelMultipleImageProcessing(true), getContext(), null);
-
-                    for (ImageInfo imageInfo : mImageInfoList) {
-
-
-                    }
-
                     for (ImageInfo imageInfo : mImageInfoList) {
                         count++;
-                        if (count == 1) {
-                            multipleImageProcessingDialog.onProcessingStarted(imageInfo, count, mImageInfoList.size());
-                        }
-                        ImageInfoLoadingTask imageInfoLoadingTask = null;
+                        ImageInfoLoadingTask imageInfoLoadingTask;
                         if (original) {
                             imageInfoLoadingTask = new ImageInfoLoadingTask(getContext(), imageInfo,
                                     mDataApi, imageInfo1 -> {
@@ -672,7 +634,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                                         saved = true;
                                     }
                                 }
-                                multipleImageProcessingDialog.onProcessingFinished(imageInfo1, count1 + 1, mImageInfoList.size());
 
                             }, ImageOperations.IMAGE_FILE_SAVE_GALLERY_TO_MY_FOLDER);
                         } else {
@@ -695,7 +656,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                                     showDeleteTextView(requireActivity());
                                     saved = true;
                                 }
-                                multipleImageProcessingDialog.onProcessingFinished(imageInfo12, count12 + 1, mImageInfoList.size());
                             }, ImageOperations.IMAGE_FILE_SAVE_CACHE_TO_GALLERY);
                         }
                         // mImageInfoLoadingTasks.add(imageInfoLoadingTask);
@@ -751,7 +711,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     @Override
     public void onDestroy() {
         super.onDestroy();
-        cancelMultipleImageProcessing(true);
         mResizePresenter.dropView();
     }
 
@@ -796,78 +755,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         }
     }
 
-    private void setResolutions(ImageInfo imageInfo) {
-
-        if (imageInfo == null) {
-            imageInfo = new ImageInfo();
-            imageInfo.setWidth(100);
-            imageInfo.setHeight(100);
-        }
-        if (getArguments() != null) {
-            mResFileContent = getArguments().getString(FileApi.RES_FILE_NAME);
-        }
-        if (mResFileContent == null) {
-            mResFileContent = Utils.loadResolutionsFromAssets(requireContext(), R.raw.res_camera);
-        }
-        List<String> nameList;
-        String[] a = mResFileContent.split("\n");
-        if (a.length > 0) {
-            nameList = Arrays.asList(a);
-            String maxRes;//a[0];
-
-            int orgWidth = imageInfo.getWidth();
-            int orgHeight = imageInfo.getHeight();
-            int newHeight;
-            int newWidth;
-            int newMaxResolution = 0;
-            int index = -1;
-            List<ResolutionInfo> newResolutionsList = new ArrayList<>();
-            int orgResolution = orgWidth * orgHeight;
-            for (int i = 0; i < nameList.size(); i++) {
-                maxRes = nameList.get(i);
-                index = maxRes.indexOf("x");
-                if (orgWidth > orgHeight) {
-                    newWidth = Integer.parseInt(maxRes.substring(0, index));
-                    newHeight = Utils.calculateAspectRatioHeight(new Point(orgWidth, orgHeight), newWidth).y;
-                } else {
-                    newHeight = Integer.parseInt(maxRes.substring(index + 1));
-                    newWidth = Utils.calculateAspectRatioWidth(new Point(orgWidth, orgHeight), newHeight).x;
-                }
-
-                int newResolution = newWidth * newHeight;
-                float ratio = ((float) newResolution / (float) orgResolution);
-                ratio = ratio * 100;
-
-                if (newResolution < maxResolution) {
-                    if (newResolution > newMaxResolution) {
-                        newMaxResolution = newResolution;
-                    }
-                    ResolutionInfo resolutionInfo = new ResolutionInfo();
-                    if (ratio >= 1) {
-                        maxRes = String.format(Locale.getDefault(), "%d %s %d (%.0f", newWidth, "x", newHeight, ratio) + "%)";
-                    } else {
-                        maxRes = String.format(Locale.getDefault(), "%d %s %d (%.1f", newWidth, "x", newHeight, ratio) + "%)";
-
-                    }
-                    resolutionInfo.setHeight(newHeight);
-                    resolutionInfo.setWidth(newWidth);
-                    resolutionInfo.setPercentageOfOriginal((int) ratio);
-                    resolutionInfo.setFormatedString(maxRes);
-                    if (!newResolutionsList.contains(resolutionInfo)) {
-                        newResolutionsList.add(resolutionInfo);
-                    }
-                }
-            }
-            ResolutionInfo resolutionInfo = new ResolutionInfo();
-            resolutionInfo.setFormatedString("Custom");
-            newResolutionsList.add(0, resolutionInfo);
-
-            resolutionInfo = new ResolutionInfo();
-            resolutionInfo.setFormatedString("Scale->");
-            newResolutionsList.add(0, resolutionInfo);
-        }
-    }
-
     Executor executor = AsyncTask.SERIAL_EXECUTOR;
     int count = 0;
     int lastIndex;
@@ -895,13 +782,12 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                 imageInfoList.add(0, processedImageInfo);
                 mhHandler.post(() -> {
                     mImageInfoLoadingTasks = new ArrayList<>();
-                    cancelMultipleImageProcessing(false);
                     for (int i = 0; i < imageInfoList.size(); i++) {
                         ImageInfo imageInfoInner = imageInfoList.get(i);
                         ImageInfoLoader imageInfoLoadingTask =
                                 new ImageInfoLoader(imageInfoInner, mDataApi
                                         , ImageOperations.IMAGE_INFO_LOAD);
-                        ImageInfo imageInfo = imageInfoLoadingTask.process(getContext());
+                        ImageInfo imageInfo = imageInfoLoadingTask.process(requireContext());
                         try {
                             Log.e(TAG, imageInfo + " Loaded ");
                             if (mCancelMutipleTask) {
@@ -1339,15 +1225,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                     }, 100);
 
                     MyImagesFragment myImagesFragment = MyImagesFragment.newInstance();
-                    Utils.addFragment((AppCompatActivity) getActivity(), myImagesFragment, R.id.contentFrame, true);
-                    myImagesFragment.setOnContextCreatedListener(new MyImagesFragment.OnContextCreatedListener() {
-                        @Override
-                        public void onContextCreated() {
-                            myImagesFragment.loadMyImages();
-                        }
-                    });
-
-
+                    Utils.addFragment((AppCompatActivity) requireActivity(), myImagesFragment, R.id.contentFrame, true);
                 }
 
                 @Override

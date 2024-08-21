@@ -53,17 +53,6 @@ public class SelectPresenter implements SelectContract.Presenter {
     @Override
     public void showMyImages(AppCompatActivity appCompatActivity, BaseFragment baseFragment) {
         Utils.addFragment(appCompatActivity,baseFragment, R.id.contentFrame,true);
-
-        if(baseFragment instanceof MyImagesFragment){
-            MyImagesFragment myImagesFragment = (MyImagesFragment) baseFragment;
-            myImagesFragment.setOnContextCreatedListener(new MyImagesFragment.OnContextCreatedListener() {
-                @Override
-                public void onContextCreated() {
-                    ((MyImagesFragment) baseFragment).loadMyImages();
-                }
-            });
-
-        }
     }
 
     @Override
