@@ -3,7 +3,6 @@ package apps.sai.com.imageresizer.myimages
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -30,8 +29,6 @@ import apps.sai.com.imageresizer.myimages.MyImagesAdaptor.OnUiUpdateListener
 import apps.sai.com.imageresizer.select.SelectActivity
 import apps.sai.com.imageresizer.settings.SettingsManager
 import apps.sai.com.imageresizer.util.ImageInfoLoader
-import apps.sai.com.imageresizer.util.ImageInfoLoadingTask
-import apps.sai.com.imageresizer.util.ImageInfoLoadingTask.OnImageInfoProcessedListener
 import apps.sai.com.imageresizer.util.ImageOperations
 import kotlinx.coroutines.launch
 
@@ -65,12 +62,9 @@ class MyImagesFragment : BaseFragment(), MyImagesContract.View, OnImagesSelected
         setHasOptionsMenu(true)
     }
 
-    private var mRecyclerView: RecyclerView? = null
-
+    private lateinit var mRecyclerView: RecyclerView
     private var mProgressBar: ProgressBar? = null
-
-    private var mNoImagesTextView: TextView? = null
-
+    private lateinit var mNoImagesTextView: TextView
     private var mHandler: Handler = Handler()
     private var myImagesPresenter: MyImagesPresenter? = null
     private var myImagesAdaptor: MyImagesAdaptor? = null
@@ -92,7 +86,7 @@ class MyImagesFragment : BaseFragment(), MyImagesContract.View, OnImagesSelected
         myImagesAdaptor = MyImagesAdaptor(myImagesPresenter,
             this,
             imageInfoList,
-            mRecyclerView!!,
+            mRecyclerView,
             GridLayoutManager(
                 context, size
             ),
@@ -127,10 +121,7 @@ class MyImagesFragment : BaseFragment(), MyImagesContract.View, OnImagesSelected
                 menu?.clear()
             }
         })
-        mRecyclerView?.setAdapter(myImagesAdaptor)
-
-
-
+        mRecyclerView.setAdapter(myImagesAdaptor)
         return view
     }
 
@@ -148,18 +139,18 @@ class MyImagesFragment : BaseFragment(), MyImagesContract.View, OnImagesSelected
     }
 
     private fun loadImagesInfo(imageInfoList: List<ImageInfo>) {
-        dataApi?.let {dataApi->
+        dataApi?.let { dataApi ->
             for (i in imageInfoList.indices) {
                 val imageInfoInner = imageInfoList[i]
-                val imageInfoLoadingTask1 =
+                val imageInfoLoader =
                     ImageInfoLoader(
                         imageInfoInner, dataApi,
                         ImageOperations.IMAGE_INFO_LOAD
                     )
-               val info =  imageInfoLoadingTask1.process(requireContext())
+                val info = imageInfoLoader.process(requireContext())
                 if (info.width == 0 || info.height == 0) {
                     myImagesAdaptor?.remove(info)
-                }else{
+                } else {
                     myImagesAdaptor?.setImageInfo(info)
                 }
             }
@@ -193,13 +184,13 @@ class MyImagesFragment : BaseFragment(), MyImagesContract.View, OnImagesSelected
         if (menu == null) {
             return
         }
-        if (hide == false) {
-            mNoImagesTextView!!.visibility = View.VISIBLE
+        if (!hide) {
+            mNoImagesTextView.visibility = View.VISIBLE
             menu.setGroupEnabled(R.id.my_images_group, false)
             menu.setGroupEnabled(R.id.my_images_select_all_group, false)
             menu.setGroupEnabled(R.id.my_images_clear_all_group, false)
         } else {
-            mNoImagesTextView!!.visibility = View.GONE
+            mNoImagesTextView.visibility = View.GONE
             menu.setGroupEnabled(R.id.my_images_group, true)
             menu.setGroupEnabled(R.id.my_images_select_all_group, true)
             menu.setGroupEnabled(R.id.my_images_clear_all_group, true)

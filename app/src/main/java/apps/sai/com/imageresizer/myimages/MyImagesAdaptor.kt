@@ -20,7 +20,6 @@ import apps.sai.com.imageresizer.R
 import apps.sai.com.imageresizer.data.DataApi
 import apps.sai.com.imageresizer.data.FileApi
 import apps.sai.com.imageresizer.data.ImageInfo
-import apps.sai.com.imageresizer.resize.ResizeFragment.OnImagedSavedListener
 import apps.sai.com.imageresizer.settings.SettingsManager
 import apps.sai.com.imageresizer.util.ImageDetailFragment
 import apps.sai.com.imageresizer.util.SpacesItemDecoration
@@ -38,16 +37,13 @@ class MyImagesAdaptor(
     layoutManager: GridLayoutManager,
     var mOnUiUpdateListener: OnUiUpdateListener?,
     onULoadingCancelListener: OnULoadingCancelListener
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), OnImagedSavedListener {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var mImageInfoList: MutableList<ImageInfo> = mutableListOf()
     private var mContext: BaseFragment = context
     private var mRecyclerView: RecyclerView = recyclerView
     var mDataApi: DataApi
     private val adImageInfoList: List<ImageInfo>
 
-    override fun onImageSaved(imageInfo: ImageInfo) {
-        reload()
-    }
 
     fun remove(imageInfo: ImageInfo) {
         val index1 = mImageInfoList.indexOf(imageInfo)
@@ -386,18 +382,6 @@ class MyImagesAdaptor(
         return HEADER
     }
 
-
-    private fun reload() {
-        if (myImagesPresenter != null) {
-            try {
-                // this.mImageInfoList = myImagesPresenter.getImages(mContext.getContext());
-                this.mSelectedImageInfoList = ArrayList()
-                notifyDataSetChanged()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
 
     val selectedImageInfoList: List<ImageInfo>
         get() = mSelectedImageInfoList

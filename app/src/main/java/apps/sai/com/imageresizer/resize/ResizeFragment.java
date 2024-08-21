@@ -438,6 +438,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         }
         setLoadingIndicator(false);
     }
+
     @Override
     public BitmapResult applyImageEffect(ImageInfo imageInfo, ImageProcessingTask imageProcessingTask, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo) {
 
@@ -558,13 +559,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     }
 
     List<ImageInfoLoader> mImageInfoLoadingTasks;
-    Reference<OnImagedSavedListener> mOnImagedSavedListenerWeakReference;
-    OnImagedSavedListener mOnImagedSavedListener;
-
-    public interface OnImagedSavedListener {
-        void onImageSaved(ImageInfo imageInfo);
-    }
-
     boolean saved;
     List<ImageInfo> mImageInfoList;
 
@@ -584,11 +578,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                 } else {
                     Toast.makeText(getActivity(), "Image saved ", Toast.LENGTH_LONG).show();
                     mSingleFileImageInfo.setSaved(true);
-
                     showDeleteTextView(requireActivity());
-                    if (mOnImagedSavedListener != null) {
-                        mOnImagedSavedListener.onImageSaved(mSingleFileImageInfo);
-                    }
                 }
             } else {
                 saved = false;
@@ -597,73 +587,58 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                     return;
                 }
                 mImageInfoLoadingTasks = new ArrayList<>();
-                mhHandler.post(() -> {
-                    mImageInfoList = mMultipleImagesAdaptor.getProcessedImageInfoList();
-                    boolean original = true;
-                    if (mImageInfoList != null && !mImageInfoList.isEmpty()) {
-                        //images are original yet
-                        original = false;
-                    } else {
-                        mImageInfoList = mMultipleImagesAdaptor.getImageInfoList();
-                    }
-                    if (mImageInfoList == null) {
-                        return;
-                    }
-                    setLoadingIndicator(true);
-                    for (ImageInfo imageInfo : mImageInfoList) {
-                        count++;
-                        ImageInfoLoadingTask imageInfoLoadingTask;
-                        if (original) {
-                            imageInfoLoadingTask = new ImageInfoLoadingTask(getContext(), imageInfo,
-                                    mDataApi, imageInfo1 -> {
-                                int count1 = mImageInfoList.indexOf(imageInfo1);
-                                if (count1 == mImageInfoList.size() - 1) {
-                                    if (!imageInfo1.isSaved()) {
-                                        showError(R.string.unable_to_save_image);
-                                    }
-                                    imageInfo1.setSaved(true);
-
-                                    if (mOnImagedSavedListenerWeakReference != null) {
-                                        OnImagedSavedListener onImagedSavedListener = mOnImagedSavedListenerWeakReference.get();
-                                        if (onImagedSavedListener != null) {
-                                            onImagedSavedListener.onImageSaved(imageInfo1);
-                                        }
-                                    }
-                                    if (!saved) {
-                                        showDeleteTextView(requireActivity());
-                                        saved = true;
-                                    }
-                                }
-
-                            }, ImageOperations.IMAGE_FILE_SAVE_GALLERY_TO_MY_FOLDER);
-                        } else {
-                            imageInfoLoadingTask = new ImageInfoLoadingTask(getContext(), imageInfo,
-                                    mDataApi, imageInfo12 -> {
-                                int count12 = mImageInfoList.indexOf(imageInfo12);
-                                if (count12 == mImageInfoList.size() - 1) {
-                                    if (!imageInfo12.isSaved()) {
-                                        showError(R.string.unable_to_save_image);
-                                    }
-                                    if (mOnImagedSavedListenerWeakReference != null) {
-                                        OnImagedSavedListener onImagedSavedListener = mOnImagedSavedListenerWeakReference.get();
-                                        if (onImagedSavedListener != null) {
-                                            onImagedSavedListener.onImageSaved(imageInfo12);
-                                        }
-                                    }
-                                    imageInfo12.setSaved(true);
-                                }
-                                if (!saved) {
-                                    showDeleteTextView(requireActivity());
-                                    saved = true;
-                                }
-                            }, ImageOperations.IMAGE_FILE_SAVE_CACHE_TO_GALLERY);
+                mImageInfoList = mMultipleImagesAdaptor.getProcessedImageInfoList();
+                boolean original = true;
+                if (mImageInfoList != null && !mImageInfoList.isEmpty()) {
+                    //images are original yet
+                    original = false;
+                } else {
+                    mImageInfoList = mMultipleImagesAdaptor.getImageInfoList();
+                }
+                if (mImageInfoList == null) {
+                    return;
+                }
+                setLoadingIndicator(true);
+                for (ImageInfo imageInfo : mImageInfoList) {
+                    count++;
+                    if (original) {
+                        ImageInfoLoader imageInfoLoader =
+                                new ImageInfoLoader(
+                                        imageInfo, mDataApi,
+                                        ImageOperations.IMAGE_FILE_SAVE_GALLERY_TO_MY_FOLDER
+                                );
+                        ImageInfo imageInfo1 = imageInfoLoader.process(requireContext());
+                        int count1 = mImageInfoList.indexOf(imageInfo1);
+                        if (count1 == mImageInfoList.size() - 1) {
+                            if (!imageInfo1.isSaved()) {
+                                showError(R.string.unable_to_save_image);
+                            }
+                            imageInfo1.setSaved(true);
+                            if (!saved) {
+                                showDeleteTextView(requireActivity());
+                                saved = true;
+                            }
                         }
-                        // mImageInfoLoadingTasks.add(imageInfoLoadingTask);
-                        imageInfoLoadingTask.executeOnExecutor(executor);
+
+                    } else {
+                        ImageInfoLoader imageInfoLoader =
+                                new ImageInfoLoader(
+                                        imageInfo, mDataApi,
+                                        ImageOperations.IMAGE_FILE_SAVE_CACHE_TO_GALLERY
+                                );
+                        ImageInfo imageInfo12 = imageInfoLoader.process(requireContext());
+                        int count12 = mImageInfoList.indexOf(imageInfo12);
+                        if (count12 == mImageInfoList.size() - 1) {
+                            if (!imageInfo12.isSaved()) {
+                                showError(R.string.unable_to_save_image);
+                            }
+                            imageInfo12.setSaved(true);
+                        }
                     }
-                    setLoadingIndicator(false);
-                });
+                }
+                setLoadingIndicator(false);
             }
+
         } catch (Throwable e) {
             showError(R.string.unknown_error);
         }
