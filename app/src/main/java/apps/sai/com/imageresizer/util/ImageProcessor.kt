@@ -10,7 +10,6 @@ import apps.sai.com.imageresizer.data.DataApi
 import apps.sai.com.imageresizer.data.DataFile
 import apps.sai.com.imageresizer.data.ImageInfo
 import apps.sai.com.imageresizer.resize.ImageProcessingTask
-import apps.sai.com.imageresizer.util.BitmapProcessingTask.OnImageProcessedListener
 
 class ImageProcessor(
     imageInfo: ImageInfo,

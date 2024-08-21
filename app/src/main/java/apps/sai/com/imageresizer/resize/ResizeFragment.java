@@ -46,7 +46,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,13 +67,12 @@ import apps.sai.com.imageresizer.myimages.MyImagesFragment;
 import apps.sai.com.imageresizer.select.MenuItem;
 import apps.sai.com.imageresizer.select.SelectActivity;
 import apps.sai.com.imageresizer.settings.SettingsManager;
-import apps.sai.com.imageresizer.util.BitmapLoadingTask;
-import apps.sai.com.imageresizer.util.BitmapProcessingTask;
 import apps.sai.com.imageresizer.util.ImageInfoLoader;
 import apps.sai.com.imageresizer.util.ImageOperations;
 import apps.sai.com.imageresizer.util.ImageProcessor;
 import apps.sai.com.imageresizer.util.MultipleImagesAdaptor;
 import apps.sai.com.imageresizer.util.NestedWebView;
+import apps.sai.com.imageresizer.util.OnImageProcessedListener;
 import apps.sai.com.imageresizer.util.Utils;
 
 /**
@@ -414,7 +412,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         for (int i = 0; i < imageInfoList.size(); i++) {
             ImageInfo imageInfo = imageInfoList.get(i);
             BitmapResult bitmapResult = mResizePresenter.applyImageEffect(imageInfo, imageProcessingTask, null, resolutionInfo);
-            if (bitmapResult.getError() != null) {
+            if (bitmapResult.getError() != null || bitmapResult.getContentUri() == null) {
                 if (bitmapResult.getError() instanceof OutOfMemoryError) {
                     Toast.makeText(getContext(), getString(R.string.out_of_memory), Toast.LENGTH_LONG).show();
                     setLoadingIndicator(false);
@@ -424,11 +422,13 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                     continue;
                 }
             }
-            ImageInfo compressedImageInfo;
-            compressedImageInfo = Utils.getImageInfo(imageInfo, getContext(), bitmapResult.getContentUri(), mDataApi);
-            compressedImageInfo.setImageUri(bitmapResult.getContentUri());
-            mMultipleImagesAdaptor.showProcessedInfo(compressedImageInfo);
-            mImageInfoListCached.add(compressedImageInfo);
+            ImageInfo compressedImageInfo = Utils.getImageInfo(imageInfo, getContext(), bitmapResult.getContentUri(), mDataApi);
+            if (compressedImageInfo != null) {
+                compressedImageInfo.setImageUri(bitmapResult.getContentUri());
+                mMultipleImagesAdaptor.showProcessedInfo(compressedImageInfo);
+                mImageInfoListCached.add(compressedImageInfo);
+            }
+
         }
         mMultipleImagesAdaptor.showProcessedInfoList(mImageInfoListCached, imageProcessingTask);
         if (autoSave) {
@@ -438,7 +438,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     }
 
     @Override
-    public BitmapResult applyImageEffect(ImageInfo imageInfo, ImageProcessingTask imageProcessingTask, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo) {
+    public BitmapResult applyImageEffect(ImageInfo imageInfo, ImageProcessingTask imageProcessingTask, OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo) {
 
         if (imageProcessingTask != null) {
             if (imageProcessingTask == ImageProcessingTask.SCALE) {
@@ -643,24 +643,24 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     }
 
 
-    public BitmapResult blurImage(ImageInfo bitmap, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
+    public BitmapResult blurImage(ImageInfo bitmap, OnImageProcessedListener onImageProcessedListener) {
         return processImage(bitmap, 0, 0, ImageProcessingTask.BLUR, onImageProcessedListener);
     }
 
-    public BitmapResult sharpenImage(ImageInfo bitmap, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
+    public BitmapResult sharpenImage(ImageInfo bitmap, OnImageProcessedListener onImageProcessedListener) {
         return processImage(bitmap, 0, 0, ImageProcessingTask.SHARPEN, onImageProcessedListener);
     }
 
-    public BitmapResult compressImage(ImageInfo bitmap, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
+    public BitmapResult compressImage(ImageInfo bitmap, OnImageProcessedListener onImageProcessedListener) {
         return processImage(bitmap, 0, 0, ImageProcessingTask.COMPRESS, onImageProcessedListener);
     }
 
-    public BitmapResult rotateImageClockWise(ImageInfo bitmap, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
+    public BitmapResult rotateImageClockWise(ImageInfo bitmap, OnImageProcessedListener onImageProcessedListener) {
         return processImage(bitmap, 0, 0, ImageProcessingTask.ROTATE_CLOCKWISE, onImageProcessedListener);
     }
 
 
-    public BitmapResult scaleImage(ImageInfo bitmap, int w, int h, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
+    public BitmapResult scaleImage(ImageInfo bitmap, int w, int h, OnImageProcessedListener onImageProcessedListener) {
         return processImage(bitmap, w, h, ImageProcessingTask.SCALE, onImageProcessedListener);
     }
 
@@ -762,7 +762,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                                         , ImageOperations.IMAGE_INFO_LOAD);
                         ImageInfo imageInfo = imageInfoLoadingTask.process(requireContext());
                         try {
-                            Log.e(TAG, imageInfo + " Loaded ");
+                            Log.e(TAG, imageInfo.getFileSize() + " Loaded ");
                             if (mCancelMutipleTask) {
                                 lastIndex = imageInfoList.indexOf(imageInfo);
                                 return;
@@ -957,8 +957,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     /**
      * Task used to load mBitmap async from UI thread
      */
-    private WeakReference<BitmapLoadingTask> mBitmapLoadingWorkerTask;
-    private static WeakReference<BitmapProcessingTask> mBitmapProcessingTaskWeakReference;
     static int mCompressPercentage, mKbEnteredValue;
 
     //    boolean mChecked =true;\
@@ -1024,16 +1022,12 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     @Override
     public void showError(final Throwable ex) {
         System.gc();
-        if (mBitmapProcessingTaskWeakReference != null) {
-            mBitmapProcessingTaskWeakReference.clear();
-            setLoadingIndicator(false);
-        }
         Toast.makeText(getActivity(), ex.toString(), Toast.LENGTH_LONG).show();
     }
 
     NestedWebView mWebView;
 
-    class MyOnImageProcessedListener implements BitmapProcessingTask.OnImageProcessedListener {
+    class MyOnImageProcessedListener implements OnImageProcessedListener {
         @Override
         public void onImageLoaded(BitmapResult bitmapResult, final ImageInfo imageInfoOrg) {
 
@@ -1069,10 +1063,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                 mResizePresenter.setSelectedImage(bitmapResult);
                 mhHandler.postDelayed(() -> {
                     setLoadingIndicator(false);
-
-                    if (mBitmapProcessingTaskWeakReference != null) {
-                        mBitmapProcessingTaskWeakReference.clear();
-                    }
                 }, 100);
 
             } catch (Exception e) {
@@ -1090,10 +1080,8 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             if (mMultipleImagesAdaptor != null && mSingleFileImageInfo == null) {
                 muliple = true;
                 List<ImageInfo> imageInfoList = mMultipleImagesAdaptor.getImageInfoList();
-                if (imageInfoList != null && imageInfoList.size() > 0) {
-
+                if (imageInfoList != null && !imageInfoList.isEmpty()) {
                     mSingleFileImageInfo = imageInfoList.get(0);
-
                 }
             }
 
@@ -1203,7 +1191,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
     private BitmapResult processImage(final ImageInfo imageInfo, int w, int h,
                                       final ImageProcessingTask imageProcessingTask,
-                                      BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener) {
+                                      OnImageProcessedListener onImageProcessedListener) {
         setLoadingIndicator(true);
         ImageProcessor imageProcessor = new ImageProcessor(imageInfo, getContext(),
                 w, h, maxResolution, imageInfo.getDataFile(),

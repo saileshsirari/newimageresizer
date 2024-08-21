@@ -7,7 +7,7 @@ import apps.sai.com.imageresizer.BaseView;
 import apps.sai.com.imageresizer.data.BitmapResult;
 import apps.sai.com.imageresizer.data.ImageInfo;
 import apps.sai.com.imageresizer.data.ResolutionInfo;
-import apps.sai.com.imageresizer.util.BitmapProcessingTask;
+import apps.sai.com.imageresizer.util.OnImageProcessedListener;
 
 
 /**
@@ -30,7 +30,7 @@ public interface ResizeContract {
 
             public void setImageSelected(String imageUriString);
 
-            BitmapResult applyImageEffect(ImageInfo bitmap, ImageProcessingTask imageProcessingTask, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo);
+            BitmapResult applyImageEffect(ImageInfo bitmap, ImageProcessingTask imageProcessingTask, OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo);
 
             void saveImage();
 
@@ -45,7 +45,7 @@ public interface ResizeContract {
             void setSelectedImage(BitmapResult bitmapResult);
 
 
-            BitmapResult applyImageEffect(ImageInfo imageInfo, ImageProcessingTask imageProcessingTask, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo);
+            BitmapResult applyImageEffect(ImageInfo imageInfo, ImageProcessingTask imageProcessingTask, OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo);
 
 
             void saveImage();

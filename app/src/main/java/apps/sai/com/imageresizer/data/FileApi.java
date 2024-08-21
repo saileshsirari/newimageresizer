@@ -1264,15 +1264,6 @@ public class FileApi extends DataApi {
     @Override
     public BitmapResult getBitmapFromAbsolutePathUri(Context context, Uri fileUri, int width, int height) {
 
-        /*byte [] a = FileUtils.getRawFileData(fileUri);
-        BitmapResult bitmapResult = new BitmapResult();
-        ByteBuffer byteBuffer = ByteBuffer.wrap(a);
-        byteBuffer.rewind();
-        Bitmap bitmap = Bitmap.createBitmap(width,height, Bitmap.Config.ARGB_8888);
-        bitmap.copyPixelsFromBuffer(byteBuffer);
-
-        bitmapResult.setBitmap(bitmap);*/
-
         if (fileUri == null) {
             return null;
         }
@@ -1281,7 +1272,7 @@ public class FileApi extends DataApi {
 
         Bitmap bitmap = null;
 
-        if (fileUri != null && fileUri.getScheme() != null && fileUri.getScheme().startsWith("file")) {
+        if (fileUri.getScheme() != null && fileUri.getScheme().startsWith("file")) {
             bitmap = FileUtils.getBitmapFromAbsoluteFileUri(fileUri);
 
         } else {

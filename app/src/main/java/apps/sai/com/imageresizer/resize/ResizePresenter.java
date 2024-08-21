@@ -6,7 +6,7 @@ import android.content.Intent;
 import apps.sai.com.imageresizer.data.BitmapResult;
 import apps.sai.com.imageresizer.data.ImageInfo;
 import apps.sai.com.imageresizer.data.ResolutionInfo;
-import apps.sai.com.imageresizer.util.BitmapProcessingTask;
+import apps.sai.com.imageresizer.util.OnImageProcessedListener;
 
 /**
  * Created by sailesh on 03/01/18.
@@ -43,7 +43,7 @@ public class ResizePresenter implements ResizeContract.Presenter {
     }
 
     @Override
-    public BitmapResult applyImageEffect(ImageInfo bitmap, ImageProcessingTask imageProcessingTask, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo) {
+    public BitmapResult applyImageEffect(ImageInfo bitmap, ImageProcessingTask imageProcessingTask, OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo) {
         if(mView!=null) {
             return mView.applyImageEffect(bitmap, imageProcessingTask, onImageProcessedListener, resolutionInfo);
         }
