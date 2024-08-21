@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Point;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -49,7 +48,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Executor;
 
 import apps.sai.com.imageresizer.BaseFragment;
 import apps.sai.com.imageresizer.R;
@@ -728,7 +726,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         }
     }
 
-    Executor executor = AsyncTask.SERIAL_EXECUTOR;
     int count = 0;
     int lastIndex;
 
