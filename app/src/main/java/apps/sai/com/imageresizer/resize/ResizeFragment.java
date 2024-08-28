@@ -1,5 +1,7 @@
 package apps.sai.com.imageresizer.resize;
 
+import static androidx.fragment.app.FragmentKt.setFragmentResultListener;
+
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
@@ -32,6 +34,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -42,7 +46,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.theartofdev.edmodo.cropper.CropImageView;
+import com.canhub.cropper.CropImageContract;
+import com.canhub.cropper.CropImageContractOptions;
+import com.canhub.cropper.CropImageView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -51,8 +57,6 @@ import java.util.List;
 
 import apps.sai.com.imageresizer.BaseFragment;
 import apps.sai.com.imageresizer.R;
-import apps.sai.com.imageresizer.crop.CropDemoPreset;
-import apps.sai.com.imageresizer.crop.CropFragment;
 import apps.sai.com.imageresizer.data.BitmapResult;
 import apps.sai.com.imageresizer.data.DataApi;
 import apps.sai.com.imageresizer.data.DataFile;
@@ -135,9 +139,17 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                             imageInfo.setImageUri(imageUri);
                             imageInfoList.add(imageInfo);
                         }
-                        mWebView.setVisibility(View.GONE);
-                        setMultipleImagesView(imageInfoList);
-                        mSingleFileImageInfo = null;
+
+                        if (imageInfoList.size() == 1) {
+                            mWebView.setVisibility(View.VISIBLE);
+                            initSingleGalleryImageConfig();
+                            mImageUrlString = imageInfoList.get(0).getImageUri().toString();
+                            mResizePresenter.setImageSelected(imageInfoList.get(0).getImageUri().toString());
+                            showCustomAppBar((AppCompatActivity) getActivity(), false);
+                        } else {
+                            mWebView.setVisibility(View.GONE);
+                            setMultipleImagesView(imageInfoList);
+                        }
                         setLoadingIndicator(false);
                     } catch (Exception e) {
                         showError(R.string.unknown_error);
@@ -145,19 +157,24 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                 }, 100);
 
             } else {
-                mSingleFileImageInfo = new ImageInfo();
-                mMultipleImagesAdaptor = null;
-                mWebView.setVisibility(View.VISIBLE);
-                sizeTextView.setVisibility(View.VISIBLE);
-                mMultiple = false;
+                initSingleGalleryImageConfig();
                 Uri imageUri = data.getData();
                 mImageUrlString = imageUri.toString();
-                showCustomAppBar((AppCompatActivity) getActivity(), false);
                 mResizePresenter.setImageSelected(imageUri.toString());
+                showCustomAppBar((AppCompatActivity) getActivity(), false);
             }
         } catch (Exception e) {
             showError(R.string.unable_to_load_image);
         }
+    }
+
+    private void initSingleGalleryImageConfig() {
+        mSingleFileImageInfo = new ImageInfo();
+        mMultipleImagesAdaptor = null;
+        mWebView.setVisibility(View.VISIBLE);
+        sizeTextView.setVisibility(View.VISIBLE);
+        mMultiple = false;
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -204,6 +221,25 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         }
     }
 
+    final ActivityResultLauncher<Intent> cropLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    Uri uri = result.getData().getData();
+
+                }
+            });
+
+
+    final ActivityResultLauncher<CropImageContractOptions> cropImageLauncher = registerForActivityResult(new CropImageContract(), result -> {
+        if (result.isSuccessful()) {
+            Uri uri = result.getUriContent();
+            String croppedImageFilePath = result.getUriFilePath(requireContext(), false);
+
+        } else {
+            Exception error = result.getError();
+        }
+    });
+
     private void fillMenuItems(final Context context, RecyclerView mRecyclerView, final BaseFragment baseFragment) {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         List<MenuItem> menuItemList = new ArrayList<>();
@@ -237,8 +273,22 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                             showError(R.string.no_images);
                             return;
                         }
-                        String path = mSingleFileImageInfo.getAbsoluteFilePathUri().toString();
-                        Utils.setCropFragmentByPreset((AppCompatActivity) getActivity(), CropDemoPreset.RECT, (path));
+
+                        //showCustomAppBar((AppCompatActivity) getActivity(), true);
+
+                        Intent intent = new Intent();
+                        intent.putExtra(CropImageActivity.PARAM_URI, mSingleFileImageInfo.getImageUri().toString());
+                        intent.setClass(requireActivity(), CropImageActivity.class);
+                        Utils.getCropFragment((AppCompatActivity) requireActivity(), mSingleFileImageInfo.getImageUri().toString());
+                        requireActivity().getSupportFragmentManager().setFragmentResultListener ( CropImageViewFragment.CROP_REQUEST,getViewLifecycleOwner(), (requestKey, bundle) -> {
+                                    String uri = bundle.getString(CropImageViewFragment.RESULT_URI);
+                                    String filePath = bundle.getString(CropImageViewFragment.RESULT_FILE_PATH);
+                                    mSingleFileImageInfo.setImageUri(Uri.parse(uri));
+                                    mSingleFileImageInfo.setAbsoluteFilePath(Uri.parse(filePath));
+                                    mResizePresenter.setImageSelected(uri);
+                                }
+                        );
+
                         mhHandler.postDelayed(() -> showCustomAppBar((AppCompatActivity) getActivity(), true), 100);
                         break;
                     case SCALE_ID:
@@ -715,9 +765,9 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                 appCompatActivity.getSupportActionBar().setDisplayShowCustomEnabled(true);
                 appCompatActivity.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
             } else {
-                appCompatActivity.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME);
                 MenuAdaptor menuAdaptor = (MenuAdaptor) mMenuRecyclerView.getAdapter();
                 menuAdaptor.clear();
+                appCompatActivity.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME);
                 appCompatActivity.getSupportActionBar().setDisplayShowCustomEnabled(false);
             }
 
@@ -851,11 +901,11 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
     }
 
-    public void setCurrentFragment(CropFragment fragment) {
+  /*  public void setCurrentFragment(CropFragment fragment) {
         mCurrentFragment = fragment;
     }
-
-    private CropFragment mCurrentFragment;
+*/
+    // private CropFragment mCurrentFragment;
 
     @Override
     public void setSelectedImage(final BitmapResult bitmapResult) {
@@ -1198,10 +1248,11 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         return imageProcessor.process();
     }
 
-    @Override
+
+  /*  @Override
     public void onCropImageStart() {
         mhHandler.post(() -> setLoadingIndicator(true));
-    }
+    }*/
 
     @Override
     public void onCropImageComplete(CropImageView view, final CropImageView.CropResult result) {

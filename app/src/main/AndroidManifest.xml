@@ -41,6 +41,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="apps.sai.com.imageresizer.resize.CropImageActivity" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="c2d2185055910a6b4c4e8074c21894cb42680118" />

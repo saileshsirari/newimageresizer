@@ -30,6 +30,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
         composeOptions {
             kotlinCompilerExtensionVersion = "1.4.0"
         }
@@ -129,7 +130,8 @@ dependencies {
     annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
 
     //openCv
-    api project(':cropper')
+   // api project(':cropper')
+    implementation("com.vanniktech:android-image-cropper:4.3.3")
 //    implementation 'com.google.android.gms:play-services-ads:20.6.0'
     implementation 'androidx.preference:preference:1.2.1'
     //billing

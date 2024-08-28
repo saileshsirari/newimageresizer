@@ -38,12 +38,11 @@ import java.io.InputStreamReader;
 import apps.sai.com.imageresizer.BaseFragment;
 import apps.sai.com.imageresizer.ImageResizeApplication;
 import apps.sai.com.imageresizer.R;
-import apps.sai.com.imageresizer.crop.CropDemoPreset;
-import apps.sai.com.imageresizer.crop.CropFragment;
 import apps.sai.com.imageresizer.data.DataApi;
 import apps.sai.com.imageresizer.data.DataFile;
 import apps.sai.com.imageresizer.data.FileApi;
 import apps.sai.com.imageresizer.data.ImageInfo;
+import apps.sai.com.imageresizer.resize.CropImageViewFragment;
 import apps.sai.com.imageresizer.settings.SettingsManager;
 
 /**
@@ -196,10 +195,10 @@ public class Utils {
         fragmentTransaction.commit();
     }
 
-    public static CropFragment setCropFragmentByPreset(AppCompatActivity activity, CropDemoPreset demoPreset, String imageUri) {
+    public static CropImageViewFragment getCropFragment(AppCompatActivity activity, String imageUri) {
         FragmentManager fragmentManager = activity.getSupportFragmentManager();
 
-        CropFragment cropFragment = CropFragment.newInstance(demoPreset, imageUri);
+        CropImageViewFragment cropFragment = CropImageViewFragment.newInstance( imageUri);
 //        cropFragment.setImageUri(imageUri);
         fragmentManager
                 .beginTransaction().addToBackStack(cropFragment.getClass().getSimpleName())

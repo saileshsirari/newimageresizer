@@ -11,7 +11,7 @@
         android:layout_gravity="center"
         android:id="@+id/image_menu"
         android:layout_centerInParent="true"
-        app:srcCompat="@drawable/crop_image_menu_rotate_left"
+        app:srcCompat="@drawable/ic_crop"
         android:layout_width="wrap_content"
         android:layout_marginRight="15dp"
         android:layout_height="25dp" />
