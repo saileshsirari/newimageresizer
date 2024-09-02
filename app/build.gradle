@@ -15,8 +15,7 @@ android {
         targetSdk 34
         versionCode 33
         versionName "1.30"
-        resConfigs "en", "zh-rCN", "fr", "ko", "it", "nl", "tr", "pl", "ro", "hu", "uk", "bg-rBG", "en-rGB", "vi", "pt-rBR", "es", "en-rNZ", "zh-rTW", "es-rES", "ca", "hr", "en-rAU", "eu-rES", "th"
-
+        resourceConfigurations += ['en', 'zh-rCN', 'fr', 'ko', 'it', 'nl', 'tr', 'pl', 'ro', 'hu', 'uk', 'bg-rBG', 'en-rGB', 'vi', 'pt-rBR', 'es', 'en-rNZ', 'zh-rTW', 'es-rES', 'ca', 'hr', 'en-rAU', 'eu-rES', 'th']
         vectorDrawables.useSupportLibrary = false
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -32,7 +31,7 @@ android {
         compose = true
         viewBinding = true
         composeOptions {
-            kotlinCompilerExtensionVersion = "1.4.0"
+            kotlinCompilerExtensionVersion = "1.5.2"
         }
     }
     buildTypes {
@@ -116,7 +115,6 @@ dependencies {
 //    annotationProcessor "com.jakewharton:butterknife-compiler:${butterKnifeVersion}"
 //    compile "com.jakewharton.timber:timber:${timberVersion}"
 //    implementation "com.android.support:design:$rootProject.supportLibraryVersion"
-    implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjavaVersion"
     implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxjavaAndroidVersion"
     def lifecycle_version ="2.8.4"
     def arch_version = "2.2.0"
@@ -135,7 +133,8 @@ dependencies {
 //    implementation 'com.google.android.gms:play-services-ads:20.6.0'
     implementation 'androidx.preference:preference:1.2.1'
     //billing
-    implementation 'com.android.billingclient:billing:5.2.1'
+    def billingVersion = "7.0.0"
+    implementation "com.android.billingclient:billing:$billingVersion"
 
     //firebase
 
