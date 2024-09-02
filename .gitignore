@@ -21,6 +21,8 @@ local.properties
 # Node artifact files
 node_modules/
 dist/
+app/demo/release
+app/demo/release/*.*
 
 # Compiled Java class files
 *.class

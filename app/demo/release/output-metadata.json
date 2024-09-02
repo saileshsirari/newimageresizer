@@ -12,6 +12,19 @@
       "filters": [
         {
           "filterType": "ABI",
+          "value": "armeabi-v7a"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 40033,
+      "versionName": "1.30-free",
+      "outputFile": "app-demo-armeabi-v7a-release.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
           "value": "x86_64"
         }
       ],
@@ -19,6 +32,19 @@
       "versionCode": 80033,
       "versionName": "1.30-free",
       "outputFile": "app-demo-x86_64-release.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "mips"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 60033,
+      "versionName": "1.30-free",
+      "outputFile": "app-demo-mips-release.apk"
     },
     {
       "type": "ONE_OF_MANY",
@@ -51,32 +77,6 @@
       "filters": [
         {
           "filterType": "ABI",
-          "value": "mips"
-        }
-      ],
-      "attributes": [],
-      "versionCode": 60033,
-      "versionName": "1.30-free",
-      "outputFile": "app-demo-mips-release.apk"
-    },
-    {
-      "type": "ONE_OF_MANY",
-      "filters": [
-        {
-          "filterType": "ABI",
-          "value": "armeabi-v7a"
-        }
-      ],
-      "attributes": [],
-      "versionCode": 40033,
-      "versionName": "1.30-free",
-      "outputFile": "app-demo-armeabi-v7a-release.apk"
-    },
-    {
-      "type": "ONE_OF_MANY",
-      "filters": [
-        {
-          "filterType": "ABI",
           "value": "arm64-v8a"
         }
       ],
@@ -86,5 +86,32 @@
       "outputFile": "app-demo-arm64-v8a-release.apk"
     }
   ],
-  "elementType": "File"
+  "elementType": "File",
+  "baselineProfiles": [
+    {
+      "minApi": 28,
+      "maxApi": 30,
+      "baselineProfiles": [
+        "baselineProfiles/1/app-demo-armeabi-v7a-release.dm",
+        "baselineProfiles/1/app-demo-x86_64-release.dm",
+        "baselineProfiles/1/app-demo-mips-release.dm",
+        "baselineProfiles/1/app-demo-armeabi-release.dm",
+        "baselineProfiles/1/app-demo-x86-release.dm",
+        "baselineProfiles/1/app-demo-arm64-v8a-release.dm"
+      ]
+    },
+    {
+      "minApi": 31,
+      "maxApi": 2147483647,
+      "baselineProfiles": [
+        "baselineProfiles/0/app-demo-armeabi-v7a-release.dm",
+        "baselineProfiles/0/app-demo-x86_64-release.dm",
+        "baselineProfiles/0/app-demo-mips-release.dm",
+        "baselineProfiles/0/app-demo-armeabi-release.dm",
+        "baselineProfiles/0/app-demo-x86-release.dm",
+        "baselineProfiles/0/app-demo-arm64-v8a-release.dm"
+      ]
+    }
+  ],
+  "minSdkVersionForDexing": 23
 }
