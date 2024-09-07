@@ -1,5 +1,6 @@
 package apps.sai.com.imageresizer.resize
 
+import android.graphics.Bitmap
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
@@ -12,11 +13,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import apps.sai.com.imageresizer.R
 import apps.sai.com.imageresizer.databinding.FragmentCropImageViewBinding
 import apps.sai.com.imageresizer.select.SelectViewModel
+import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import com.canhub.cropper.CropImageView.CropResult
@@ -31,7 +34,7 @@ internal class CropImageViewFragment :
     private var _binding: FragmentCropImageViewBinding? = null
     private val binding get() = _binding!!
     private var options: CropImageOptions? = null
-    private var selectViewModel: SelectViewModel? = null
+    private var selectViewModel: SelectViewModel? =null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,7 +49,7 @@ internal class CropImageViewFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        selectViewModel = ViewModelProvider(requireActivity())[SelectViewModel::class.java]
+       selectViewModel = ViewModelProvider(requireActivity())[SelectViewModel::class.java]
     }
 
     override fun onDestroyView() {
@@ -78,6 +81,9 @@ internal class CropImageViewFragment :
     }
 
 
+    fun onOptionsApplySelected(options: CropImageOptions) {
+        this.options = options
+    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
@@ -90,7 +96,18 @@ internal class CropImageViewFragment :
     }
 
     private fun handleCropImageResult(result: CropResult) {
-       // selectViewModel?.cropResult = result
+//        FileApi(context).saveImageInCache(dataFile, result.bitmap, 95)
+        val croppedImageFilePath = result.getUriFilePath(requireContext(), false)
+        // Set the new result
+        // Use the Kotlin extension in the fragment-ktx artifact.
+        activity?.supportFragmentManager?.setFragmentResult(
+            CROP_REQUEST, bundleOf(
+                RESULT_URI to result.uriContent.toString(),
+                RESULT_FILE_PATH to croppedImageFilePath,
+                RESULT_WIDTH to result.bitmap?.width,
+                RESULT_HEIGHT to result.bitmap?.height
+            )
+        )
         activity?.supportFragmentManager?.popBackStack()
     }
 
@@ -131,11 +148,9 @@ internal class CropImageViewFragment :
 
     private fun setOptions() {
         // binding.cropImageView.cropRect = Rect(100, 300, 500, 1200)
-        //                        Utils.getCropFragment((AppCompatActivity) requireActivity(), pathFile);
-        val cropImageOptions = CropImageOptions()
-        cropImageOptions.guidelines = CropImageView.Guidelines.ON
-         binding.cropImageView.cropRect = Rect(100, 300, 500, 1200)
-         binding.cropImageView.guidelines = cropImageOptions.guidelines
+        binding.cropImageView.cropRect = Rect(100, 300, 500, 1200)
+       // binding.cropImageView.guidelines = cropImageOptions.guidelines
+       // onOptionsApplySelected(cropImageOptions)
     }
 
 

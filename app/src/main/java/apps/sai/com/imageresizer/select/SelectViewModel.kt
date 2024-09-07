@@ -9,5 +9,4 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class SelectViewModel:ViewModel() {
-    val cropResult = MutableStateFlow<Result<CropResult>>(Result.failure(Exception("")));
 }
