@@ -1,6 +1,6 @@
 package apps.sai.com.imageresizer.resize
 
-import android.graphics.Bitmap
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,14 +10,13 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import apps.sai.com.imageresizer.R
 import apps.sai.com.imageresizer.databinding.FragmentCropImageViewBinding
-import com.canhub.cropper.CropImageContractOptions
+import apps.sai.com.imageresizer.select.SelectViewModel
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import com.canhub.cropper.CropImageView.CropResult
@@ -27,19 +26,19 @@ import com.canhub.cropper.CropImageView.OnSetImageUriCompleteListener
 
 internal class CropImageViewFragment :
     Fragment(),
-    MenuProvider,
     OnSetImageUriCompleteListener,
     OnCropImageCompleteListener {
     private var _binding: FragmentCropImageViewBinding? = null
     private val binding get() = _binding!!
     private var options: CropImageOptions? = null
+    private var selectViewModel: SelectViewModel? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        (activity as ComponentActivity).addMenuProvider(this)
+        // (activity as ComponentActivity).addMenuProvider(this)
         _binding = FragmentCropImageViewBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
@@ -47,6 +46,7 @@ internal class CropImageViewFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        selectViewModel = ViewModelProvider(requireActivity())[SelectViewModel::class.java]
     }
 
     override fun onDestroyView() {
@@ -62,6 +62,7 @@ internal class CropImageViewFragment :
         setOptions()
         arguments?.let {
             it.getString("imageUri")?.let {
+//                binding.cropImageView.imageResource = R.drawable.my_images_camera
                 binding.cropImageView.setImageUriAsync(Uri.parse(it))
             }
         }
@@ -74,64 +75,42 @@ internal class CropImageViewFragment :
         if (savedInstanceState == null) {
             //  binding.cropImageView.imageResource = R.drawable.cat
         }
-
-        binding.reset.setOnClickListener {
-            binding.cropImageView.resetCropRect()
-            setOptions()
-        }
-        binding.crop.setOnClickListener {
-            binding.cropImageView.croppedImageAsync()
-        }
     }
 
 
-    fun onOptionsApplySelected(options: CropImageOptions) {
-        this.options = options
-    }
 
-    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         val appCompatActivity = activity as AppCompatActivity?
         appCompatActivity?.supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_HOME
         appCompatActivity?.supportActionBar?.setDisplayShowCustomEnabled(false)
         appCompatActivity?.supportActionBar?.show()
-        menuInflater.inflate(apps.sai.com.imageresizer.R.menu.main, menu)
-        super.onCreateOptionsMenu(menu, menuInflater)
+        inflater.inflate(R.menu.main, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     private fun handleCropImageResult(result: CropResult) {
-
-//        FileApi(context).saveImageInCache(dataFile, result.bitmap, 95)
-        val croppedImageFilePath = result.getUriFilePath(requireContext(), false)
-        // Use the Kotlin extension in the fragment-ktx artifact.
-        activity?.supportFragmentManager?.setFragmentResult(
-            CROP_REQUEST, bundleOf(
-                RESULT_URI to result.uriContent.toString(),
-                RESULT_FILE_PATH to croppedImageFilePath,
-                RESULT_WIDTH to result.bitmap?.width,
-                RESULT_HEIGHT to result.bitmap?.height
-            )
-        )
+       // selectViewModel?.cropResult = result
         activity?.supportFragmentManager?.popBackStack()
     }
 
-    override fun onMenuItemSelected(menuItem: MenuItem) = when (menuItem.itemId) {
-        apps.sai.com.imageresizer.R.id.main_action_crop -> {
+    override fun onOptionsItemSelected(menuItem: MenuItem) = when (menuItem.itemId) {
+        R.id.main_action_crop -> {
             binding.cropImageView.croppedImageAsync()
             true
         }
 
-        apps.sai.com.imageresizer.R.id.main_action_rotate -> {
+        R.id.main_action_rotate -> {
             binding.cropImageView.rotateImage(90)
             true
         }
 
-        apps.sai.com.imageresizer.R.id.main_action_flip_horizontally -> {
+        R.id.main_action_flip_horizontally -> {
             binding.cropImageView.flipImageHorizontally()
             true
         }
 
-        apps.sai.com.imageresizer.R.id.main_action_flip_vertically -> {
+        R.id.main_action_flip_vertically -> {
             binding.cropImageView.flipImageVertically()
             true
         }
@@ -152,15 +131,11 @@ internal class CropImageViewFragment :
 
     private fun setOptions() {
         // binding.cropImageView.cropRect = Rect(100, 300, 500, 1200)
+        //                        Utils.getCropFragment((AppCompatActivity) requireActivity(), pathFile);
         val cropImageOptions = CropImageOptions()
-        cropImageOptions.guidelines = (CropImageView.Guidelines.ON)
-        cropImageOptions.outputCompressFormat = Bitmap.CompressFormat.PNG
-        CropImageContractOptions(
-            Uri.parse(arguments?.getString("imageUri") ?: ""),
-            cropImageOptions
-        )
-        binding.cropImageView.guidelines = cropImageOptions.guidelines
-        onOptionsApplySelected(cropImageOptions)
+        cropImageOptions.guidelines = CropImageView.Guidelines.ON
+         binding.cropImageView.cropRect = Rect(100, 300, 500, 1200)
+         binding.cropImageView.guidelines = cropImageOptions.guidelines
     }
 
 

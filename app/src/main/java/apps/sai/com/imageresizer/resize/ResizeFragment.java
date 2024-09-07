@@ -1,12 +1,15 @@
 package apps.sai.com.imageresizer.resize;
 
-import static androidx.fragment.app.FragmentKt.setFragmentResultListener;
+import static androidx.lifecycle.LifecycleOwnerKt.getLifecycleScope;
+import static apps.sai.com.imageresizer.resize.CropImageViewFragment.RESULT_HEIGHT;
+import static apps.sai.com.imageresizer.resize.CropImageViewFragment.RESULT_WIDTH;
 
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
@@ -41,6 +44,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LifecycleOwnerKt;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -48,6 +52,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.canhub.cropper.CropImageContract;
 import com.canhub.cropper.CropImageContractOptions;
+import com.canhub.cropper.CropImageOptions;
 import com.canhub.cropper.CropImageView;
 
 import java.io.File;
@@ -68,6 +73,7 @@ import apps.sai.com.imageresizer.listener.OnResolutionSelectedListener;
 import apps.sai.com.imageresizer.myimages.MyImagesFragment;
 import apps.sai.com.imageresizer.select.MenuItem;
 import apps.sai.com.imageresizer.select.SelectActivity;
+import apps.sai.com.imageresizer.select.SelectViewModel;
 import apps.sai.com.imageresizer.settings.SettingsManager;
 import apps.sai.com.imageresizer.util.ImageInfoLoader;
 import apps.sai.com.imageresizer.util.ImageOperations;
@@ -76,6 +82,11 @@ import apps.sai.com.imageresizer.util.MultipleImagesAdaptor;
 import apps.sai.com.imageresizer.util.NestedWebView;
 import apps.sai.com.imageresizer.util.OnImageProcessedListener;
 import apps.sai.com.imageresizer.util.Utils;
+import kotlin.Result;
+import kotlin.Unit;
+import kotlin.coroutines.Continuation;
+import kotlin.jvm.functions.Function2;
+import kotlinx.coroutines.CoroutineScope;
 
 /**
  * Created by Sailesh on 03/01/18.
@@ -91,6 +102,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     RecyclerView mMultipleImagesRecyclerView;
     private static Intent mIntent;
     ResizeViewModel resizeViewModel;
+    private SelectViewModel selectViewModel = null;
 
     public ResizeFragment() {
         mResizePresenter = new ResizePresenter();
@@ -106,6 +118,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         autoSave = SettingsManager.getInstance().getAutoSaveImages();
         mDataApi = new FileApi(getContext());
         mMyOnImageProcessedListener = new MyOnImageProcessedListener();
+        selectViewModel = new ViewModelProvider(requireActivity()).get(SelectViewModel.class);
     }
 
     @Override
@@ -275,17 +288,47 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                         }
 
                         //showCustomAppBar((AppCompatActivity) getActivity(), true);
-
+                        String pathFile = mSingleFileImageInfo.getAbsoluteFilePathUri().toString();
+//                        Utils.getCropFragment((AppCompatActivity) requireActivity(), pathFile);
+                        CropImageOptions cropImageOptions =  new CropImageOptions();
+                        cropImageOptions.guidelines = CropImageView.Guidelines.ON;
+                        //cropImageLauncher.launch(new CropImageContractOptions( mSingleFileImageInfo.getAbsoluteFilePathUri(),cropImageOptions));
                         Intent intent = new Intent();
                         intent.putExtra(CropImageActivity.PARAM_URI, mSingleFileImageInfo.getImageUri().toString());
                         intent.setClass(requireActivity(), CropImageActivity.class);
                         Utils.getCropFragment((AppCompatActivity) requireActivity(), mSingleFileImageInfo.getImageUri().toString());
-                        requireActivity().getSupportFragmentManager().setFragmentResultListener ( CropImageViewFragment.CROP_REQUEST,getViewLifecycleOwner(), (requestKey, bundle) -> {
-                                    String uri = bundle.getString(CropImageViewFragment.RESULT_URI);
-                                    String filePath = bundle.getString(CropImageViewFragment.RESULT_FILE_PATH);
-                                    mSingleFileImageInfo.setImageUri(Uri.parse(uri));
-                                    mSingleFileImageInfo.setAbsoluteFilePath(Uri.parse(filePath));
-                                    mResizePresenter.setImageSelected(uri);
+
+
+                        requireActivity().getSupportFragmentManager().setFragmentResultListener(CropImageViewFragment.CROP_REQUEST, getViewLifecycleOwner(), (requestKey, bundle) -> {
+                             Result<CropImageView.CropResult> cropResult=  selectViewModel.getCropResult().getValue();
+
+                                  /*  if(cropResult!=null && cropResult.getBitmap()!=null) {
+                                        mhHandler.post(() -> {
+                                                BitmapResult bitmapResult = new BitmapResult();
+                                                Uri path = null;
+                                                try {
+                                                    DataFile dataFile = mSingleFileImageInfo.getDataFile();
+                                                    if (dataFile != null && dataFile.getName() != null) {
+                                                        mDataApi.saveImageInCache(dataFile,cropResult.getBitmap(), 95);
+                                                        path = mDataApi.getAbsoluteImagePathUriFromCache(dataFile);
+                                                    }
+                                                    bitmapResult.setContentUri(path);
+                                                    if (autoSave) {
+                                                        mDataApi.copyImageFromCacheToGallery(requireActivity(), mSingleFileImageInfo.getDataFile());
+                                                    }
+                                                    mSingleFileImageInfo.setAbsoluteFilePath(path);
+                                                    mSingleFileImageInfo = Utils.getImageInfo(mSingleFileImageInfo, getContext(), path, mDataApi);
+                                                    cropResult.getBitmap().recycle();
+                                                    if (autoSave) {
+                                                        showDeleteTextView(requireActivity());
+                                                    }
+                                                } catch (Throwable t) {
+                                                    bitmapResult.setError(t);
+                                                }
+                                                mResizePresenter.setSelectedImage(bitmapResult);
+                                        });
+
+                                    }*/
                                 }
                         );
 
@@ -1256,31 +1299,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
     @Override
     public void onCropImageComplete(CropImageView view, final CropImageView.CropResult result) {
-        mhHandler.post(() -> {
-            if (result.getBitmap() != null) {
-                BitmapResult bitmapResult = new BitmapResult();
-                Uri path = null;
-                try {
-                    DataFile dataFile = mSingleFileImageInfo.getDataFile();
-                    if (dataFile != null && dataFile.getName() != null) {
-                        mDataApi.saveImageInCache(dataFile, result.getBitmap(), 95);
-                        path = mDataApi.getAbsoluteImagePathUriFromCache(dataFile);
-                    }
-                    bitmapResult.setContentUri(path);
-                    if (autoSave) {
-                        mDataApi.copyImageFromCacheToGallery(requireActivity(), mSingleFileImageInfo.getDataFile());
-                    }
-                    mSingleFileImageInfo.setAbsoluteFilePath(path);
-                    mSingleFileImageInfo = Utils.getImageInfo(mSingleFileImageInfo, getContext(), path, mDataApi);
-                    result.getBitmap().recycle();
-                    if (autoSave) {
-                        showDeleteTextView(requireActivity());
-                    }
-                } catch (Throwable t) {
-                    bitmapResult.setError(t);
-                }
-                mResizePresenter.setSelectedImage(bitmapResult);
-            }
-        });
+
     }
 }

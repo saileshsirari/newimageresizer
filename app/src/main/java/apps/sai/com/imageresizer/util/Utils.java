@@ -79,22 +79,10 @@ public class Utils {
 
 
     public static boolean isUpgradedMy() {
-
-        if (false) {
-            return true;
-        }
-       /* if (BuildConfig.DEBUG == true) {
-            return false;
-        }*/
-
-
         if (ImageResizeApplication.getInstance().getIsUpgraded()) {
             return true;
         }
-
         return SettingsManager.getInstance().isLegacyUpgraded();
-
-
         //If something goes wrong, assume the user has the pro version
     }
     /**
@@ -194,6 +182,8 @@ public class Utils {
         }
         fragmentTransaction.commit();
     }
+
+
 
     public static CropImageViewFragment getCropFragment(AppCompatActivity activity, String imageUri) {
         FragmentManager fragmentManager = activity.getSupportFragmentManager();

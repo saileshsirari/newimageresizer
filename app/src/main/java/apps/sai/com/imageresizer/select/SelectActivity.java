@@ -182,11 +182,11 @@ public class SelectActivity extends AppCompatActivity implements
         billingManager = new BillingManager(this, new BillingManager.BillingUpdatesListener() {
             @Override
             public void onPurchasesUpdated(List<Purchase> purchases) {
-
-
                 for (Purchase purchase : purchases) {
-                    if (purchase.getSkus().get(0).equals(Config.SKU_PREMIUM)) {
-                        ImageResizeApplication.getInstance().setIsUpgraded(true);
+                    for (String product : purchase.getProducts()) {
+                        if (product.equals(Config.SKU_PREMIUM)) {
+                            ImageResizeApplication.getInstance().setIsUpgraded(true);
+                        }
                     }
                 }
             }
@@ -206,9 +206,8 @@ public class SelectActivity extends AppCompatActivity implements
         });
 
 //        showFacebookBanner(this,R.id.banner_container,"179547122769778_179622146095609");
-        if (Utils.isUpgradedMy() == false) {
+        if (!Utils.isUpgradedMy()) {
             showFacebookBanner(this, R.id.banner_container_top, "179547122769778_189046365153187");
-
         }
 
 
@@ -305,7 +304,7 @@ public class SelectActivity extends AppCompatActivity implements
     private boolean adShown;
 
     public void loadInterstitial(final Context context) {
-        if(true){
+        if (true) {
             return;
         }
 

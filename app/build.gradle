@@ -6,6 +6,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
+
     compileSdk 34
     namespace 'apps.sai.com.imageresizer'
 
@@ -13,9 +14,8 @@ android {
         applicationId "apps.sai.com.imageresizer"
         minSdk 23
         targetSdk 34
-        versionCode 33
-        versionName "1.30"
-        resourceConfigurations += ['en', 'zh-rCN', 'fr', 'ko', 'it', 'nl', 'tr', 'pl', 'ro', 'hu', 'uk', 'bg-rBG', 'en-rGB', 'vi', 'pt-rBR', 'es', 'en-rNZ', 'zh-rTW', 'es-rES', 'ca', 'hr', 'en-rAU', 'eu-rES', 'th']
+        versionCode 10000004
+        versionName "1.33"
         vectorDrawables.useSupportLibrary = false
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -66,35 +66,7 @@ android {
             dimension "default"
         }
     }
-    splits {
-        abi {
-            enable true
-            reset()
-            include "armeabi", "armeabi-v7a", 'arm64-v8a', "mips", "x86", "x86_64", 'arm64-v8a'
-            universalApk false
-        }
-    }
-}
-ext.versionCodes = ['armeabi': 3, 'armeabi-v7a': 4, 'arm64-v8a': 5,
-                    mips: 6, 'x86': 7, 'x86_64': 8]
-import com.android.build.OutputFile
-android.applicationVariants.all { variant ->
-    def name = variant.buildType.getName()
-    System.out.println("variant.flavorName->"+name)
 
-    if(name.contains("debug")==false) {
-        System.out.println("variant.flavorName->"+name)
-
-        variant.outputs.each { output ->
-            def abiFilter = output.getFilter(OutputFile.ABI)
-            def abiMultiplier = 0
-            if (abiFilter != null) {
-                abiMultiplier = project.ext.versionCodes.get(abiFilter)
-            }
-            output.versionCodeOverride =
-                    abiMultiplier * 10000 + android.defaultConfig.versionCode
-        }
-    }
 }
 
 dependencies {
