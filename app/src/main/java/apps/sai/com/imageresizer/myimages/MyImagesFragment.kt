@@ -51,7 +51,7 @@ class MyImagesFragment : BaseFragment(), MyImagesContract.View, OnImagesSelected
     override fun showError(th: Throwable) {
     }
 
-    override fun proccessGalleryImage(data: Intent) {
+    override fun processGalleryImage(data: Intent) {
     }
 
     var dataApi: DataApi? = null
@@ -129,7 +129,7 @@ class MyImagesFragment : BaseFragment(), MyImagesContract.View, OnImagesSelected
     fun loadMyImages() {
         lifecycleScope.launch {
             myImagesPresenter?.getImages(requireContext())?.collect { imageInfoList ->
-                myImagesAdaptor?.setItems(imageInfoList.toMutableList())
+                myImagesAdaptor?.setItems(imageInfoList.reversed().toMutableList())
                 if (imageInfoList.isNotEmpty()) {
                     showNoImagesMenu(menu, true)
                 }

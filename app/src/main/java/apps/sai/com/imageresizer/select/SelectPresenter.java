@@ -11,7 +11,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import apps.sai.com.imageresizer.BaseFragment;
 import apps.sai.com.imageresizer.R;
-import apps.sai.com.imageresizer.myimages.MyImagesFragment;
 import apps.sai.com.imageresizer.settings.SettingsFragment;
 import apps.sai.com.imageresizer.util.Utils;
 
@@ -26,7 +25,7 @@ public class SelectPresenter implements SelectContract.Presenter {
 
     public void launchgalleryExternalApp(boolean singlePhoto) {
 
-     mView.launchgalleryExternalApp(singlePhoto);
+     mView.launchGalleryExternalApp(singlePhoto);
     }
 
 

@@ -498,7 +498,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
     }
 
     @Override
-    public void launchgalleryExternalApp(boolean singlePhoto) {
+    public void launchGalleryExternalApp(boolean singlePhoto) {
 
     }
 

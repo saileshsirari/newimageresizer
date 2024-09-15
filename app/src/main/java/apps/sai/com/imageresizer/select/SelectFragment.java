@@ -166,7 +166,7 @@ public class SelectFragment extends BaseFragment implements SelectContract.View 
     Handler mHandler = new Handler();
 
     @Override
-    public void proccessGalleryImage(Intent data) {
+    public void processGalleryImage(Intent data) {
         mSelectPresenter.onGalleryImageSelected(data);
     }
 

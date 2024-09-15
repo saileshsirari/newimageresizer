@@ -1,34 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-    <!-- res/layout/action_view_button.xml -->
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-
-        android:layout_height="match_parent"
-    android:gravity="center"
-        android:id="@+id/customAction"
-        android:orientation="vertical" >
-        <!--<ImageView
-
-            android:src="@drawable/crop_image_menu_rotate_left"
-
-
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Button" />
-
-        <TextView
-            android:text="Hello!"
-            android:id="@+id/textViewCustom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />-->
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/menuRecyclerView"
-        android:layout_gravity="center"
-
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    </LinearLayout>
+<!-- res/layout/action_view_button.xml -->
+<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/menuRecyclerView"
+    android:elevation="12dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center" />

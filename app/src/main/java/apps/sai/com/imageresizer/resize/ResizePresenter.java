@@ -76,7 +76,7 @@ public class ResizePresenter implements ResizeContract.Presenter {
     public void launchgalleryExternalApp(boolean singlePhoto) {
         if(mView!=null) {
 
-            mView.launchgalleryExternalApp(singlePhoto);
+            mView.launchGalleryExternalApp(singlePhoto);
         }
     }
 }

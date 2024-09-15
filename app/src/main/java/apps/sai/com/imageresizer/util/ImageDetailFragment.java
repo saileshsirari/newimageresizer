@@ -47,7 +47,7 @@ public class ImageDetailFragment extends BaseFragment implements View.OnLayoutCh
     }
 
     @Override
-    public void proccessGalleryImage(Intent data) {
+    public void processGalleryImage(Intent data) {
     }
 
     public static ImageDetailFragment newInstance(Uri orgImageUri, Uri compressedImageUri) {

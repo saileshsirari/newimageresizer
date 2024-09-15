@@ -89,7 +89,7 @@ public class BillingManager implements PurchasesUpdatedListener, PurchasesRespon
                     serviceConnected = true;
                     executeOnSuccess.run();
                 }else{
-                    Toast.makeText(activity,  billingResult.getDebugMessage()+" Billing response not OK ", Toast.LENGTH_LONG).show();
+                  //  Toast.makeText(activity,  billingResult.getDebugMessage()+" Billing response not OK ", Toast.LENGTH_LONG).show();
                     Log.e(TAG, billingResult.getDebugMessage());
                 }
                 billingClientResponseCode = billingResult.getResponseCode();

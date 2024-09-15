@@ -111,7 +111,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     }
 
     @Override
-    public void proccessGalleryImage(Intent data) {
+    public void processGalleryImage(Intent data) {
         mResizePresenter.onGalleryImageSelected(data);
     }
 
@@ -243,8 +243,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     });
 
     private void fillMenuItems(final Context context, RecyclerView mRecyclerView, final BaseFragment baseFragment) {
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        List<MenuItem> menuItemList = new ArrayList<>();
+       List<MenuItem> menuItemList = new ArrayList<>();
         menuItemList.add(MenuItem.newInstance(OPEN_ID, context.getString(R.string.action_open),
                 R.drawable.ic_folder));
         menuItemList.add(MenuItem.newInstance(COMPRESS_ID, context.getString(R.string.action_compress),
@@ -259,10 +258,8 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             menuItemList.add(MenuItem.newInstance(SAVE_ID, context.getString(R.string.action_save),
                     R.drawable.ic_save));
         }
-        menuItemList.add(MenuItem.newInstance(RESET_ID, context.getString(R.string.action_reset),
-                R.drawable.ic_reset));
-        menuItemList.add(MenuItem.newInstance(SHARE_ID, context.getString(R.string.action_share),
-                R.drawable.ic_share));
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), menuItemList.size());
+
         MenuAdaptor mResizeAdaptor = new MenuAdaptor(getContext(), menuItemList, menuItem -> {
 
             try {
@@ -407,6 +404,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             this.mMenuSelectedListener = menuSelectedListener;
         }
 
+        @NonNull
         @Override
         public MenuAdaptor.ResizeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             return new ResizeHolder(LayoutInflater.from(mContext).inflate(R.layout.menu_row, null));
@@ -419,8 +417,10 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
 
         @Override
         public void onBindViewHolder(MenuAdaptor.ResizeHolder holder, int position) {
+            TextView textView = holder.textView;
             ImageView imageView = holder.imageView;
             final MenuItem menuItem = mMenuItemList.get(position);
+            textView.setText(menuItem.getName());
             imageView.setImageResource(menuItem.getImageResourcePath());
             holder.itemView.setOnClickListener(v -> mMenuSelectedListener.onMenuSelected(menuItem));
         }
@@ -433,11 +433,13 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         static class ResizeHolder extends RecyclerView.ViewHolder {
             ImageView imageView;
             View itemView;
+            TextView textView;
 
             public ResizeHolder(View itemView) {
                 super(itemView);
                 this.itemView = itemView;
-                imageView = itemView.findViewById(R.id.image_menu);
+                imageView  = itemView.findViewById(R.id.image_menu);
+                textView = itemView.findViewById(R.id.text_name_menu);
             }
         }
     }
@@ -1037,25 +1039,20 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         try {
             if (res.getFormatedString().equals("Custom")) {
                 if (mOnResolutionSelectedListener == null) {
-                    mOnResolutionSelectedListener = new OnResolutionSelectedListener() {
-                        @Override
-                        public void onResolutionSelected(ResolutionInfo resolutionInfo) {
-                            ResizeFragment.this.onResolutionSelected(resolutionInfo);
-                        }
-                    };
+                    mOnResolutionSelectedListener = ResizeFragment.this::onResolutionSelected;
                 }
                 if (mSingleFileImageInfo != null) {
 
-                    BitmapResult bitmapResult = mDataApi.getBitmapFromAbsolutePathUri(getContext(), mSingleFileImageInfo.getAbsoluteFilePathUri(),
+                    mDataApi.getBitmapFromAbsolutePathUri(getContext(), mSingleFileImageInfo.getAbsoluteFilePathUri(),
                             res.getWidth(), res.getHeight());
 
-                    showCustomResolutionAlert(mOnResolutionSelectedListener, bitmapResult.getBitmap(), maxResolution, maxWidth, meanDimension);
+                    showCustomResolutionAlert(mOnResolutionSelectedListener, maxResolution, maxWidth, meanDimension);
                 } else {
                     //multiple files
-                    BitmapResult bitmapResult = mDataApi.getBitmapFromAbsolutePathUri(getContext(), mImageInfoMin.getAbsoluteFilePathUri(),
+                     mDataApi.getBitmapFromAbsolutePathUri(getContext(), mImageInfoMin.getAbsoluteFilePathUri(),
                             res.getWidth(), res.getHeight());
 
-                    showCustomResolutionAlert(mOnResolutionSelectedListener, bitmapResult.getBitmap(), maxResolution, maxWidth, meanDimension);
+                    showCustomResolutionAlert(mOnResolutionSelectedListener, maxResolution, maxWidth, meanDimension);
                 }
 
             } else if (res.getFormatedString().startsWith("Scale")) {

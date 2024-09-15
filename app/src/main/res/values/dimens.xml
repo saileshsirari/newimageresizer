@@ -6,10 +6,12 @@
     <dimen name="left_pad_scale_text">20dp</dimen>
     <dimen name="large_app">220dp</dimen>
     <dimen name="small_app">50dp</dimen>
+    <dimen name="text_size_scale">20sp</dimen>
     <dimen name="normal_app">120dp</dimen>
     <dimen name="spacing">10dp</dimen>
     <dimen name="keyline">4dp</dimen>
     <dimen name="keyline_x2">8dp</dimen>
     <dimen name="keyline_x4">16dp</dimen>
     <dimen name="elevation_card_resting">1dp</dimen>
+    <dimen name="menu_item_padding">4dp</dimen>
 </resources>
