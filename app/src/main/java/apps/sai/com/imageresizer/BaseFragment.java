@@ -138,8 +138,6 @@ public abstract class BaseFragment extends Fragment {
 
     public abstract void showAd();
 
-    public static boolean openCvLoaded;
-
     class RadioChangeListener implements RadioGroup.OnCheckedChangeListener {
         private final SeekBar mSeekBar;
         SeekBarListener mSeekBarListener;

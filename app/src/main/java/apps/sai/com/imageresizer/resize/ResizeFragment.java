@@ -37,11 +37,12 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.canhub.cropper.CropImageContract;
@@ -103,11 +104,11 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
         autoSave = SettingsManager.getInstance().getAutoSaveImages();
         mDataApi = new FileApi(getContext());
         mMyOnImageProcessedListener = new MyOnImageProcessedListener();
         selectViewModel = new ViewModelProvider(requireActivity()).get(SelectViewModel.class);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -147,12 +148,12 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                             initSingleGalleryImageConfig();
                             mImageUrlString = imageInfoList.get(0).getImageUri().toString();
                             mResizePresenter.setImageSelected(imageInfoList.get(0).getImageUri().toString());
-                            showCustomAppBar((AppCompatActivity) getActivity(), false);
                         } else {
                             mWebView.setVisibility(View.GONE);
                             setMultipleImagesView(imageInfoList);
                         }
                         setLoadingIndicator(false);
+                        requireActivity().invalidateOptionsMenu();
                     } catch (Exception e) {
                         showError(R.string.unknown_error);
                     }
@@ -163,8 +164,9 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                 Uri imageUri = data.getData();
                 mImageUrlString = imageUri.toString();
                 mResizePresenter.setImageSelected(imageUri.toString());
-                showCustomAppBar((AppCompatActivity) getActivity(), false);
+                requireActivity().invalidateOptionsMenu();
             }
+
         } catch (Exception e) {
             showError(R.string.unable_to_load_image);
         }
@@ -243,7 +245,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     });
 
     private void fillMenuItems(final Context context, RecyclerView mRecyclerView, final BaseFragment baseFragment) {
-       List<MenuItem> menuItemList = new ArrayList<>();
+        List<MenuItem> menuItemList = new ArrayList<>();
         menuItemList.add(MenuItem.newInstance(OPEN_ID, context.getString(R.string.action_open),
                 R.drawable.ic_folder));
         menuItemList.add(MenuItem.newInstance(COMPRESS_ID, context.getString(R.string.action_compress),
@@ -285,14 +287,11 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                                     Uri imageUri = Uri.parse(uri);
                                     mImageUrlString = imageUri.toString();
                                     mResizePresenter.setImageSelected(imageUri.toString());
-                                    showCustomAppBar((AppCompatActivity) getActivity(), false);
                                     if (autoSave) {
                                         mResizePresenter.applyImageEffect(mSingleFileImageInfo, ImageProcessingTask.SHARPEN, mMyOnImageProcessedListener, null);
                                     }
                                 }
                         );
-
-                        mhHandler.postDelayed(() -> showCustomAppBar((AppCompatActivity) getActivity(), true), 100);
                         break;
                     case SCALE_ID:
                         if (mSingleFileImageInfo != null) {
@@ -438,19 +437,229 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             public ResizeHolder(View itemView) {
                 super(itemView);
                 this.itemView = itemView;
-                imageView  = itemView.findViewById(R.id.image_menu);
+                imageView = itemView.findViewById(R.id.image_menu);
                 textView = itemView.findViewById(R.id.text_name_menu);
             }
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.resize_menu, menu);
+        menu.setGroupVisible(R.id.singleImageItem, mSingleFileImageInfo != null);
+        menu.setGroupVisible(R.id.groupSave, !autoSave);
+
+    }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, @NonNull MenuInflater inflater) {
-        menu.clear();
-        this.menu = menu;
-        showCustomAppBar((AppCompatActivity) getActivity(), false);
+    public boolean onOptionsItemSelected(@NonNull android.view.MenuItem item) {
+        try {
+            int itemId = item.getItemId();
+            if (itemId == R.id.action_open) {
+                mResizePresenter.launchgalleryExternalApp(false);
+                return true;
+            } else if (itemId == R.id.action_crop) {
+                if (mSingleFileImageInfo == null) {
+                    showError(R.string.no_images);
+                    return false;
+                }
+                CropImageOptions cropImageOptions = new CropImageOptions();
+                cropImageOptions.guidelines = CropImageView.Guidelines.ON;
+                Intent intent = new Intent();
+                intent.putExtra(CropImageActivity.PARAM_URI, mSingleFileImageInfo.getImageUri().toString());
+                intent.setClass(requireActivity(), CropImageActivity.class);
+                Utils.getCropFragment((AppCompatActivity) requireActivity(), mSingleFileImageInfo.getImageUri().toString());
+
+                requireActivity().getSupportFragmentManager().setFragmentResultListener(CropImageViewFragment.CROP_REQUEST, getViewLifecycleOwner(), (requestKey, bundle) -> {
+                            String uri = bundle.getString(CropImageViewFragment.RESULT_URI);
+                            initSingleGalleryImageConfig();
+                            Uri imageUri = Uri.parse(uri);
+                            mImageUrlString = imageUri.toString();
+                            mResizePresenter.setImageSelected(imageUri.toString());
+//                                    showCustomAppBar((AppCompatActivity) getActivity(), false);
+                            if (autoSave) {
+                                mResizePresenter.applyImageEffect(mSingleFileImageInfo, ImageProcessingTask.SHARPEN, mMyOnImageProcessedListener, null);
+                            }
+                        }
+                );
+                return true;
+
+//                        mhHandler.postDelayed(() -> showCustomAppBar((AppCompatActivity) getActivity(), true), 100);
+            } else if (itemId == R.id.action_scale) {
+                if (mSingleFileImageInfo != null) {
+                    showCustomScaleAlert(false, null, mSingleFileImageInfo, ResizeFragment.this);
+                } else {
+                    if (mMultipleImagesAdaptor == null) {
+                        showError(R.string.no_images);
+                        return false;
+                    }
+                    showCustomScaleAlert(true, null, mImageInfoMin, ResizeFragment.this);
+                }
+                return true;
+            } else if (itemId == R.id.action_share) {
+                Uri uri = null;
+                setLoadingIndicator(true);
+                if (mSingleFileImageInfo != null && mSingleFileImageInfo.getDataFile() != null
+                        && mSingleFileImageInfo.getDataFile().getName() != null) {
+                    uri = mDataApi.getImageUriFromCacheWithFileProvider(mSingleFileImageInfo.getDataFile().getName());
+                    if (uri == null) {
+                        uri = mSingleFileImageInfo.getImageUri();
+                    }
+                } else {
+                    if (mMultipleImagesAdaptor == null) {
+                        showError(R.string.no_images);
+                        return false;
+                    }
+                }
+                mResizePresenter.shareImage(getContext(), uri != null ? uri.toString() : "");
+                return true;
+            } else if (itemId == R.id.action_reset) {
+                if (tobedeletedTextView != null) {
+                    tobedeletedTextView.setVisibility(View.GONE);
+                }
+                mResizePresenter.applyImageEffect(null, ImageProcessingTask.RESET, mMyOnImageProcessedListener, null);
+                return true;
+            } else if (itemId == R.id.action_compress) {
+                mCompressPercentage = 0;
+                mKbEnteredValue = 0;
+                if (mOnCompressTypeChangedListen == null) {
+                    mOnCompressTypeChangedListen = (quality, kbEntered) -> {
+                        if (!kbEntered) {
+                            mCompressPercentage = quality;
+                        } else {
+                            mKbEnteredValue = quality;
+                        }
+                        if (mSingleFileImageInfo != null) {
+                            mResizePresenter.applyImageEffect(mSingleFileImageInfo, ImageProcessingTask.COMPRESS, mMyOnImageProcessedListener, null);
+
+                        } else {
+                            doMultipleImageProcessing(ImageProcessingTask.COMPRESS, null);
+                        }
+                    };
+                }
+                baseFragment.showCompressAlert(getContext(), mOnCompressTypeChangedListen, hashMap, mSingleFileImageInfo != null);
+                return true;
+            } else if (itemId == R.id.action_save) {
+                mResizePresenter.saveImage();
+                return true;
+            }
+        } catch (Throwable e) {
+            showError(R.string.unknown_error);
+        }
+        return false;
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ((AppCompatActivity) requireActivity()).getSupportActionBar().setTitle("");
+        this.baseFragment = this;
+        /*requireActivity().addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                   }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull android.view.MenuItem menuItem) {
+                try {
+                    int itemId = menuItem.getItemId();
+                    if (itemId == R.id.action_open) {
+                        mResizePresenter.launchgalleryExternalApp(false);
+                        return true;
+                    } else if (itemId == R.id.action_crop) {
+                        if (mSingleFileImageInfo == null) {
+                            showError(R.string.no_images);
+                            return false;
+                        }
+                        CropImageOptions cropImageOptions = new CropImageOptions();
+                        cropImageOptions.guidelines = CropImageView.Guidelines.ON;
+                        Intent intent = new Intent();
+                        intent.putExtra(CropImageActivity.PARAM_URI, mSingleFileImageInfo.getImageUri().toString());
+                        intent.setClass(requireActivity(), CropImageActivity.class);
+                        Utils.getCropFragment((AppCompatActivity) requireActivity(), mSingleFileImageInfo.getImageUri().toString());
+
+                        requireActivity().getSupportFragmentManager().setFragmentResultListener(CropImageViewFragment.CROP_REQUEST, getViewLifecycleOwner(), (requestKey, bundle) -> {
+                                    String uri = bundle.getString(CropImageViewFragment.RESULT_URI);
+                                    initSingleGalleryImageConfig();
+                                    Uri imageUri = Uri.parse(uri);
+                                    mImageUrlString = imageUri.toString();
+                                    mResizePresenter.setImageSelected(imageUri.toString());
+//                                    showCustomAppBar((AppCompatActivity) getActivity(), false);
+                                    if (autoSave) {
+                                        mResizePresenter.applyImageEffect(mSingleFileImageInfo, ImageProcessingTask.SHARPEN, mMyOnImageProcessedListener, null);
+                                    }
+                                }
+                        );
+                        return true;
+
+//                        mhHandler.postDelayed(() -> showCustomAppBar((AppCompatActivity) getActivity(), true), 100);
+                    } else if (itemId == R.id.action_scale) {
+                        if (mSingleFileImageInfo != null) {
+                            showCustomScaleAlert(false, null, mSingleFileImageInfo, ResizeFragment.this);
+                        } else {
+                            if (mMultipleImagesAdaptor == null) {
+                                showError(R.string.no_images);
+                                return false;
+                            }
+                            showCustomScaleAlert(true, null, mImageInfoMin, ResizeFragment.this);
+                        }
+                        return true;
+                    } else if (itemId == R.id.action_share) {
+                        Uri uri = null;
+                        setLoadingIndicator(true);
+                        if (mSingleFileImageInfo != null && mSingleFileImageInfo.getDataFile() != null
+                                && mSingleFileImageInfo.getDataFile().getName() != null) {
+                            uri = mDataApi.getImageUriFromCacheWithFileProvider(mSingleFileImageInfo.getDataFile().getName());
+                            if (uri == null) {
+                                uri = mSingleFileImageInfo.getImageUri();
+                            }
+                        } else {
+                            if (mMultipleImagesAdaptor == null) {
+                                showError(R.string.no_images);
+                                return false;
+                            }
+                        }
+                        mResizePresenter.shareImage(getContext(), uri != null ? uri.toString() : "");
+                        return true;
+                    } else if (itemId == R.id.action_reset) {
+                        if (tobedeletedTextView != null) {
+                            tobedeletedTextView.setVisibility(View.GONE);
+                        }
+                        mResizePresenter.applyImageEffect(null, ImageProcessingTask.RESET, mMyOnImageProcessedListener, null);
+                        return true;
+                    } else if (itemId == R.id.action_compress) {
+                        mCompressPercentage = 0;
+                        mKbEnteredValue = 0;
+                        if (mOnCompressTypeChangedListen == null) {
+                            mOnCompressTypeChangedListen = (quality, kbEntered) -> {
+                                if (!kbEntered) {
+                                    mCompressPercentage = quality;
+                                } else {
+                                    mKbEnteredValue = quality;
+                                }
+                                if (mSingleFileImageInfo != null) {
+                                    mResizePresenter.applyImageEffect(mSingleFileImageInfo, ImageProcessingTask.COMPRESS, mMyOnImageProcessedListener, null);
+
+                                } else {
+                                    doMultipleImageProcessing(ImageProcessingTask.COMPRESS, null);
+                                }
+                            };
+                        }
+                        baseFragment.showCompressAlert(getContext(), mOnCompressTypeChangedListen, hashMap, mSingleFileImageInfo != null);
+                        return true;
+                    } else if (itemId == R.id.action_save) {
+                        mResizePresenter.saveImage();
+                        return true;
+                    }
+                } catch (Throwable e) {
+                    showError(R.string.unknown_error);
+                }
+                return false;
+            }
+        },getViewLifecycleOwner(), Lifecycle.State.RESUMED);*/
+    }
+
 
     //    MultipleImageProcessingDialog multipleImageProcessingListener;
     volatile boolean mCancelMutipleTask;
@@ -732,12 +941,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
     }
 
     @Override
-    public void onDestroyView() {
-        showCustomAppBar((AppCompatActivity) getActivity(), true);
-        super.onDestroyView();
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         mResizePresenter.dropView();
@@ -762,27 +965,8 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         return mView;
     }
 
-    private void showCustomAppBar(AppCompatActivity appCompatActivity, boolean hide) {
-        try {
+    private BaseFragment baseFragment;
 
-            if (!hide) {
-                appCompatActivity.getSupportActionBar().setCustomView(R.layout.custom_menu_layout);
-                View view = ((AppCompatActivity) getActivity()).getSupportActionBar().getCustomView();
-                mMenuRecyclerView = view.findViewById(R.id.menuRecyclerView);
-                fillMenuItems(appCompatActivity, mMenuRecyclerView, this);
-                appCompatActivity.getSupportActionBar().setDisplayShowCustomEnabled(true);
-                appCompatActivity.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-            } else {
-                MenuAdaptor menuAdaptor = (MenuAdaptor) mMenuRecyclerView.getAdapter();
-                menuAdaptor.clear();
-                appCompatActivity.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME);
-                appCompatActivity.getSupportActionBar().setDisplayShowCustomEnabled(false);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     int count = 0;
     int lastIndex;
@@ -791,7 +975,6 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
         count = 0;
         mMultiple = true;
         sizeTextView.setVisibility(View.GONE);
-        showCustomAppBar((AppCompatActivity) getActivity(), false);
         mMultipleImagesRecyclerView.setVisibility(View.VISIBLE);
         gridSize = SettingsManager.getInstance().getGridSize();
         mMultipleImagesAdaptor = new MultipleImagesAdaptor(this, imageInfoList,
@@ -1049,7 +1232,7 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
                     showCustomResolutionAlert(mOnResolutionSelectedListener, maxResolution, maxWidth, meanDimension);
                 } else {
                     //multiple files
-                     mDataApi.getBitmapFromAbsolutePathUri(getContext(), mImageInfoMin.getAbsoluteFilePathUri(),
+                    mDataApi.getBitmapFromAbsolutePathUri(getContext(), mImageInfoMin.getAbsoluteFilePathUri(),
                             res.getWidth(), res.getHeight());
 
                     showCustomResolutionAlert(mOnResolutionSelectedListener, maxResolution, maxWidth, meanDimension);
@@ -1213,9 +1396,10 @@ public class ResizeFragment extends BaseFragment implements ResizeContract.View,
             click = new ClickableSpan() {
                 @Override
                 public void onClick(View widget) {
-                    mhHandler.postDelayed(() -> showCustomAppBar((AppCompatActivity) getActivity(), true), 100);
                     MyImagesFragment myImagesFragment = MyImagesFragment.newInstance();
                     Utils.addFragment((AppCompatActivity) requireActivity(), myImagesFragment, R.id.contentFrame, true);
+//                    MenuHost menuHost= requireActivity();
+                    requireActivity().invalidateOptionsMenu();
                 }
 
                 @Override

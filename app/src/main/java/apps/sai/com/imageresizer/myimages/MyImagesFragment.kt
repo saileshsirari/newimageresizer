@@ -14,8 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.appcompat.app.ActionBar
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MenuProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -168,16 +167,93 @@ class MyImagesFragment : BaseFragment(), MyImagesContract.View, OnImagesSelected
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
-        val appCompatActivity = activity as AppCompatActivity?
-        appCompatActivity!!.supportActionBar!!.displayOptions =
-            ActionBar.DISPLAY_SHOW_HOME
-        appCompatActivity.supportActionBar!!.setDisplayShowCustomEnabled(true)
-        inflater.inflate(R.menu.myimages, menu)
-        this.menu = menu
-        if (myImagesAdaptor!!.itemCount == 0) {
+        inflater.inflate(R.menu.myimages_menu, menu)
+        if (myImagesAdaptor?.itemCount == 0) {
             showNoImagesMenu(menu, false)
         }
-        super.onCreateOptionsMenu(menu, inflater)
+        this@MyImagesFragment.menu = menu
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val itemId = item.itemId
+        val consumed = when (itemId) {
+            R.id.action_select_all_my_images -> {
+                myImagesAdaptor!!.selectAllItems()
+                menu?.setGroupEnabled(R.id.my_images_clear_all_group, true)
+                menu?.setGroupEnabled(R.id.my_images_select_all_group, false)
+                menu?.setGroupEnabled(R.id.my_images_group, true)
+                true
+            }
+
+            R.id.action_clear_all_my_images -> {
+                myImagesAdaptor?.clearAllItems()
+                menu?.setGroupEnabled(R.id.my_images_select_all_group, true)
+                menu?.setGroupEnabled(R.id.my_images_clear_all_group, false)
+                menu?.setGroupEnabled(R.id.my_images_group, false)
+                true
+            }
+
+            R.id.action_delete_my_image -> { //                cancelPendingTasks();
+
+                showDeleteAlert(context) {
+                    myImagesAdaptor?.setOnUiUpdateListener(object : OnUiUpdateListener {
+                        override fun onDataChanged(newAdaptorSize: Int) {
+                        }
+
+                        override fun onImageDeleted(imageInfo: ImageInfo) {
+                        }
+
+                        override fun onAllImagesDeleted(mImageInfoList: List<ImageInfo>) {
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                for (imageInfo in mImageInfoList) {
+                                    myImagesAdaptor?.remove(imageInfo)
+                                }
+                                mProgressBar?.visibility = View.GONE
+                            }, 2000)
+                        }
+                    })
+                    mProgressBar?.visibility = View.VISIBLE
+                    myImagesAdaptor?.deleteSelectedImages()
+                }
+                true
+            }
+
+            R.id.action_share_my_image -> {
+                shareImage(requireContext(), null)
+                true
+            }
+
+            else -> {
+                false
+            }
+
+        }
+        if (myImagesAdaptor?.itemCount == 0) {
+            showNoImagesMenu(menu, false)
+        } else {
+            mNoImagesTextView.visibility = View.GONE
+        }
+        return consumed
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // Add options menu to the toolbar
+      /*  requireActivity().addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menu.clear()
+                menuInflater.inflate(R.menu.myimages_menu, menu)
+                if (myImagesAdaptor?.itemCount == 0) {
+                    showNoImagesMenu(menu, false)
+                }
+                this@MyImagesFragment.menu = menu
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+
+            }
+
+        })*/
     }
 
     private fun showNoImagesMenu(menu: Menu?, hide: Boolean) {
@@ -202,60 +278,17 @@ class MyImagesFragment : BaseFragment(), MyImagesContract.View, OnImagesSelected
         cancelLoading(true)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val itemId = item.itemId
-        if (itemId == R.id.action_select_all_my_images) {
-            myImagesAdaptor!!.selectAllItems()
-            menu!!.setGroupEnabled(R.id.my_images_clear_all_group, true)
-            menu!!.setGroupEnabled(R.id.my_images_select_all_group, false)
-            menu!!.setGroupEnabled(R.id.my_images_group, true)
-        } else if (itemId == R.id.action_clear_all_my_images) {
-            myImagesAdaptor!!.clearAllItems()
-            menu!!.setGroupEnabled(R.id.my_images_select_all_group, true)
-            menu!!.setGroupEnabled(R.id.my_images_clear_all_group, false)
-            menu!!.setGroupEnabled(R.id.my_images_group, false)
-        } else if (itemId == R.id.action_delete_my_image) { //                cancelPendingTasks();
-
-            showDeleteAlert(context) {
-                myImagesAdaptor?.setOnUiUpdateListener(object : OnUiUpdateListener {
-                    override fun onDataChanged(newAdaptorSize: Int) {
-                    }
-
-                    override fun onImageDeleted(imageInfo: ImageInfo) {
-                    }
-
-                    override fun onAllImagesDeleted(mImageInfoList: List<ImageInfo>) {
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            for (imageInfo in mImageInfoList) {
-                                myImagesAdaptor?.remove(imageInfo)
-                            }
-                            mProgressBar!!.visibility = View.GONE
-                        }, 2000)
-                    }
-                })
-                mProgressBar!!.visibility = View.VISIBLE
-                myImagesAdaptor!!.deleteSelectedImages()
-            }
-        } else if (itemId == R.id.action_share_my_image) {
-            shareImage(requireContext(), null)
-        }
-        if (myImagesAdaptor!!.itemCount == 0) {
-            showNoImagesMenu(menu, false)
-        } else {
-            mNoImagesTextView!!.visibility = View.GONE
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     override fun onGalleryImageSelected(data: Intent) {
     }
 
     override fun shareImage(context: Context, mUrlString: String?) {
         val uriList = ArrayList<Uri>()
         //multiple
-        val imageInfoList = myImagesAdaptor!!.selectedImageInfoList
-        for (i in imageInfoList.indices) {
-            uriList.add(imageInfoList[i].imageUri)
+        val imageInfoList = myImagesAdaptor?.selectedImageInfoList
+        if (imageInfoList != null) {
+            for (i in imageInfoList.indices) {
+                uriList.add(imageInfoList[i].imageUri)
+            }
         }
 
         if (uriList.size > 0) {
@@ -266,9 +299,9 @@ class MyImagesFragment : BaseFragment(), MyImagesContract.View, OnImagesSelected
     override fun setLoadingIndicator(b: Boolean) {
         mHandler.post {
             if (b == true) {
-                mProgressBar!!.visibility = View.VISIBLE
+                mProgressBar?.visibility = View.VISIBLE
             } else {
-                mProgressBar!!.visibility = View.GONE
+                mProgressBar?.visibility = View.GONE
             }
         }
     }
@@ -288,14 +321,14 @@ class MyImagesFragment : BaseFragment(), MyImagesContract.View, OnImagesSelected
     }
 
     override fun onAnyImageSelected() {
-        menu!!.setGroupEnabled(R.id.my_images_group, true)
-        menu!!.setGroupEnabled(R.id.my_images_select_all_group, true)
+        menu?.setGroupEnabled(R.id.my_images_group, true)
+        menu?.setGroupEnabled(R.id.my_images_select_all_group, true)
     }
 
     override fun onNoneImageSelected() {
         //hide menu bar items
-        menu!!.setGroupEnabled(R.id.my_images_group, false)
-        menu!!.setGroupEnabled(R.id.my_images_select_all_group, true)
+        menu?.setGroupEnabled(R.id.my_images_group, false)
+        menu?.setGroupEnabled(R.id.my_images_select_all_group, true)
     }
 
     companion object {

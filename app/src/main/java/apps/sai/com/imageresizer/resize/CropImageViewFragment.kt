@@ -1,6 +1,5 @@
 package apps.sai.com.imageresizer.resize
 
-import android.graphics.Bitmap
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
@@ -11,15 +10,14 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.ActionBar
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import apps.sai.com.imageresizer.R
 import apps.sai.com.imageresizer.databinding.FragmentCropImageViewBinding
 import apps.sai.com.imageresizer.select.SelectViewModel
-import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import com.canhub.cropper.CropImageView.CropResult
@@ -48,7 +46,6 @@ internal class CropImageViewFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
        selectViewModel = ViewModelProvider(requireActivity())[SelectViewModel::class.java]
     }
 
@@ -61,38 +58,42 @@ internal class CropImageViewFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setOptions()
         arguments?.let {
             it.getString("imageUri")?.let {
-//                binding.cropImageView.imageResource = R.drawable.my_images_camera
                 binding.cropImageView.setImageUriAsync(Uri.parse(it))
             }
         }
-
-
-
         binding.cropImageView.setOnSetImageUriCompleteListener(this)
         binding.cropImageView.setOnCropImageCompleteListener(this)
+        requireActivity().addMenuProvider(object :MenuProvider{
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menu.clear()
+                menuInflater.inflate(R.menu.crop_menu, menu)
+            }
 
-        if (savedInstanceState == null) {
-            //  binding.cropImageView.imageResource = R.drawable.cat
-        }
-    }
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean  =
+                when (menuItem.itemId) {
+                    R.id.main_action_crop -> {
+                        binding.cropImageView.croppedImageAsync()
+                        true
+                    }
+                    R.id.main_action_rotate -> {
+                        binding.cropImageView.rotateImage(90)
+                        true
+                    }
+                    R.id.main_action_flip_horizontally -> {
+                        binding.cropImageView.flipImageHorizontally()
+                        true
+                    }
+                    R.id.main_action_flip_vertically -> {
+                        binding.cropImageView.flipImageVertically()
+                        true
+                    }
+                    else -> false
+                }
 
-
-    fun onOptionsApplySelected(options: CropImageOptions) {
-        this.options = options
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        val appCompatActivity = activity as AppCompatActivity?
-        appCompatActivity?.supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_HOME
-        appCompatActivity?.supportActionBar?.setDisplayShowCustomEnabled(false)
-        appCompatActivity?.supportActionBar?.show()
-        inflater.inflate(R.menu.main, menu)
-        super.onCreateOptionsMenu(menu, inflater)
+        }, viewLifecycleOwner, Lifecycle.State.STARTED)
     }
 
     private fun handleCropImageResult(result: CropResult) {
@@ -111,29 +112,7 @@ internal class CropImageViewFragment :
         activity?.supportFragmentManager?.popBackStack()
     }
 
-    override fun onOptionsItemSelected(menuItem: MenuItem) = when (menuItem.itemId) {
-        R.id.main_action_crop -> {
-            binding.cropImageView.croppedImageAsync()
-            true
-        }
 
-        R.id.main_action_rotate -> {
-            binding.cropImageView.rotateImage(90)
-            true
-        }
-
-        R.id.main_action_flip_horizontally -> {
-            binding.cropImageView.flipImageHorizontally()
-            true
-        }
-
-        R.id.main_action_flip_vertically -> {
-            binding.cropImageView.flipImageVertically()
-            true
-        }
-
-        else -> false
-    }
 
     override fun onSetImageUriComplete(view: CropImageView, uri: Uri, error: Exception?) {
         if (error != null) {

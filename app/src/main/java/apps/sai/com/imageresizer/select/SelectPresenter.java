@@ -72,8 +72,6 @@ public class SelectPresenter implements SelectContract.Presenter {
     @Override
     public void showSettings(AppCompatActivity activity, SettingsFragment settingsFragment) {
         Utils.addFragment(activity,settingsFragment, R.id.contentFrame,true);
-        FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.hide(activity.getSupportFragmentManager().findFragmentByTag(SelectFragment.class.getSimpleName())).commit();
     }
 
     @Override

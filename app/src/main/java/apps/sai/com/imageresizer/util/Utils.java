@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -50,6 +51,7 @@ import apps.sai.com.imageresizer.settings.SettingsManager;
  */
 
 public class Utils {
+    private static final String TAG = "Utils";
     public static UiState mUiState;
     public static Uri mImgeUri;
 
@@ -58,15 +60,19 @@ public class Utils {
         fragmentTransaction.add(resId, fragment, fragment.getClass().getSimpleName());
         if (isBackStack) {
             fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
-
         }
         fragmentTransaction.commit();
     }
 
     public static void showFragment(AppCompatActivity activity, String fragmentClassSimpleName) {
-        FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.show(activity.getSupportFragmentManager().findFragmentByTag(fragmentClassSimpleName));
-        fragmentTransaction.commit();
+        try {
+            FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.show(activity.getSupportFragmentManager().findFragmentByTag(fragmentClassSimpleName));
+            fragmentTransaction.commit();
+        }catch (Exception e){
+            Log.e(TAG, e.toString());
+        }
+
     }
 
     public static void removeFragment(AppCompatActivity activity, Fragment fragment) {

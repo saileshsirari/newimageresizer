@@ -63,8 +63,6 @@ public class SelectFragment extends BaseFragment implements SelectContract.View 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-
         try {
             mDataApi = new FileApi(getContext());
         } catch (Exception e) {
@@ -79,13 +77,7 @@ public class SelectFragment extends BaseFragment implements SelectContract.View 
         super.onViewCreated(view, savedInstanceState);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear();
-        AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
-        appCompatActivity.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
+
 
     @Override
     public void showError(Throwable th) {
@@ -124,7 +116,7 @@ public class SelectFragment extends BaseFragment implements SelectContract.View 
                 } else if (menuItem.getId() == MenuItem.MORE_APPS) {
                     mSelectPresenter.showMoreApps((AppCompatActivity) getActivity());
                 } else if (menuItem.getId() == MenuItem.REMOVE_ADS) {
-                    UpgradeDialog.getUpgradeDialog(getActivity()).show();
+                    UpgradeDialog.getUpgradeDialog(requireActivity()).show();
                 }
             }
         });

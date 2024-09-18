@@ -1,20 +1,18 @@
 package apps.sai.com.imageresizer.billing;
 
+import static com.android.billingclient.api.BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED;
 import static com.android.billingclient.api.BillingClient.BillingResponseCode.OK;
 import static com.android.billingclient.api.BillingClient.BillingResponseCode.USER_CANCELED;
-import static com.android.billingclient.api.BillingClient.ProductType.*;
+import static com.android.billingclient.api.BillingClient.ProductType.INAPP;
 
 import android.app.Activity;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.android.billingclient.api.AcknowledgePurchaseParams;
-import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
 import com.android.billingclient.api.BillingClient;
-import com.android.billingclient.api.BillingClient.ProductType;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingFlowParams.ProductDetailsParams;
@@ -23,19 +21,16 @@ import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ConsumeResponseListener;
 import com.android.billingclient.api.PendingPurchasesParams;
 import com.android.billingclient.api.ProductDetails;
-import com.android.billingclient.api.ProductDetailsResponseListener;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesResponseListener;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.QueryProductDetailsParams;
-import com.android.billingclient.api.SkuDetails;
-import com.android.billingclient.api.SkuDetailsResponseListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.sai.com.imageresizer.data.BitmapResult;
 import apps.sai.com.imageresizer.rx.UnsafeAction;
+import apps.sai.com.imageresizer.settings.SettingsManager;
 import apps.sai.com.imageresizer.util.Config;
 
 public class BillingManager implements PurchasesUpdatedListener, PurchasesResponseListener, ConsumeResponseListener {
@@ -132,8 +127,11 @@ public class BillingManager implements PurchasesUpdatedListener, PurchasesRespon
                                         .build();
                         billingClient.acknowledgePurchase(acknowledgePurchaseParams, billingResult1 -> {
                             Log.i(TAG, "acknowledgePurchase() -"+billingResult1.getResponseCode()+" , "+billingResult.getDebugMessage());
-
-
+                            if (billingResult1.getResponseCode() == OK) {
+                                SettingsManager.getInstance().setLegacyUpgraded(true);
+                                activity.finish();
+                                activity.startActivity(activity.getIntent());
+                            }
                         });
                     }
                 }
@@ -155,6 +153,11 @@ public class BillingManager implements PurchasesUpdatedListener, PurchasesRespon
         } else if (billingResult.getResponseCode() == USER_CANCELED) {
             Log.i(TAG, "onPurchasesUpdated() - user cancelled the purchase flow - skipping");
         } else {
+            if(billingResult.getResponseCode() == ITEM_ALREADY_OWNED){
+                SettingsManager.getInstance().setLegacyUpgraded(true);
+                activity.finish();
+                activity.startActivity(activity.getIntent());
+            }
             Log.e(TAG, String.format("onPurchasesUpdated() got unknown resultCode: %d", billingResult.getResponseCode()), null);
         }
     }
