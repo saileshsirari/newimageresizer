@@ -9,7 +9,7 @@ import android.content.Intent;
 public interface BaseView <T>{
 
     void onGalleryImageSelected(Intent data);
-    void launchgalleryExternalApp(boolean singlePhoto);
+    void launchGalleryExternalApp(boolean singlePhoto);
 
 //    void onImageSelected(Intent data); //selected image from gallery or camera
 

@@ -11,7 +11,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import apps.sai.com.imageresizer.BaseFragment;
 import apps.sai.com.imageresizer.R;
-import apps.sai.com.imageresizer.myimages.MyImagesFragment;
 import apps.sai.com.imageresizer.settings.SettingsFragment;
 import apps.sai.com.imageresizer.util.Utils;
 
@@ -26,7 +25,7 @@ public class SelectPresenter implements SelectContract.Presenter {
 
     public void launchgalleryExternalApp(boolean singlePhoto) {
 
-     mView.launchgalleryExternalApp(singlePhoto);
+     mView.launchGalleryExternalApp(singlePhoto);
     }
 
 
@@ -53,17 +52,6 @@ public class SelectPresenter implements SelectContract.Presenter {
     @Override
     public void showMyImages(AppCompatActivity appCompatActivity, BaseFragment baseFragment) {
         Utils.addFragment(appCompatActivity,baseFragment, R.id.contentFrame,true);
-
-        if(baseFragment instanceof MyImagesFragment){
-            MyImagesFragment myImagesFragment = (MyImagesFragment) baseFragment;
-            myImagesFragment.setOnContextCreatedListener(new MyImagesFragment.OnContextCreatedListener() {
-                @Override
-                public void onContextCreated() {
-                    ((MyImagesFragment) baseFragment).loadMyImages();
-                }
-            });
-
-        }
     }
 
     @Override
@@ -84,8 +72,6 @@ public class SelectPresenter implements SelectContract.Presenter {
     @Override
     public void showSettings(AppCompatActivity activity, SettingsFragment settingsFragment) {
         Utils.addFragment(activity,settingsFragment, R.id.contentFrame,true);
-        FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.hide(activity.getSupportFragmentManager().findFragmentByTag(SelectFragment.class.getSimpleName())).commit();
     }
 
     @Override

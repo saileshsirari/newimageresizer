@@ -9,12 +9,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.os.SystemClock;
-import android.util.Log;
 
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
 
 import java.io.Closeable;
 import java.io.FileNotFoundException;
@@ -28,68 +23,15 @@ import java.nio.ByteBuffer;
 
 public class ImageUtils {
 
-    public static Bitmap scaleImage(Context context , Bitmap unscaledBitmap,int newWidth,int newHeight) {
+    public static Bitmap scaleImage(Bitmap unscaledBitmap, int newWidth, int newHeight) {
         final long startTime = SystemClock.uptimeMillis();
-//        int mDstWidth =(int)(unscaledBitmap.getWidth()*times);// (int)(times*context.getResources().getDimensionPixelSize(R.dimen.destination_width));
-//        int  mDstHeight =(int)(unscaledBitmap.getHeight()*times);
-//        int  mDstHeight =(int) (times*context.getResources().getDimensionPixelSize(R.dimen.destination_height));
-        // Part 1: Decode image
-        /*Bitmap unscaledBitmap = ScalingUtilities.decodeResource(getResources(), mSourceId,
-                mDstWidth, mDstHeight, ScalingLogic.FIT);*/
-
-        // Part 2: Scale image
         Bitmap scaledBitmap = ScalingUtilities.createScaledBitmap(unscaledBitmap, newWidth,
                 newHeight, ScalingUtilities.ScalingLogic.FIT);
-
-        // Calculate memory usage and performance statistics
-        final int memUsageKb = (unscaledBitmap.getRowBytes() * unscaledBitmap.getHeight()) / 1024;
-        final long stopTime = SystemClock.uptimeMillis();
-
-        // Publish results
         unscaledBitmap.recycle();
-
         return scaledBitmap;
     }
 
     //The imagePath consist the path of the image from camereFunction()
-    public static Bitmap scaleImage(Bitmap image, int newWidth, int newHeight, int interPolationType ) {
-
-        try {
-
-            //my image file
-//        Bitmap image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imagePath);
-
-            //For Testing Purpose
-            int image_w = image.getWidth();
-            int image_h = image.getHeight();
-            Log.d("Captured Image Prop: ", "Height = " + image_h + " Width = " + image_w);
-
-            if (image != null) {
-
-
-                Mat imageMat = new Mat();
-                Mat image_res = new Mat();
-                //changes bitmap to Mat
-                org.opencv.android.Utils.bitmapToMat(image, imageMat);
-
-                image = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
-
-                Imgproc.resize(imageMat, image_res, new Size(newWidth, newHeight), 0, 0, interPolationType);
-
-
-                org.opencv.android.Utils.matToBitmap(image_res, image);
-//
-                image_w = image.getWidth();
-                image_h = image.getHeight();
-                Log.d("Resize Image Prop: ", "Height = " + image_h + " Width = " + image_w);
-
-//            return image;
-            }
-        }catch (Throwable t){
-            return null;
-        }
-        return image;
-    }
 
     public static byte[] imageToBytes(Bitmap bitmap) {
 
@@ -105,75 +47,6 @@ public class ImageUtils {
         return imageInByte;
     }
 
-
-
-
-    public static Bitmap rotateImageClockWise(Bitmap bitmap) {
-        Mat imageMat = new Mat();
-
-        //changes bitmap to Mat
-        org.opencv.android.Utils.bitmapToMat(bitmap, imageMat);
-
-//        Mat imageRes =new Mat();
-//                new Mat(imageMat.height(),imageMat.width(), CvType.CV_8U);
-
-       // imageMat.copyTo(imageRes);
-
-
-
-//            Core.rotate(imageMat, imageRes, Core.ROTATE_180); //ROTATE_180 or ROTATE_90_COUNTERCLOCKWISE
-
-            // Rotate clockwise 90 degrees
-            Core.flip(imageMat.t(), imageMat, 1);
-
-            Bitmap destBitmap1 = Bitmap.createBitmap(imageMat.width(), imageMat.height(), Bitmap.Config.ARGB_8888);
-
-            org.opencv.android.Utils.matToBitmap(imageMat, destBitmap1);
-
-            return destBitmap1;
-
-
-
-
-    }
-
-    public static Bitmap sharpenImage(Bitmap bitmap){
-        Mat imageMat = new Mat();
-
-        //changes bitmap to Mat
-        org.opencv.android.Utils.bitmapToMat(bitmap, imageMat);
-          Mat dest = new Mat();
-
-         Imgproc.GaussianBlur(imageMat, dest, new Size(0, 0), 3);
-         Core.addWeighted(imageMat, 1.5, dest, -0.5, 0, dest);
-
-        Bitmap destBitmap1 = Bitmap.createBitmap(dest.width(), dest.height(), Bitmap.Config.ARGB_8888);
-
-        org.opencv.android.Utils.matToBitmap(dest, destBitmap1);
-
-        return  destBitmap1;
-
-
-    }
-
-    public static Bitmap blurImage(Bitmap bitmap){
-        Mat imageMat = new Mat();
-
-        //changes bitmap to Mat
-        org.opencv.android.Utils.bitmapToMat(bitmap, imageMat);
-        Mat dest = new Mat();
-
-        Imgproc.GaussianBlur(imageMat, dest, new Size(0, 0), 3);
-//        Core.addWeighted(imageMat, 1.5, dest, -0.5, 0, dest);
-
-        Bitmap destBitmap1 = Bitmap.createBitmap(dest.width(), dest.height(), Bitmap.Config.ARGB_8888);
-
-        org.opencv.android.Utils.matToBitmap(dest, destBitmap1);
-
-        return  destBitmap1;
-
-
-    }
 
     public static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {

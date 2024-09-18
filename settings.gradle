@@ -17,4 +17,3 @@ dependencyResolutionManagement {
 rootProject.name = "ImageResizerN"
 include ':app'
 include ':cropper'
-include ':opencv'

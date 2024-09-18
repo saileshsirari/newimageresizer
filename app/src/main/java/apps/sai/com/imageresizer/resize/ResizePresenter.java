@@ -2,12 +2,11 @@ package apps.sai.com.imageresizer.resize;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 
 import apps.sai.com.imageresizer.data.BitmapResult;
 import apps.sai.com.imageresizer.data.ImageInfo;
 import apps.sai.com.imageresizer.data.ResolutionInfo;
-import apps.sai.com.imageresizer.util.BitmapProcessingTask;
+import apps.sai.com.imageresizer.util.OnImageProcessedListener;
 
 /**
  * Created by sailesh on 03/01/18.
@@ -44,9 +43,9 @@ public class ResizePresenter implements ResizeContract.Presenter {
     }
 
     @Override
-    public Bitmap applyImageEffect(ImageInfo bitmap, ResizeFragment.IMAGE_PROCESSING_TASKS image_PROCESSING_tasks, BitmapProcessingTask.OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo) {
+    public BitmapResult applyImageEffect(ImageInfo bitmap, ImageProcessingTask imageProcessingTask, OnImageProcessedListener onImageProcessedListener, ResolutionInfo resolutionInfo) {
         if(mView!=null) {
-            return mView.applyImageEffect(bitmap, image_PROCESSING_tasks, onImageProcessedListener, resolutionInfo);
+            return mView.applyImageEffect(bitmap, imageProcessingTask, onImageProcessedListener, resolutionInfo);
         }
         return null;
     }
@@ -77,7 +76,7 @@ public class ResizePresenter implements ResizeContract.Presenter {
     public void launchgalleryExternalApp(boolean singlePhoto) {
         if(mView!=null) {
 
-            mView.launchgalleryExternalApp(singlePhoto);
+            mView.launchGalleryExternalApp(singlePhoto);
         }
     }
 }

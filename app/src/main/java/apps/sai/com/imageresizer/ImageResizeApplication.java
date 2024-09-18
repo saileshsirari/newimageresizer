@@ -21,16 +21,11 @@ public class ImageResizeApplication extends Application {
 
         String bannerId = null;
 
-            if(BuildConfig.BUILD_TYPE.equals("debug")){
+      /*      if(BuildConfig.BUILD_TYPE.equals("debug")){
                 bannerId ="ca-app-pub-3940256099942544/6300978111";
         }else if(BuildConfig.BUILD_TYPE.equals("release")){
-
                 bannerId ="ca-app-pub-5260132970861532~3575130198";
-//                bannerId ="ca-app-pub-3940256099942544/6300978111";
-
-
-
-        }
+        }*/
 
 //        MobileAds.initialize(this, bannerId);
 

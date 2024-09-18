@@ -1,11 +1,9 @@
 package apps.sai.com.imageresizer.select;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.Menu;
@@ -31,20 +29,15 @@ import java.io.File;
 import java.util.List;
 
 import apps.sai.com.imageresizer.BaseFragment;
-import apps.sai.com.imageresizer.BuildConfig;
 import apps.sai.com.imageresizer.ImageResizeApplication;
 import apps.sai.com.imageresizer.MyUncaughtExceptionHandler;
 import apps.sai.com.imageresizer.R;
 import apps.sai.com.imageresizer.billing.BillingManager;
-import apps.sai.com.imageresizer.resize.ResizeFragment;
 import apps.sai.com.imageresizer.settings.SettingsManager;
 import apps.sai.com.imageresizer.util.Config;
 import apps.sai.com.imageresizer.util.UiState;
 import apps.sai.com.imageresizer.util.UpgradeDialog;
 import apps.sai.com.imageresizer.util.Utils;
-//import com.startapp.android.publish.adsCommon.StartAppAd;
-//import com.startapp.android.publish.adsCommon.StartAppSDK;
-//import com.startapp.android.publish.adsCommon.adListeners.AdDisplayListener;
 
 /**
  * Created by sailesh on 03/01/18.
@@ -100,13 +93,10 @@ public class SelectActivity extends AppCompatActivity implements
     }
 
     public void showError(final int errorId) {
-
         String s = getString(errorId);
-        if (s != null && s.length() > 0) {
+        if (!s.isEmpty()) {
             Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
-
         }
-
     }
 
     public void showFacebookBanner(final AppCompatActivity context, int resid, String id) {
@@ -126,14 +116,7 @@ public class SelectActivity extends AppCompatActivity implements
         AdListener adListener = new AdListener() {
             @Override
             public void onError(Ad ad, AdError adError) {
-                if(BuildConfig.DEBUG) {
-// Ad error callback
-                   /* Toast.makeText(
-                                    SelectActivity.this,
-                                    "Error: " + adError.getErrorMessage(),
-                                    Toast.LENGTH_LONG)
-                            .show();*/
-                }
+
             }
 
             @Override
@@ -165,39 +148,22 @@ public class SelectActivity extends AppCompatActivity implements
         return super.onPrepareOptionsMenu(menu);
     }
 
-    boolean showStartAppAd = false;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-        if (showStartAppAd && Utils.isUpgradedMy() == false) {
-//            StartAppSDK.init(this, "201508105", false);
-//            StartAppAd.disableSplash();
-        }
         doNotshowAd = true;
-
-       /* if (BuildConfig.BUILD_TYPE.equals("release")) {
-            setContentView(R.layout.activity_sharing_release);
-        } else {
-            setContentView(R.layout.activity_sharing);
-        }*/
-
-        setContentView(R.layout.activity_sharing);
+        setContentView(R.layout.activity_select);
         Toolbar myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
-        BaseFragment.openCvLoaded = false;
-        openCvLoaded = false;
 
         billingManager = new BillingManager(this, new BillingManager.BillingUpdatesListener() {
             @Override
             public void onPurchasesUpdated(List<Purchase> purchases) {
-
-
                 for (Purchase purchase : purchases) {
-                    if (purchase.getSkus().get(0).equals(Config.SKU_PREMIUM)) {
-                        ImageResizeApplication.getInstance().setIsUpgraded(true);
+                    for (String product : purchase.getProducts()) {
+                        if (product.equals(Config.SKU_PREMIUM)) {
+                            ImageResizeApplication.getInstance().setIsUpgraded(true);
+                        }
                     }
                 }
             }
@@ -216,99 +182,28 @@ public class SelectActivity extends AppCompatActivity implements
 
         });
 
-//        showFacebookBanner(this,R.id.banner_container,"179547122769778_179622146095609");
-        if (Utils.isUpgradedMy() == false) {
+        if (!Utils.isUpgradedMy()) {
             showFacebookBanner(this, R.id.banner_container_top, "179547122769778_189046365153187");
-
         }
-
-
-
-       /* if(Utils.isUpgradedMy() ==false && SettingsManager.getInstance().getLaunchCount()>0) {
-
-
-            loadInterstitial(this);
-        }*/
         SettingsManager.getInstance().incrementLaunchCount();
-
-//        mBanner = findViewById(R.id.startAppBanner);
-//        mAdView =findViewById(R.id.adView);
-       /* if(BuildConfig.BUILD_TYPE.equals("release")){
-            mAdView.setAdUnitId("ca-app-pub-5260132970861532/5707179950");
-        }else{
-            mAdView.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
-
-        }*/
-
-        // Instantiate an AdView view
-//        mAdView = new AdView(this, "YOUR_PLACEMENT_ID", AdSize.BANNER_HEIGHT_50);
-
-        // Find the Ad Container
-//        LinearLayout adContainer = (LinearLayout) findViewById(R.id.banner_container);
-
-        // Add the ad view to your activity layout
-//        adContainer.addView(mAdView);
-
-
-//        StartAppAd.disableSplash();
-
-
-        /**
-         * Load Native Ad with the following parameters:
-         * 1. Only 1 Ad
-         * 2. Download ad image automatically
-         * 3. Image size of 150x150px
-         */
-     /*   try {
-
-
-        startAppNativeAd.loadAd(
-                new NativeAdPreferences()
-                        .setAdsNumber(1)
-                        .setAutoBitmapDownload(true)
-
-                        .setPrimaryImageSize(2),
-                nativeAdListener);
-
-    }catch (Exception e){
-            Fabric.getLogger().e("SelectActivity",e.toString());
-        }*/
-
-
         launchSharingFragment();
-
-
-//        getSupportActionBar().setDisplayShowHomeEnabled(true);
-//        getSupportActionBar().show();
-    }
-
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-
-
     }
 
 
     @Override
     public void onFolderSelection(@NonNull FolderChooserDialog dialog, @NonNull File folder) {
-        if (folder != null) {
-            if (folder.canWrite() == false) {
-                showError(R.string.unable_to_select_folder);
-                return;
-            }
-            SettingsManager.getInstance().setFolderPath(folder.getAbsolutePath());
-
-
+        if (!folder.canWrite()) {
+            showError(R.string.unable_to_select_folder);
+            return;
         }
+        SettingsManager.getInstance().setFolderPath(folder.getAbsolutePath());
+
+
     }
 
     @Override
     public void onFolderChooserDismissed(@NonNull FolderChooserDialog dialog) {
-        if (dialog != null) {
 
-        }
     }
 //    private StartAppAd startAppAd ;
 
@@ -316,7 +211,7 @@ public class SelectActivity extends AppCompatActivity implements
     private boolean adShown;
 
     public void loadInterstitial(final Context context) {
-        if(true){
+        if (true) {
             return;
         }
 
@@ -354,7 +249,7 @@ public class SelectActivity extends AppCompatActivity implements
                         adShown = true;
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                   Log.e(TAG,e.toString());
                 }
             }
 
@@ -379,52 +274,8 @@ public class SelectActivity extends AppCompatActivity implements
 
     boolean lastScreen = false;
 
-    @Override
-    public void onBackPressed() {
-//        if (showExitAd()) return;
-
-        super.onBackPressed();
-    }
-
-    private boolean showExitAd() {
-        try {
 
 
-            if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-                if (lastScreen && Utils.isUpgradedMy() == false) {
-                    super.onBackPressed();
-                    return true;
-                }
-                //                if(interstitialAd.isAdLoaded()==false) {
-
-                //                }
-
-
-                //                startAppAd.onBackPressed();
-
-                if (Utils.isUpgradedMy() == false) {
-
-                    loadInterstitial(this);
-
-                    lastScreen = true;
-
-                    return true;
-                }
-            }
-        } catch (Exception e) {
-
-        }
-        return false;
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        /*if(startAppAd!=null){
-            startAppAd.onPause();
-        }*/
-
-    }
 
     public void showFullScreenAd() {
 
@@ -446,69 +297,16 @@ public class SelectActivity extends AppCompatActivity implements
     }
 
 
-    /**
-     * Native Ad Callback
-     *//*
-    private AdEventListener nativeAdListener = new AdEventListener() {
-
-        @Override
-        public void onReceiveAd(Ad ad) {
-
-            try {
-
-                // Get the native ad
-                ArrayList<NativeAdDetails> nativeAdsList = startAppNativeAd.getNativeAds();
-                if (nativeAdsList.size() > 0) {
-                    nativeAd = nativeAdsList.get(0);
-                }
-
-                // Verify that an ad was retrieved
-                if (nativeAd != null) {
-
-                    // When ad is received and displayed - we MUST send impression
-                    nativeAd.sendImpression(SelectActivity.this);
-
-
-
-               *//* if (imgFreeApp != null && txtFreeApp != null){
-
-                    // Set button as enabled
-                    imgFreeApp.setEnabled(true);
-                    txtFreeApp.setEnabled(true);
-
-                    // Set ad's image
-                    imgFreeApp.setImageBitmap(nativeAd.getImageBitmap());
-
-                    // Set ad's title
-                    txtFreeApp.setText(nativeAd.getTitle());
-                }*//*
-                }
-            }catch (Exception e){
-                Fabric.getLogger().e("SelectActivity",e.toString());
-
-            }
-        }
-
-        @Override
-        public void onFailedToReceiveAd(Ad ad) {
-
-
-        }
-    };
-*/
-
-    Handler mHandler = new Handler();
-
     @Override
     public void onResume() {
         super.onResume();
-        if (Utils.isUpgradedMy() == false && doNotshowAd == false) {
+        if (!Utils.isUpgradedMy() && !doNotshowAd) {
 
             loadInterstitial(this);
             doNotshowAd = true;
         } else {
 
-            if (adShown == false) {
+            if (!adShown) {
 
                 doNotshowAd = false;
             }
@@ -522,11 +320,9 @@ public class SelectActivity extends AppCompatActivity implements
 
     }
 
-    private boolean openCvLoaded;
-
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+    public void onSaveInstanceState(Bundle outState, @NonNull PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
         outState.putSerializable("ss", Utils.mUiState);
         outState.putString("imagekey", Utils.mImgeUri.toString());
@@ -537,63 +333,35 @@ public class SelectActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
 
-       /* if(adView!=null) {
-
-            adView.destroy();
-        }*/
+        try {
 
 
-        if (interstitialAd != null) {
+            if (interstitialAd != null) {
 
-            interstitialAd.destroy();
-        }
+                interstitialAd.destroy();
+            }
 
        /* if (mAdView != null) {
             mAdView.destroy();
         }*/
-        if (billingManager != null) {
-            billingManager.destroy();
+            if (billingManager != null) {
+                billingManager.destroy();
+            }
+        }catch (Exception e){
+            Log.e(TAG,e.toString());
         }
         super.onDestroy();
 
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         Utils.mUiState = (UiState) savedInstanceState.getSerializable("ss");
         String imageUrl = savedInstanceState.getString("imagekey");
         if (imageUrl != null) {
             Utils.mImgeUri = Uri.parse(imageUrl);
         }
-    }
-
-    public void startResizeViewStatic() {
-        Intent resizeIntent = new Intent();
-
-
-        final Uri imageUri = Utils.mImgeUri;
-//        resizeIntent.setData(imageUri);
-
-        Utils.mUiState = UiState.FRAGMENT_RESIZE;
-
-        Utils.mImgeUri = imageUri;
-        ResizeFragment resizeFragment = ResizeFragment.newInstance(resizeIntent);
-        Utils.addFragment(this, resizeFragment, R.id.contentFrame, true);
-    }
-
-    public void startResizeView() {
-        Intent resizeIntent = new Intent();
-
-
-        final Uri imageUri = Utils.mImgeUri;
-        resizeIntent.setData(imageUri);
-
-        Utils.mUiState = UiState.FRAGMENT_RESIZE;
-
-        Utils.mImgeUri = imageUri;
-        ResizeFragment resizeFragment = ResizeFragment.newInstance(resizeIntent);
-        Utils.addFragment(this, resizeFragment, R.id.contentFrame, true);
     }
 
     private void launchSharingFragment() {
@@ -607,18 +375,14 @@ public class SelectActivity extends AppCompatActivity implements
 
             Utils.addFragment(this, selectFragment, R.id.contentFrame, false);
 
-        } else {
-//            Utils.replaceFragment(this, selectFragment, R.id.contentFrame,false);
         }
+//            Utils.replaceFragment(this, selectFragment, R.id.contentFrame,false);
 
         //if it is restored the last state should not be undone
 
         if (Utils.mUiState != UiState.FRAGMENT_RESIZE) {
 
             Utils.mUiState = UiState.FRAGMENT_SELECT;
-        } else {
-            Utils.mUiState = UiState.FRAGMENT_RESIZE;
-
         }
     }
 

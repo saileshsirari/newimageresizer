@@ -18,13 +18,9 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 import androidx.core.provider.DocumentsContractCompat;
 
-import org.opencv.core.Mat;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -146,18 +142,13 @@ public class FileApi extends DataApi {
     }
 
     @Override
-    public Bitmap scaleImage(Context context, Bitmap unscaledBitmap, int newWidth, int newHeight, int type) {
-        return ImageUtils.scaleImage(context, unscaledBitmap, newWidth, newHeight);
+    public Bitmap scaleImage( Bitmap unscaledBitmap, int newWidth, int newHeight, int type) {
+        return ImageUtils.scaleImage(unscaledBitmap, newWidth, newHeight);
     }
-
     public String getMyFolderPath() {
-
         if (myFolderPath == null) {
-
             myFolderPath = SettingsManager.getInstance().getFolderPath();
         }
-
-
         return myFolderPath;
     }
 
@@ -172,20 +163,15 @@ public class FileApi extends DataApi {
         if (!createFoldersIfRequired()) {
             return imageInfoList;
         }
-//        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+File.separator+PUBLIC_FOLDER_NAME+File.separator);
-
         File file = new File(getMyFolderPath() + File.separator);
         if (!file.exists()) {
             return imageInfoList;
-
         }
-
         Uri uriBase = Uri.fromFile(file);
-        String a[] = file.list();
+        String[] a = file.list();
 
         if (a != null) {
-            for (int i = 0; i < a.length; i++) {
-                String b = a[i];
+            for (String b : a) {
                 File bfile = new File(file, b);
                 if (bfile.length() == 0) {
                     bfile.delete();
@@ -207,15 +193,9 @@ public class FileApi extends DataApi {
                                 imageInfo.setImageUri(fileUri);
                             }
                         }
-//                        imageInfo = Utils.getImageInfo(context,imageInfo.getImageUri(),this);
-
-//                        if(imageInfo.getWidth()>0 && imageInfo.getHeight()>0) {
-
                         if (imageInfo.getImageUri() != null) {
-
                             imageInfoList.add(imageInfo);
                         }
-//                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -648,17 +628,15 @@ public class FileApi extends DataApi {
     public void deleteCache(Context context) {
 
         File file = new File(context.getFilesDir() + File.separator + PRIVATE_FOLDER_NAME + File.separator);
-        String b[] = file.list();
-
+        String[] b = file.list();
         if (b != null) {
-            for (int i = 0; i < b.length; i++) {
-                File fileInner = new File(file.getAbsolutePath(), b[i]);
+            for (String s : b) {
+                File fileInner = new File(file.getAbsolutePath(), s);
                 if (fileInner.exists()) {
                     fileInner.delete();
                 }
             }
         }
-
     }
 
     @Override
@@ -1144,21 +1122,6 @@ public class FileApi extends DataApi {
         return null;
     }
 
-    private void createAlphaMat(Mat mat) {
-        int UCHAR_MAX = 255;
-        for (int i = 0; i < mat.rows(); ++i) {
-            for (int j = 0; j < mat.cols(); ++j) {
-
-                double[] bgra = mat.get(i, j);
-                bgra[0] = UCHAR_MAX; // Blue
-                bgra[1] = (((mat.cols() - j)) / ((float) mat.cols()) * UCHAR_MAX); // Green
-                bgra[2] = (((mat.rows() - i)) / ((float) mat.rows()) * UCHAR_MAX); // Red
-                bgra[3] = (0.5 * (bgra[1] + bgra[2])); // Alpha
-
-
-            }
-        }
-    }
 
     static int COMPRESSION_PERCENTAGE_START = 80;
     static int IMAGE_COMPRESSION_EXPECTED_MAX_ITERATIONS = 3;
@@ -1224,7 +1187,6 @@ public class FileApi extends DataApi {
 
     private Uri storeImageInCacheWithSizeLimit(Bitmap image, DataFile dataFile, int quality, int maxSizeKb) {
 
-
         if (!createFoldersIfRequired()) {
             return null;
         }
@@ -1233,16 +1195,12 @@ public class FileApi extends DataApi {
         File file = new File(context.getFilesDir() + File.separator + PRIVATE_FOLDER_NAME + File.separator, fileName);
         boolean result = false;
 
-        if (SettingsManager.getInstance().isJpg(dataFile.getName()) == true) {
+        if (SettingsManager.getInstance().isJpg(dataFile.getName())) {
             result = FileUtils.storeImageWithSizeLimit(image, file, quality, maxSizeKb);
         } else {
             result = FileUtils.storeImage(image, file, quality);
         }
-
-//        boolean result =  FileUtils.storeImage(image,file);
-//         result =  FileUtils.storeImageWithSizeLimit(image,file,quality,maxSizeKb);
-
-        if (result == true) {
+        if (result) {
 //            Uri contentUri = FileProvider.getUriForFile(context, CACHE_URI_PROVIDER, file);
             return Uri.fromFile(file);
         }
@@ -1300,22 +1258,11 @@ public class FileApi extends DataApi {
 
     @Override
     public void getBitmapFromAbsolutePathUriAsync(Context context, Uri fileUri, OnBitMapLoaded onBitMapLoaded) {
-
-        getBitmapFromOpenCVAsync(context, fileUri, onBitMapLoaded);
     }
 
 
     @Override
     public BitmapResult getBitmapFromAbsolutePathUri(Context context, Uri fileUri, int width, int height) {
-
-        /*byte [] a = FileUtils.getRawFileData(fileUri);
-        BitmapResult bitmapResult = new BitmapResult();
-        ByteBuffer byteBuffer = ByteBuffer.wrap(a);
-        byteBuffer.rewind();
-        Bitmap bitmap = Bitmap.createBitmap(width,height, Bitmap.Config.ARGB_8888);
-        bitmap.copyPixelsFromBuffer(byteBuffer);
-
-        bitmapResult.setBitmap(bitmap);*/
 
         if (fileUri == null) {
             return null;
@@ -1325,7 +1272,7 @@ public class FileApi extends DataApi {
 
         Bitmap bitmap = null;
 
-        if (fileUri != null && fileUri.getScheme() != null && fileUri.getScheme().startsWith("file")) {
+        if (fileUri.getScheme() != null && fileUri.getScheme().startsWith("file")) {
             bitmap = FileUtils.getBitmapFromAbsoluteFileUri(fileUri);
 
         } else {
@@ -1379,26 +1326,6 @@ public class FileApi extends DataApi {
         }
         return null;
 
-    }
-
-    @NonNull
-    public static void getBitmapFromOpenCVAsync(Context context, Uri fileUri, OnBitMapLoaded onBitMapLoaded) {
-        Bitmap bitmapRes = null;
-
-
-        try {
-
-            Mat mat = Imgcodecs.imread(fileUri.getPath());
-            Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2RGB);
-            bitmapRes = Bitmap.createBitmap(mat.width(), mat.height(), Bitmap.Config.ARGB_8888);
-            org.opencv.android.Utils.matToBitmap(mat, bitmapRes);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } catch (OutOfMemoryError oe) {
-
-            System.gc();
-
-        }
     }
 
     /*@NonNull

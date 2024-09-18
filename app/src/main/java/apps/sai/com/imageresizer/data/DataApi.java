@@ -79,7 +79,7 @@ public abstract class DataApi {
 
 
 
-    public abstract Bitmap scaleImage(Context context , Bitmap unscaledBitmap,int newWidth,int newHeight,int type) ;
+    public abstract Bitmap scaleImage( Bitmap unscaledBitmap,int newWidth,int newHeight,int type) ;
 //    public  abstract Bitmap saveImageInCacheOpenCV(Bitmap bitmap, int type,int quality);
 //    public  abstract Bitmap saveImageInCacheOpenCV(DataFile dataFile,Bitmap bitmap, int type,int quality);
 

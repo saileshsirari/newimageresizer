@@ -1,106 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    tools:context=".select.SelectActivity"
     android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".select.SelectActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/darker_gray">
 
-   <!-- <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/Toolbar"
+            app:layout_collapseMode="none"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <FrameLayout
+        android:id="@+id/contentFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".select.SelectActivity"
-        android:orientation="vertical">-->
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-       <!-- <android.support.design.widget.AppBarLayout
-            android:layout_width="match_parent"
-            android:background="@android:color/darker_gray"
-            ads:adSize="SMART_BANNER"
-            ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
-            android:layout_height="wrap_content">-->
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:background="@android:color/darker_gray"
-        android:layout_height="wrap_content">
-
-            <!--<android.support.design.widget.CollapsingToolbarLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed"
-                >-->
-
-
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/colorPrimary"
-                android:minHeight="?attr/actionBarSize"
-                android:theme="@style/Toolbar"
-                app:layout_collapseMode="none"
-
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
-           <!-- <com.startapp.android.publish.ads.banner.Banner
-                android:id="@+id/startAppBanner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"/>-->
-
-           <!-- <com.google.android.gms.ads.AdView
-                xmlns:ads="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/adView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_alignParentTop="true"
-                ads:adSize="BANNER"
-                ads:adUnitId="ca-app-pub-5260132970861532/5707179950"
-
-                >
-            </com.google.android.gms.ads.AdView>-->
-
-            <!--</android.support.design.widget.CollapsingToolbarLayout>-->
-
-        </android.support.design.widget.AppBarLayout>
-
-
-
-            <FrameLayout
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                android:id="@+id/contentFrame"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
     <LinearLayout
-        android:layout_gravity="bottom"
         android:id="@+id/banner_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical">
-    </LinearLayout>
+        android:layout_gravity="bottom"
+        android:orientation="vertical" />
+
     <ProgressBar
-        android:visibility="gone"
         android:id="@+id/activityProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
-
-
-
-
-
-    <!--</LinearLayout>-->
-</android.support.design.widget.CoordinatorLayout>
+        android:layout_gravity="center"
+        android:visibility="gone" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
 

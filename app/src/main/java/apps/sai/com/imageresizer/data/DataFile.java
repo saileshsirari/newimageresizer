@@ -37,8 +37,7 @@ public  class DataFile implements Comparable<DataFile> {
     @Override
     public boolean equals(Object obj) {
 
-        if(obj instanceof  DataFile){
-            DataFile dataFile =(DataFile) obj;
+        if(obj instanceof DataFile dataFile){
             return dataFile.getName().equals(getName());
         }
         return super.equals(obj);
@@ -51,11 +50,6 @@ public  class DataFile implements Comparable<DataFile> {
 
     @Override
     public int compareTo(@NonNull DataFile o) {
-
-        if(o instanceof DataFile){
-            DataFile dataFile =(DataFile) o;
-            return o.getName().compareTo(getName());
-        }
-        return 0;
+        return o.getName().compareTo(getName());
     }
 }

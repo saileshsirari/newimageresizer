@@ -7,6 +7,7 @@ import java.util.List;
 import apps.sai.com.imageresizer.BasePresenter;
 import apps.sai.com.imageresizer.BaseView;
 import apps.sai.com.imageresizer.data.ImageInfo;
+import kotlinx.coroutines.flow.Flow;
 
 
 /**
@@ -39,9 +40,7 @@ public interface MyImagesContract {
 
             void shareImages(Context context, List<ImageInfo> imageInfoList);
 
-            List<ImageInfo>  getImages(Context context);
-
-
+            Flow<List<ImageInfo>> getImages(Context context);
 
         }
 

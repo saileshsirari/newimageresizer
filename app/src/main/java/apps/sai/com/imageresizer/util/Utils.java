@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -36,15 +37,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import apps.sai.com.imageresizer.BaseFragment;
-import apps.sai.com.imageresizer.BuildConfig;
 import apps.sai.com.imageresizer.ImageResizeApplication;
 import apps.sai.com.imageresizer.R;
-import apps.sai.com.imageresizer.crop.CropDemoPreset;
-import apps.sai.com.imageresizer.crop.CropFragment;
 import apps.sai.com.imageresizer.data.DataApi;
 import apps.sai.com.imageresizer.data.DataFile;
 import apps.sai.com.imageresizer.data.FileApi;
 import apps.sai.com.imageresizer.data.ImageInfo;
+import apps.sai.com.imageresizer.resize.CropImageViewFragment;
 import apps.sai.com.imageresizer.settings.SettingsManager;
 
 /**
@@ -52,6 +51,7 @@ import apps.sai.com.imageresizer.settings.SettingsManager;
  */
 
 public class Utils {
+    private static final String TAG = "Utils";
     public static UiState mUiState;
     public static Uri mImgeUri;
 
@@ -60,15 +60,19 @@ public class Utils {
         fragmentTransaction.add(resId, fragment, fragment.getClass().getSimpleName());
         if (isBackStack) {
             fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
-
         }
         fragmentTransaction.commit();
     }
 
     public static void showFragment(AppCompatActivity activity, String fragmentClassSimpleName) {
-        FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.show(activity.getSupportFragmentManager().findFragmentByTag(fragmentClassSimpleName));
-        fragmentTransaction.commit();
+        try {
+            FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.show(activity.getSupportFragmentManager().findFragmentByTag(fragmentClassSimpleName));
+            fragmentTransaction.commit();
+        }catch (Exception e){
+            Log.e(TAG, e.toString());
+        }
+
     }
 
     public static void removeFragment(AppCompatActivity activity, Fragment fragment) {
@@ -81,26 +85,11 @@ public class Utils {
 
 
     public static boolean isUpgradedMy() {
-
-        if (false) {
-            return true;
-        }
-        if (BuildConfig.DEBUG == true) {
-            return false;
-        }
-
-
         if (ImageResizeApplication.getInstance().getIsUpgraded()) {
             return true;
         }
-
-        if (SettingsManager.getInstance().isLegacyUpgraded()) {
-            return true;
-        }
-
-
+        return SettingsManager.getInstance().isLegacyUpgraded();
         //If something goes wrong, assume the user has the pro version
-        return false;
     }
     /**
      * In most cases you need only to set crop aspect ration and max size for resulting image.
@@ -200,10 +189,12 @@ public class Utils {
         fragmentTransaction.commit();
     }
 
-    public static CropFragment setCropFragmentByPreset(AppCompatActivity activity, CropDemoPreset demoPreset, String imageUri) {
+
+
+    public static CropImageViewFragment getCropFragment(AppCompatActivity activity, String imageUri) {
         FragmentManager fragmentManager = activity.getSupportFragmentManager();
 
-        CropFragment cropFragment = CropFragment.newInstance(demoPreset, imageUri);
+        CropImageViewFragment cropFragment = CropImageViewFragment.newInstance( imageUri);
 //        cropFragment.setImageUri(imageUri);
         fragmentManager
                 .beginTransaction().addToBackStack(cropFragment.getClass().getSimpleName())
@@ -291,9 +282,8 @@ public class Utils {
 
     public static String getPath(Context context, Uri uri) {
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-
         // DocumentProvider
-        if (isKitKat == true) {
+        if (isKitKat) {
             if (DocumentsContract.isDocumentUri(context, uri)) {
                 // ExternalStorageProvider
                 if (isExternalStorageDocument(uri)) {
@@ -335,7 +325,6 @@ public class Utils {
             }
         } else if ("content".equalsIgnoreCase(uri.getScheme())) {
             // MediaStore (and general)
-
             // Return the remote address
             if (isGooglePhotosUri(uri)) {
                 return uri.getLastPathSegment();
@@ -425,26 +414,22 @@ public class Utils {
                    /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                         savedOnSD = DocumentsContract.deleteDocument(context.getContentResolver(), url);
                     }*/
-                if (savedOnSD == false) {
+                if (!savedOnSD) {
                     ImageInfo imageInfo = null;
                     DataApi dataApi = new FileApi(context);
                     imageInfo = Utils.getImageInfo(imageInfo, context, url, dataApi);
-                    dataApi.deleteImageFile(context,imageInfo, null);
+                    dataApi.deleteImageFile(context, imageInfo, null);
 
 
                     File file = new File(imageInfo.getAbsoluteFilePathUri().getPath());
-                    if (file.exists() == true) {
+                    if (file.exists()) {
                         savedOnSD = file.delete();
                     }
 
                 }
 
-                if (savedOnSD == false) {
-
-                    int deleted = cr.delete(url, null, null);
-                    if (deleted >= 1) {
-                        savedOnSD = true;
-                    }
+                if (!savedOnSD) {
+                    cr.delete(url, null, null);
                 }
 
 
@@ -472,7 +457,7 @@ public class Utils {
                 String returned = (getPath(context, mUri));
                 if (returned != null) {
                     File file = new File(returned);
-                    if (file.exists() == true) {
+                    if (file.exists()) {
                         return Uri.fromFile(new File(returned));
                     }
                 }
@@ -627,32 +612,13 @@ public class Utils {
 
             Uri path = uri;
             boolean isFilePath = false;
-            if (uri.getScheme().equals(ContentResolver.SCHEME_FILE) == false) {
-
-
+            if (!uri.getScheme().equals(ContentResolver.SCHEME_FILE)) {
                 path = Utils.getTImageFilePathUri(context, uri);
-
-
             } else {
                 isFilePath = true;
             }
-
-
-//
-//            if(path==null){//its local cache path change later
-//
-//               // path = dataApi.getAbsoluteImagePathUriFromCache();
-////                uri = Uri.fromFile(new File(path));
-//            }
-
-
-            // First decode with inJustDecodeBounds=true to check dimensions
             BitmapFactory.Options options = ImageUtils.decodeImageForOption(resolver, uri);
-
-//            if(imageInfo==null) {
-//            }
             imageInfo.setAbsoluteFilePath(path);
-
             imageInfo.setTobeDeletedUri(path);
             if (imageInfoOrg != null) {
                 imageInfo.setAbsoluteThumbFilePath(imageInfoOrg.getAbsoluteThumbFilePath());
@@ -660,20 +626,14 @@ public class Utils {
             } else {
                 imageInfo.setImageUri(uri);
             }
-
-
-//
             imageInfo.setWidth(options.outWidth);
             imageInfo.setHeight(options.outHeight);
-            if (isFilePath == true) {
+            if (isFilePath) {
                 imageInfo.setFileSize(new File(path.getPath()).length());
-
             } else {
                 imageInfo.setFileSize(getRealSizeFromUri(context, imageInfo.getImageUri()));
-
             }
             imageInfo.setFormatedFileSize(Utils.getFormattedFileSize(imageInfo));
-
             String filename = path.getPath().substring(path.getPath().lastIndexOf("/") + 1);
             if (filename.indexOf(".") == -1) {
                 filename += SettingsManager.getInstance().getFileExtensionPref();
@@ -681,46 +641,30 @@ public class Utils {
             DataFile dataFile = new DataFile();
             dataFile.setName(filename);
             dataFile.setUri(imageInfo.getAbsoluteFilePathUri());
-
             imageInfo.setDataFile(dataFile);
-
-
             Uri uriThumb = null;
-
             if (imageInfo.getAbsoluteThumbFilePath() != null) {
                 uriThumb = Uri.fromFile(new File(imageInfo.getAbsoluteThumbFilePath()));
-
-//                uriThumb = Uri.parse(imageInfo.getAbsoluteThumbFilePath());
             }
             if (uriThumb == null) {
                 imageInfo.setAbsoluteThumbFilePath(getThumbFilePath(context, uri));
-
-                //   imageInfo.setAbsoluteThumbFilePath(getThumbFilePath(context,uri));
-
-
                 if (imageInfo.getAbsoluteThumbFilePath() != null) {
-//                    uriThumb = Uri.parse(imageInfo.getAbsoluteThumbFilePath());
                     uriThumb = Uri.fromFile(new File(imageInfo.getAbsoluteThumbFilePath()));
                 } else if (imageInfo.getAbsoluteFilePathUri() != null) {
-//                    uriThumb = Uri.fromFile(new File(imageInfo.getAbsoluteFilePathUri().getPath()));
                     uriThumb = imageInfo.getAbsoluteFilePathUri();
-
                 }
-
             }
-
-
             if (uriThumb != null) {
                 try {
 
-                    if (uriThumb.getScheme() != null && uriThumb.getScheme().equals(ContentResolver.SCHEME_FILE) == true) {
-                        if (new File(uriThumb.getPath()).exists() == false) {
+                    if (uriThumb.getScheme() != null && uriThumb.getScheme().equals(ContentResolver.SCHEME_FILE)) {
+                        if (!new File(uriThumb.getPath()).exists()) {
                             return imageInfo;
                         }
                     }
                     ImageUtils.BitmapSampled result = ImageUtils.decodeSampledBitmap(context, uri, 100, 100);
 
-                    if (result != null && result.bitmap != null) {
+                    if (result.bitmap != null) {
 //                        File file = new File(uriThumb.getPath());
                         String s = uriThumb.getPath();
                         s = s.substring(s.lastIndexOf(File.separator) + File.separator.length());
@@ -728,7 +672,7 @@ public class Utils {
                         s = "_thumb" + s;
 
 //                        }
-                        if (s.indexOf(".") == -1) {
+                        if (!s.contains(".")) {
                             s = s + SettingsManager.getInstance().getFileExtensionPref();
                         }
                         dataFile = new DataFile();
@@ -736,32 +680,20 @@ public class Utils {
                         Bitmap bitmap = result.bitmap;
 
 
-                        int orientation = getImageOrientation(context, uri);
-                        if (orientation != ExifInterface.ORIENTATION_NORMAL) {
-
-                            bitmap = getRotatedBitmap(bitmap, orientation);
-
-
-//                            dataApi.saveImageInCache(dataFile, bitmap, 100);
-//
-//                            uriThumb = dataApi.getImageUriFromCache(dataFile.getName());
+                        int orientation = 0;
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                            orientation = getImageOrientation(context, uri);
                         }
-
+                        if (orientation != ExifInterface.ORIENTATION_NORMAL) {
+                            bitmap = getRotatedBitmap(bitmap, orientation);
+                        }
                         dataApi.saveImageInCache(dataFile, bitmap, 100);
                         uriThumb = dataApi.getImageUriFromCache(dataFile.getName());
                         imageInfo.setAbsoluteThumbFilePath(uriThumb.getPath());
-//                        result.bitmap.recycle();
-
                     }
-
-
                 } catch (Throwable e) {
-
                     e.printStackTrace();
-
-
                 }
-
             }
 
             return imageInfo;
@@ -790,7 +722,7 @@ public class Utils {
 
     public static void showFacebookBanner(Context context, final View view, int resid, String id) {
 
-        if (Utils.isUpgradedMy() == true) {
+        if (Utils.isUpgradedMy()) {
 
             return;
         }

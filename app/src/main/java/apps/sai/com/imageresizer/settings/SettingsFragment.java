@@ -25,6 +25,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,12 +33,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import apps.sai.com.imageresizer.BuildConfig;
 import apps.sai.com.imageresizer.R;
 import apps.sai.com.imageresizer.listener.OnPreferenceChangedListener;
 import apps.sai.com.imageresizer.select.MenuItem;
-import apps.sai.com.imageresizer.select.SelectFragment;
-import apps.sai.com.imageresizer.util.Utils;
 
 /**
  * Created by sailesh on 15/02/18.
@@ -48,6 +46,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
     SettingsAdaptor mSettingsAdaptor;
 
     SettingsContract.Presenter mSettingsPresenter;
+
     public static SettingsFragment newInstance() {
 
         Bundle args = new Bundle();
@@ -63,7 +62,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
         mSettingsPresenter = new SettingsPresenter();
         mSettingsPresenter.takeView(this);
 
-        if(mSettingsPresenter!=null){
+        if (mSettingsPresenter != null) {
             mSettingsPresenter.setOnPreferenceChangedListener(mOnPreferenceChangedListener);
         }
 //        SelectActivity selectActivity = (SelectActivity)getActivity();
@@ -72,18 +71,24 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
 
     }
 
-
-
-   /* @Nullable
+    @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_settings,null);
-        ButterKnife.bind(this,view);
-
-//        fillMenuItems();
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view =  super.onCreateView(inflater, container, savedInstanceState);
+        view.setBackgroundColor(ContextCompat.getColor(requireContext(),android.R.color.white));
         return view;
-    }*/
+    }
+
+    /* @Nullable
+         @Override
+         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                                  @Nullable Bundle savedInstanceState) {
+             View view =  inflater.inflate(R.layout.fragment_settings,null);
+             ButterKnife.bind(this,view);
+
+     //        fillMenuItems();
+             return view;
+         }*/
     OnPreferenceChangedListener mOnPreferenceChangedListener;
 
     public void setOnPreferenceChangedListener(OnPreferenceChangedListener mOnPreferenceChangedListener) {
@@ -97,7 +102,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
 //        mRecyclerView = getActivity().findViewById(R.id.settings_recycler_view);
 
 
-
 //        mSettingsPresenter = new SettingsPresenter();
 //        mLayoutManager = new LinearLayoutManager(getContext());
 
@@ -107,7 +111,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
 
-                    mSettingsPresenter.autoSavedClicked(SettingsFragment.this.getContext(),newValue);
+                    mSettingsPresenter.autoSavedClicked(SettingsFragment.this.getContext(), newValue);
                     return true;
                 }
             });
@@ -126,17 +130,17 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
             });
         }
 
-            Preference shareFeedbackPreference = findPreference(SettingsManager.KEY_PREF_SHARE_FEEDBACK);
-            if (shareFeedbackPreference != null) {
-                shareFeedbackPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                    @Override
-                    public boolean onPreferenceClick(Preference preference) {
-                        mSettingsPresenter.shareFeedback(SettingsFragment.this.getContext());
+        Preference shareFeedbackPreference = findPreference(SettingsManager.KEY_PREF_SHARE_FEEDBACK);
+        if (shareFeedbackPreference != null) {
+            shareFeedbackPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    mSettingsPresenter.shareFeedback(SettingsFragment.this.getContext());
 
 
-                        return true;
-                    }
-                });
+                    return true;
+                }
+            });
 
         }
 
@@ -164,7 +168,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
                     String value = (String) newValue;
                     SettingsManager.getInstance().setGridSize(value);
 
-                    if(mOnPreferenceChangedListener!=null){
+                    if (mOnPreferenceChangedListener != null) {
                         mOnPreferenceChangedListener.onPreferenceChanged();
                     }
                     return false;
@@ -189,7 +193,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
                     String value = (String) newValue;
                     SettingsManager.getInstance().setKeyPrefGridAppearance(value);
 
-                    if(mOnPreferenceChangedListener!=null){
+                    if (mOnPreferenceChangedListener != null) {
                         mOnPreferenceChangedListener.onPreferenceChanged();
                     }
                     return false;
@@ -217,25 +221,23 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
 
-                   if (  mayRequestExternalStorage() ==true) {
+                    if (mayRequestExternalStorage() == true) {
 //                    mSettingsPresenter.rateUsClicked(SettingsFragment.this.getContext());
 
 
-                       mSettingsPresenter.changeOutputFolderClicked(getActivity(), SettingsFragment.this.getActivity().getSupportFragmentManager());
+                        mSettingsPresenter.changeOutputFolderClicked(getActivity(), SettingsFragment.this.getActivity().getSupportFragmentManager());
 
-                   }
-                   return true;
+                    }
+                    return true;
                 }
             });
-
 
 
         }
 
         Preference versionPreference = findPreference(SettingsManager.KEY_PREF_VERSION);
         if (versionPreference != null) {
-           versionPreference.setSummary(BuildConfig.VERSION_NAME);
-
+            // versionPreference.setSummary(BuildConfig.VERSION_NAME);
         }
 
 
@@ -245,17 +247,16 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
                 @Override
                 public boolean onPreferenceClick(@NonNull Preference preference) {
 
-                    Intent  intent = new Intent(android.content.Intent.ACTION_VIEW);
+                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
 
                     //Copy App URL from Google Play Store.
                     intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=frees.com.beautifulapps.media.music.musicplayer.search.player"));
 
                     startActivity(intent);
 
-                   return true;
+                    return true;
                 }
             });
-
 
 
         }
@@ -268,12 +269,13 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
     public void shareFeedback(Context context) {
         shareFeedbackGmail(context);
     }
-    public void shareFeedbackGmail(Context context ) {
+
+    public void shareFeedbackGmail(Context context) {
 
 
         Intent gmail = new Intent(Intent.ACTION_VIEW);
-        gmail.setClassName("com.google.android.gm","com.google.android.gm.ComposeActivityGmail");
-        gmail.putExtra(Intent.EXTRA_EMAIL, new String[] { "androbbmidlet@@gmail.com" });
+        gmail.setClassName("com.google.android.gm", "com.google.android.gm.ComposeActivityGmail");
+        gmail.putExtra(Intent.EXTRA_EMAIL, new String[]{"androbbmidlet@@gmail.com"});
 //        gmail.setData(Uri.parse("jckdsilva@gmail.com"));
         gmail.putExtra(Intent.EXTRA_SUBJECT, "Feedback");
 //        gmail.setType("message/rfc822");
@@ -283,26 +285,28 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
             try {
                 startActivity(gmail);
                 return;
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
         }
 
 
-            Intent email = new Intent(android.content.Intent.ACTION_SEND);
-            email.setType("message/rfc822");
-            email.putExtra(Intent.EXTRA_EMAIL, new String[] { "androbbmidlet@gmail.com" });
-            email.putExtra(Intent.EXTRA_SUBJECT, "Feedback");
+        Intent email = new Intent(android.content.Intent.ACTION_SEND);
+        email.setType("message/rfc822");
+        email.putExtra(Intent.EXTRA_EMAIL, new String[]{"androbbmidlet@gmail.com"});
+        email.putExtra(Intent.EXTRA_SUBJECT, "Feedback");
 
 //        gmail.putExtra(Intent.EXTRA_TEXT, "");
-            startActivity(email);
+        startActivity(email);
 
     }
+
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.settings_preferences);
 
     }
+
     public static void shareApp(Context context) {
         final String appPackageName = context.getPackageName();
         Intent sendIntent = new Intent();
@@ -318,7 +322,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
         List<MenuItem> menuItemList = new ArrayList<>();
 
 
-        menuItemList.add(MenuItem.newInstance( MenuItem.RATE_APP_ID , getString(R.string.rate_app) ,
+        menuItemList.add(MenuItem.newInstance(MenuItem.RATE_APP_ID, getString(R.string.rate_app),
                 R.drawable.star));
 //        menuItemList.add(MenuItem.newInstance( MenuItem.TAKE_PHOTO_ID , MenuItem.TAKE_PHOTO_TEXT ,
 //                MenuItem.TAKE_PHOTO_RES_ID));
@@ -329,9 +333,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
         mSettingsAdaptor = new SettingsAdaptor(getContext(), menuItemList, new SettingsAdaptor.OnMenuSelectedListener() {
             @Override
             public void onMenuSelected(MenuItem menuItem) {
-                   if(menuItem.getId()==MenuItem.RATE_APP_ID){
+                if (menuItem.getId() == MenuItem.RATE_APP_ID) {
 
-                       mSettingsPresenter.handleRateClick();
+                    mSettingsPresenter.handleRateClick();
 //                    / / mSettingsPresenter.showMyImages((AppCompatActivity) getActivity(), MyImagesFragment.newInstance());
                 }
 
@@ -342,10 +346,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
 //        mRecyclerView.setLayoutManager(mLayoutManager);
 
 //        mRecyclerView.setAdapter(mSettingsAdaptor);
-
-
-
-
 
 
     }
@@ -360,26 +360,28 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
     }
 
 
-
-    public static class SettingsAdaptor extends RecyclerView.Adapter<SettingsAdaptor.SettingsHolder>{
+    public static class SettingsAdaptor extends RecyclerView.Adapter<SettingsAdaptor.SettingsHolder> {
 
 
         List<MenuItem> mMenuItemList;
         Context mContext;
         OnMenuSelectedListener mMenuSelectedListener;
-        public interface OnMenuSelectedListener{
+
+        public interface OnMenuSelectedListener {
 
             void onMenuSelected(MenuItem menuItem);
         }
-        public SettingsAdaptor(Context context, List<MenuItem> menuItemList, OnMenuSelectedListener menuSelectedListener){
+
+        public SettingsAdaptor(Context context, List<MenuItem> menuItemList, OnMenuSelectedListener menuSelectedListener) {
             mMenuItemList = menuItemList;
-            this.mContext =context;
+            this.mContext = context;
             this.mMenuSelectedListener = menuSelectedListener;
         }
+
         @Override
         public SettingsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-            return new SettingsHolder(LayoutInflater.from(mContext).inflate(R.layout.file_row,null));
+            return new SettingsHolder(LayoutInflater.from(mContext).inflate(R.layout.file_row, null));
         }
 
         @Override
@@ -400,7 +402,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
                     mMenuSelectedListener.onMenuSelected(menuItem);
 
 
-
                 }
             });
 
@@ -418,9 +419,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
 
             ImageView imageView;
             View itemView;
+
             public SettingsHolder(View itemView) {
                 super(itemView);
-                this.itemView= itemView;
+                this.itemView = itemView;
 
                 nameTextView = itemView.findViewById(R.id.text_name_menu);
                 imageView = itemView.findViewById(R.id.image_menu);
@@ -429,28 +431,31 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
             }
         }
     }
+
     public static final int REQUEST_WRITE_STORAGE = 10;
+
     public boolean mayRequestExternalStorage() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
         }
         if (getActivity().checkSelfPermission(WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
                 && getActivity().checkSelfPermission(READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                ) {
+        ) {
             return true;
         }
 
 //        Snackbar.make(mView,R.string.permission_rationale,Snackbar.LENGTH_LONG).show();
-        requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE,ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION}, REQUEST_WRITE_STORAGE);
+        requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE, ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION}, REQUEST_WRITE_STORAGE);
 //        }
         return false;
     }
-    public void showRateDialog(Context context){
+
+    public void showRateDialog(Context context) {
 
 
-        if(false){
+        if (false) {
 
-            Intent  intent = new Intent(android.content.Intent.ACTION_VIEW);
+            Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
 
             //Copy App URL from Google Play Store.
             intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=apps.sai.com.imageresizer.demo"));
@@ -470,7 +475,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
-                Intent  intent = new Intent(android.content.Intent.ACTION_VIEW);
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
 
                 //Copy App URL from Google Play Store.
                 intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=apps.sai.com.imageresizer.demo"));
@@ -500,7 +505,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
     }
 
     @Override
-    public void launchgalleryExternalApp(boolean singlePhoto) {
+    public void launchGalleryExternalApp(boolean singlePhoto) {
 
     }
 
@@ -534,12 +539,5 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mSettingsPresenter.dropView();
-    }
-
-    @Override
-    public void onDestroyView() {
-        Utils.showFragment((AppCompatActivity) getActivity(), SelectFragment.class.getSimpleName());
-        super.onDestroyView();
     }
 }

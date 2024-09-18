@@ -4,11 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -18,8 +15,6 @@ import java.util.List;
 import apps.sai.com.imageresizer.R;
 import apps.sai.com.imageresizer.data.ResolutionInfo;
 import apps.sai.com.imageresizer.listener.OnResolutionSelectedListener;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by sailesh on 06/01/18.
@@ -55,8 +50,6 @@ public class ResolutionAdaptor extends RecyclerView.Adapter<ResolutionAdaptor.Re
 
     @Override
     public ResolutionHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-
         View view = null;
         if (mResLayoutFile == 0) {
             view = LayoutInflater.from(mContext).inflate(R.layout.resolution_row, null);
@@ -64,7 +57,6 @@ public class ResolutionAdaptor extends RecyclerView.Adapter<ResolutionAdaptor.Re
             view = LayoutInflater.from(mContext).inflate(mResLayoutFile, null);
 
         }
-
         return new ResolutionHolder(view);
     }
 
@@ -88,73 +80,13 @@ public class ResolutionAdaptor extends RecyclerView.Adapter<ResolutionAdaptor.Re
     }
 
     public static class ResolutionHolder extends RecyclerView.ViewHolder {
-
         View rootView;
-        @BindView(R.id.text_res)
         TextView textView;
-
         public ResolutionHolder(View itemView) {
             super(itemView);
             rootView = itemView;
-            ButterKnife.bind(this, rootView);
-
+            textView = itemView.findViewById(R.id.text_res);
         }
     }
 
-
-    public static class SpinnerResolutionAdaptor extends ArrayAdapter<ResolutionInfo> {
-        List<ResolutionInfo> mResolutionInfoList;
-        Context mContext;
-        int mResLayoutFile;
-        View rootView;
-        @BindView(R.id.text_res)
-        TextView textView;
-        public SpinnerResolutionAdaptor(@NonNull Context context, List<ResolutionInfo> resolutionInfoList, int resLayoutFile) {
-            super(context, 0);
-            this.mContext = context;
-            this.mResolutionInfoList = resolutionInfoList;
-            this.mResLayoutFile = resLayoutFile;
-
-
-        }
-
-        @Override
-        public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            if (convertView == null) {
-                convertView = LayoutInflater.from(mContext).inflate(mResLayoutFile, null);
-            }
-            ButterKnife.bind(this, convertView);
-
-            textView.setText(getItem(position).getFormatedString());
-
-            return convertView;
-        }
-
-        @NonNull
-        @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
-            if (convertView == null) {
-                convertView = LayoutInflater.from(mContext).inflate(mResLayoutFile, null);
-            }
-            textView = convertView.findViewById(R.id.text_res);
-
-            textView.setText(getItem(position).getFormatedString());
-
-            return convertView;
-        }
-
-        @Override
-        public int getCount() {
-            return mResolutionInfoList.size();
-        }
-
-
-
-        @Nullable
-        @Override
-        public ResolutionInfo getItem(int position) {
-            return mResolutionInfoList.get(position);
-        }
-    }
 }

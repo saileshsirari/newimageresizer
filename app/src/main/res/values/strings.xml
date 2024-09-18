@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" >
 
     <string name="or" translatable="false">Or</string>
-    <string name="percentage_of_orignal" translatable="false">Or \n\nEnter percentage of original </string>
+    <string name="percentage_of_original" translatable="false">Or \n\nEnter percentage of original </string>
     <string name="or_enter_custom_dime" translatable="false">Or Enter custom dimensions</string>
 
     <string name="app_name" translatable="false">Image Resizer</string>
@@ -119,6 +119,13 @@
     <string name="pref_summary_music_app" tools:ignore="MissingTranslation">Download stunning music player with customizable skins ,background and many more features!</string>
     <string name="more_apps">More Apps</string>
     <string name="showing_max_images" translatable="false">Only first %d images are loaded</string>
-    <string name="md_choose_label">Choose label</string>
-    <string name="new_folder">New folder</string>
+    <string name="md_choose_label" translatable="false">Choose label</string>
+    <string name="new_folder" translatable="false">New folder</string>
+    <string name="menu" translatable="false">Menu item</string>
+    <string name="to_be_deleted" translatable="false">to be deleted</string>
+    <string name="or_enter_custom_dimensions" translatable="false">Or Enter custom dimensions</string>
+    <string name="x">X</string>
+    <string name="enter_height">Enter height</string>
+    <string name="enter_width">Enter width</string>
+    <string name="percentage">%</string>
 </resources>

@@ -2,11 +2,6 @@ package apps.sai.com.imageresizer.util.algo;
 
 import android.graphics.Bitmap;
 
-import org.opencv.android.Utils;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -50,26 +45,15 @@ public class SeamCarverOpenCv {
         pictureData = new double[rows][cols][];
 //        Mat imageMat = new Mat();
 //
-        Mat imageMat = new Mat(rows,cols,CvType.CV_8UC3);
+      /*  Mat imageMat = new Mat(rows,cols,CvType.CV_8UC3);
         org.opencv.android.Utils.bitmapToMat(bitmap, imageMat);
 
         for (int col = 0; col < cols; col++) {
             for (int row = 0; row < rows; row++) {
-
-
-
-
-//                pictureData[row][col] = bitmap.getPixel(col, row);
-//                pictureData[row][col] =unpackPixel(pictureData[row][col]);
-
                 double [] intensity = imageMat.get(row,col);
                 pictureData[row][col] = intensity;
-
-
-
             }
-
-        }
+        }*/
 
 
         initEnergyForBoundaries(energy);
@@ -181,43 +165,6 @@ public class SeamCarverOpenCv {
             energy[i][cols - 1] = ENERGY_BOUNDARY;
         }
     }
-
-    public Bitmap picture() {
-
-        if (lastState == STATE_SEAM.HORIZONTAL_SEAM) {
-            rotateMatrices();
-            lastState = STATE_SEAM.VERTICAL_SEAM;
-        }
-
-
-        Bitmap newPicture = Bitmap.createBitmap(cols,rows,bitmap.getConfig());
-
-        Mat mat = new Mat(rows,cols, CvType.CV_8UC3);
-//        Mat mat = new Mat();
-                Utils.bitmapToMat(newPicture,mat);
-
-
-        for (int col = 0; col < cols; col++) {
-            for (int row = 0; row < rows; row++) {
-
-//                newPicture.setPixel(col, row, pictureData[row][col]);
-//                pictureData[row][col] = new double[]{100,255,255,0};
-                mat.put(row,col,pictureData[row][col]);
-            }
-        }
-
-        Imgproc.rectangle(mat,
-                new org.opencv.core.Point(15, 20), new org.opencv.core.Point(mat.width()-20, mat.height()-20),
-                new Scalar(255, 0, 255), 20);
-
-
-
-
-        Utils.matToBitmap(mat,newPicture);
-        this.bitmap = newPicture;
-        return this.bitmap;
-
-    }                      // current picture
 
     public int width() {
 
